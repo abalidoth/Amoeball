@@ -1,0 +1,16 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=3 format=3 uid="uid://dcutux8alxxse"]
+
+[sub_resource type="Curve" id="1"]
+min_value = -200.0
+max_value = 200.0
+_data = [Vector2(0.048913, 174.545), 0.0, 0.0, 0, 0, Vector2(0.282609, 160), -1624.93, -1624.93, 0, 0, Vector2(0.494565, -189.091), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="2"]
+curve = SubResource("1")
+
+[resource]
+emission_shape = 1
+emission_sphere_radius = 42.92
+gravity = Vector3(0, 0, 0)
+linear_accel_curve = SubResource("2")

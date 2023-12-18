@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://dj14brvwctnn"]
+
+[ext_resource type="Script" path="res://particle_follow_test.gd" id="1"]
+[ext_resource type="Material" uid="uid://dcutux8alxxse" path="res://particle_follow_test.tres" id="2"]
+
+[node name="particle_follow_test" type="GPUParticles2D"]
+position = Vector2(491, 210)
+amount = 20
+process_material = ExtResource("2")
+lifetime = 3.31
+script = ExtResource("1")

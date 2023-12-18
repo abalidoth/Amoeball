@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/piecePurple_multi12.png" type="Texture2D" id=1]
+[ext_resource path="res://assets/pieceGreen_multi11.png" type="Texture2D" id=2]
+[ext_resource path="res://assets/pieceBlack_multi11.png" type="Texture2D" id=3]
+[ext_resource path="res://Token.gd" type="Script" id=4]
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "black",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "green",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 1 ) ],
+"loop": true,
+"name": "purple",
+"speed": 5.0
+} ]
+
+[node name="Token" type="AnimatedSprite2D"]
+frames = SubResource( 1 )
+animation = "green"
+script = ExtResource( 4 )
