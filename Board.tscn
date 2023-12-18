@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cqv7kmlogihyx" path="res://assets/tileStone_full.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://xg2u812jdkco" path="res://assets/tileSnow_full.png" id="3"]
 [ext_resource type="Script" path="res://Board.gd" id="4"]
-[ext_resource type="PackedScene" path="res://Token.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://imfmoexuiinx" path="res://Token.tscn" id="5"]
 [ext_resource type="Texture2D" uid="uid://bssix5f0alrgu" path="res://assets/pixel_tiles.png" id="5_is3ua"]
 [ext_resource type="Script" path="res://Game.gd" id="6"]
 [ext_resource type="PackedScene" uid="uid://cla1uqq22m1of" path="res://PlayerAgent.tscn" id="7"]
