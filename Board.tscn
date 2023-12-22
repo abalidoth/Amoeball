@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bssix5f0alrgu" path="res://assets/pixel_tiles.png" id="5_is3ua"]
 [ext_resource type="Script" path="res://Game.gd" id="6"]
 [ext_resource type="PackedScene" uid="uid://cla1uqq22m1of" path="res://PlayerAgent.tscn" id="7"]
-[ext_resource type="Texture2D" uid="uid://bnnrpmkuh07wi" path="res://assets/pieceBlack_multi11.png" id="7_puphk"]
+[ext_resource type="Texture2D" uid="uid://dn1lejuj7jajq" path="res://assets/soccer-ball.png" id="8_illos"]
 [ext_resource type="Texture2D" uid="uid://kpleavd2rsnp" path="res://assets/pieceGreen_multi11.png" id="8_ta76u"]
 [ext_resource type="Texture2D" uid="uid://b5yqmko7xlhnw" path="res://assets/piecePurple_multi12.png" id="9_pwmb4"]
 
@@ -42,6 +42,7 @@ texture_region_size = Vector2i(14, 17)
 
 [sub_resource type="TileSet" id="1"]
 tile_shape = 3
+tile_layout = 1
 tile_size = Vector2i(13, 12)
 sources/0 = SubResource("TileSetAtlasSource_tquku")
 sources/1 = SubResource("TileSetAtlasSource_m6tu4")
@@ -52,7 +53,7 @@ sources/3 = SubResource("TileSetAtlasSource_kjbdp")
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("7_puphk")
+"texture": ExtResource("8_illos")
 }],
 "loop": true,
 "name": &"black",
@@ -83,7 +84,7 @@ y_sort_enabled = true
 tile_set = SubResource("1")
 format = 2
 layer_0/y_sort_enabled = true
-layer_0/tile_data = PackedInt32Array(131075, 3, 0, 131076, 65539, 0, 131077, 131075, 0, 131078, 3, 0, 131079, 65539, 0, 196611, 131075, 0, 196614, 131075, 0, 262152, 131075, 0, 262146, 131075, 0, 393218, 131075, 0, 524290, 131075, 0, 589827, 131075, 0, 655365, 131075, 0, 589830, 131075, 0, 524296, 131075, 0, 393224, 131075, 0, 327686, 131075, 0, 262149, 131075, 0, 327683, 131075, 0, 458755, 131075, 0, 524293, 131075, 0, 458758, 131075, 0, 393221, 131075, 0, 196613, 65539, 0, 262148, 65539, 0, 262151, 65539, 0, 327688, 65539, 0, 196610, 65539, 0, 327685, 65539, 0, 393220, 65539, 0, 458757, 65539, 0, 327682, 65539, 0, 393217, 65539, 0, 458754, 65539, 0, 524292, 65539, 0, 589829, 65539, 0, 655364, 65539, 0, 589826, 65539, 0, 655367, 65539, 0, 524295, 65539, 0, 393223, 65539, 0, 458760, 65539, 0, 196612, 3, 0, 262147, 3, 0, 262150, 3, 0, 393219, 3, 0, 458753, 3, 0, 524291, 3, 0, 655363, 3, 0, 655366, 3, 0, 524294, 3, 0, 458756, 3, 0, 393222, 3, 0, 327684, 3, 0, 327687, 3, 0, 196615, 3, 0, 393225, 3, 0, 458759, 3, 0, 589831, 3, 0, 589828, 3, 0, 327681, 3, 0)
+layer_0/tile_data = PackedInt32Array(131075, 3, 0, 131076, 65539, 0, 131077, 131075, 0, 131078, 3, 0, 131079, 65539, 0, 655365, 131075, 0, 655364, 65539, 0, 655367, 65539, 0, 655363, 3, 0, 655366, 3, 0, 524291, 3, 0, 458754, 3, 0, 458757, 3, 0, 524294, 3, 0, 458760, 3, 0, 393222, 3, 0, 327685, 3, 0, 393219, 3, 0, 262147, 3, 0, 262150, 3, 0, 589829, 3, 0, 327688, 3, 0, 393225, 3, 0, 196613, 3, 0, 327682, 3, 0, 589832, 3, 0, 196616, 3, 0, 262148, 65539, 0, 393220, 65539, 0, 524292, 65539, 0, 262151, 65539, 0, 393223, 65539, 0, 524295, 65539, 0, 196614, 65539, 0, 327686, 65539, 0, 458758, 65539, 0, 589830, 65539, 0, 196611, 65539, 0, 327683, 65539, 0, 458755, 65539, 0, 589827, 65539, 0, 393217, 65539, 0, 327689, 65539, 0, 458761, 65539, 0, 262152, 131075, 0, 196615, 131075, 0, 262149, 131075, 0, 196612, 131075, 0, 262146, 131075, 0, 327684, 131075, 0, 393218, 131075, 0, 524290, 131075, 0, 458756, 131075, 0, 589828, 131075, 0, 524293, 131075, 0, 393221, 131075, 0, 327687, 131075, 0, 393224, 131075, 0, 458759, 131075, 0, 589831, 131075, 0, 524296, 131075, 0)
 script = ExtResource("4")
 
 [node name="Ball" parent="." instance=ExtResource("5")]

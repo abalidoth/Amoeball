@@ -17,8 +17,16 @@ config/icon="res://icon.png"
 
 [display]
 
+window/size/viewport_width=300
+window/size/viewport_height=200
+window/size/resizable=false
 window/stretch/scale=5.0
 window/stretch/scale_mode="integer"
+
+[editor]
+
+version_control/plugin_name="GitPlugin"
+version_control/autoload_on_startup=true
 
 [gdnative]
 

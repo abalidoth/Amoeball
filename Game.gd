@@ -7,6 +7,8 @@ extends Node2D
 var tile_pos
 #var tile_pos_raw
 
+var mouse_pos
+
 var Token = preload("res://Token.tscn")
 var token_coords = [[],[]]
 var ball_pos = Vector3(0,0,0)
@@ -15,7 +17,7 @@ enum {ST_INIT, ST_PLACE_1, ST_PLACE_2, ST_REMOVE, ST_KICK, ST_END}
 var state = ST_INIT
 
 const PLAYER_COLORS=["purple","green"]
-const CENTER_TILE = Vector2(7,5)
+const CENTER_TILE = Vector2(5,6) #tile position of the center of the board
 const TOKEN_POSITION = Vector2(0,0)
 
 var ALL_TILES = []
@@ -125,7 +127,7 @@ func advance_game_state(most_recent_move):
 				state = ST_REMOVE
 				this_player.change_state("remove")
 				this_player.valid_moves = determine_valid_moves()
-			else:
+			else: #player's turn is over; switch players
 				state = ST_PLACE_1
 				this_player.change_state("wait")
 				that_player.change_state("place")
@@ -157,9 +159,10 @@ func update_ball_pos(cell):
 
 func determine_valid_moves():
 	var moves = []
-	print("checking moves")
 	match state:
 		ST_PLACE_1, ST_PLACE_2: #Select from adjacent to current player's tokens
+			print(token_coords[current_player])
+			print("checking moves")
 			for i in ALL_TILES:
 				if tile_free(i):
 					for j in token_coords[current_player]:

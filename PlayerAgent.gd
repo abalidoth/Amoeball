@@ -18,6 +18,7 @@ const LABEL_TEXT = {
 
 
 var tile_pos
+var prev_pos
 
 const PLAYER_PARTICLE_COLORS = [Color(0,87, 0.53, 1), Color(0.3, 0.93, 0.4)]
 const PLAYER_TOKEN_ANIMS = ["purple","green"]
