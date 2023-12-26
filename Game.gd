@@ -17,7 +17,7 @@ enum {ST_INIT, ST_PLACE_1, ST_PLACE_2, ST_REMOVE, ST_KICK, ST_END}
 var state = ST_INIT
 
 const PLAYER_COLORS=["purple","green"]
-const CENTER_TILE = Vector2(5,6) #tile position of the center of the board
+const CENTER_TILE = Vector2(7,8) #tile position of the center of the board
 const TOKEN_POSITION = Vector2(0,0)
 
 var ALL_TILES = []
