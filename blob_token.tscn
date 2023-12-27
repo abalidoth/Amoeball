@@ -1,0 +1,95 @@
+[gd_scene load_steps=13 format=3 uid="uid://cb7hvn8h0s4q2"]
+
+[ext_resource type="Texture2D" uid="uid://dydh2p2wdccmc" path="res://assets/green_slime_all.png" id="1_tpjrp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7jmol"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6xpm"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(128, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ptuvs"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(160, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xua23"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(192, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7kj2k"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vh5b5"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m465t"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yqlpv"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1yo0"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fv8dw"]
+atlas = ExtResource("1_tpjrp")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mpvd6"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"green_dangle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7jmol")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6xpm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ptuvs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xua23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7kj2k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vh5b5")
+}],
+"loop": true,
+"name": &"green_drop",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m465t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yqlpv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d1yo0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fv8dw")
+}],
+"loop": true,
+"name": &"green_idle",
+"speed": 5.0
+}]
+
+[node name="BlobToken" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_mpvd6")
+animation = &"green_dangle"
