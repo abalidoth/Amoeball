@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://cw1ah0hw5wxln"]
+[gd_scene load_steps=20 format=3 uid="uid://cw1ah0hw5wxln"]
 
 [ext_resource type="Texture2D" uid="uid://dxpicsdccprjo" path="res://assets/tileRock_full.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://cqv7kmlogihyx" path="res://assets/tileStone_full.png" id="2"]
@@ -12,8 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://dn1lejuj7jajq" path="res://assets/soccer-ball.png" id="8_illos"]
 [ext_resource type="Texture2D" uid="uid://kpleavd2rsnp" path="res://assets/pieceGreen_multi11.png" id="8_ta76u"]
 [ext_resource type="Texture2D" uid="uid://b5yqmko7xlhnw" path="res://assets/piecePurple_multi12.png" id="9_pwmb4"]
-[ext_resource type="Texture2D" uid="uid://04rpcsnotkax" path="res://assets/green_slime_idle.png" id="13_svkaa"]
-[ext_resource type="Texture2D" uid="uid://dwx83ccib3nff" path="res://assets/green_slime_pop.png" id="14_3nprd"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tquku"]
 texture = ExtResource("2")
@@ -90,103 +88,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_1gl4n"]
-atlas = ExtResource("13_svkaa")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_m27tt"]
-atlas = ExtResource("13_svkaa")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_v166v"]
-atlas = ExtResource("13_svkaa")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hsmpu"]
-atlas = ExtResource("13_svkaa")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rsxsx"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tg0pp"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_77eqc"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ja5ow"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3jmls"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1y0g8"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(160, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dnpfy"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(192, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wkada"]
-atlas = ExtResource("14_3nprd")
-region = Rect2(224, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_od4o0"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1gl4n")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_m27tt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_v166v")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hsmpu")
-}],
-"loop": true,
-"name": &"default",
-"speed": 10.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rsxsx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tg0pp")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_77eqc")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ja5ow")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3jmls")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1y0g8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_dnpfy")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wkada")
-}],
-"loop": false,
-"name": &"new_animation",
-"speed": 10.0
-}]
-
 [node name="Game" type="Node2D"]
 script = ExtResource("6")
 
@@ -207,13 +108,6 @@ animation = &"black"
 
 [node name="Player2" parent="." instance=ExtResource("7")]
 player = 1
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(232, 100)
-sprite_frames = SubResource("SpriteFrames_od4o0")
-animation = &"new_animation"
-frame = 7
-frame_progress = 1.0
 
 [connection signal="make_move" from="Player1" to="." method="_on_player_make_move"]
 [connection signal="make_move" from="Player2" to="." method="_on_player_make_move"]

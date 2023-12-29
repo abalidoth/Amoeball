@@ -147,7 +147,7 @@ turbulence_enabled = true
 
 [sub_resource type="LabelSettings" id="LabelSettings_luuu8"]
 font = ExtResource("6_afsd1")
-font_size = 11
+font_size = 46
 
 [node name="PlayerAgent" type="Node"]
 script = ExtResource("1")
