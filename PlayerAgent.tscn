@@ -1,100 +1,11 @@
-[gd_scene load_steps=27 format=3 uid="uid://cla1uqq22m1of"]
+[gd_scene load_steps=16 format=3 uid="uid://cla1uqq22m1of"]
 
 [ext_resource type="Script" path="res://PlayerAgent.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://imfmoexuiinx" path="res://Token.tscn" id="2"]
 [ext_resource type="Texture2D" uid="uid://dn1lejuj7jajq" path="res://assets/soccer-ball.png" id="3_ypvdm"]
-[ext_resource type="Texture2D" uid="uid://bmow00esiximd" path="res://assets/green-blob.png" id="4_65ysu"]
-[ext_resource type="Texture2D" uid="uid://bkyxutwkbfay3" path="res://assets/purple-blob.png" id="5_86ge0"]
+[ext_resource type="PackedScene" uid="uid://cb7hvn8h0s4q2" path="res://blob_token.tscn" id="5_qdm8j"]
 [ext_resource type="FontFile" uid="uid://dmi84odllf8ul" path="res://assets/Kenney Pixel.ttf" id="6_afsd1"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_064so"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("3_ypvdm")
-}],
-"loop": true,
-"name": &"black",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("4_65ysu")
-}],
-"loop": true,
-"name": &"green",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("5_86ge0")
-}],
-"loop": true,
-"name": &"purple",
-"speed": 5.0
-}]
-
-[sub_resource type="Curve" id="18"]
-min_value = -500.0
-max_value = 500.0
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="17"]
-curve = SubResource("18")
-
-[sub_resource type="Curve" id="19"]
-min_value = -200.0
-max_value = 200.0
-_data = [Vector2(0, -174.545), 0.0, 0.0, 0, 0, Vector2(1, -14.5454), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="10"]
-curve = SubResource("19")
-
-[sub_resource type="Curve" id="20"]
-_data = [Vector2(0.00543478, 0.654545), 0.0, 1.63091, 0, 0, Vector2(1, 0), -0.858968, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="12"]
-curve = SubResource("20")
-
-[sub_resource type="Curve" id="21"]
-min_value = -200.0
-max_value = 200.0
-_data = [Vector2(0, 76.3636), 0.0, 0.0, 0, 0, Vector2(1, -29.0909), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="15"]
-curve = SubResource("21")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_s4h3c"]
-emission_shape = 1
-emission_sphere_radius = 9.09
-direction = Vector3(0, 0, 0)
-spread = 180.0
-orbit_velocity_curve = SubResource("17")
-radial_velocity_max = 10.0
-gravity = Vector3(0, -20, 0)
-radial_accel_curve = SubResource("10")
-tangential_accel_curve = SubResource("15")
-scale_max = 3.0
-scale_curve = SubResource("12")
-color = Color(0, 0.87451, 0.14902, 1)
-
-[sub_resource type="ParticleProcessMaterial" id="23"]
-emission_shape = 1
-emission_sphere_radius = 9.09
-direction = Vector3(0, 0, 0)
-spread = 180.0
-orbit_velocity_curve = SubResource("17")
-radial_velocity_max = 10.0
-gravity = Vector3(0, -20, 0)
-radial_accel_curve = SubResource("10")
-tangential_accel_curve = SubResource("15")
-scale_max = 3.0
-scale_curve = SubResource("12")
-color = Color(0.8, 0.611765, 1, 1)
+[ext_resource type="Texture2D" uid="uid://c5m3c44238wyx" path="res://assets/x-marker.png" id="6_b5lfw"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_imvii"]
 animations = [{
@@ -107,78 +18,68 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="Gradient" id="25"]
-offsets = PackedFloat32Array(0, 0.180124, 0.403727, 1)
-colors = PackedColorArray(1, 1, 1, 1, 0.927817, 1, 0.422535, 1, 1, 0, 0, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="26"]
-gradient = SubResource("25")
-
-[sub_resource type="Curve" id="27"]
-min_value = -200.0
-max_value = 200.0
-_data = [Vector2(0.00543478, 94.5455), 0.0, 0.0, 0, 0, Vector2(1, -54.5454), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="28"]
-curve = SubResource("27")
-
-[sub_resource type="Curve" id="29"]
-_data = [Vector2(0, 0.690909), 0.0, 0.0, 0, 0, Vector2(1, 0.263636), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="30"]
-curve = SubResource("29")
-
-[sub_resource type="ParticleProcessMaterial" id="31"]
-emission_shape = 1
-emission_sphere_radius = 9.09
-angle_min = -720.0
-angle_max = 720.0
-direction = Vector3(0, -1, 0)
-initial_velocity_max = 44.94
-gravity = Vector3(0, 20, 0)
-linear_accel_curve = SubResource("28")
-scale_min = 0.0
-scale_max = 3.0
-scale_curve = SubResource("30")
-color_ramp = SubResource("26")
-turbulence_enabled = true
-
 [sub_resource type="LabelSettings" id="LabelSettings_luuu8"]
 font = ExtResource("6_afsd1")
 font_size = 46
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_y3hrv"]
+atlas = ExtResource("6_b5lfw")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rqbs3"]
+atlas = ExtResource("6_b5lfw")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yv2to"]
+atlas = ExtResource("6_b5lfw")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u7xqd"]
+atlas = ExtResource("6_b5lfw")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ps2re"]
+atlas = ExtResource("6_b5lfw")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hl47u"]
+atlas = ExtResource("6_b5lfw")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pmhvp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y3hrv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rqbs3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yv2to")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u7xqd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ps2re")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hl47u")
+}],
+"loop": false,
+"name": &"default",
+"speed": 10.0
+}]
+
 [node name="PlayerAgent" type="Node"]
 script = ExtResource("1")
-
-[node name="PlaceCursor" parent="." instance=ExtResource("2")]
-modulate = Color(1, 1, 1, 0.411765)
-sprite_frames = SubResource("SpriteFrames_064so")
-animation = &"black"
-
-[node name="green_particles" type="GPUParticles2D" parent="PlaceCursor"]
-emitting = false
-amount = 30
-process_material = SubResource("ParticleProcessMaterial_s4h3c")
-randomness = 1.0
-
-[node name="purple_particles" type="GPUParticles2D" parent="PlaceCursor"]
-emitting = false
-amount = 30
-process_material = SubResource("23")
-randomness = 1.0
 
 [node name="KickCursor" parent="." instance=ExtResource("2")]
 modulate = Color(1, 1, 1, 0.411765)
 position = Vector2(-74, -32)
 sprite_frames = SubResource("SpriteFrames_imvii")
 animation = &"default"
-
-[node name="RemoveCursor" type="GPUParticles2D" parent="."]
-visible = false
-amount = 100
-process_material = SubResource("31")
 
 [node name="InstructionLabel" type="Label" parent="."]
 offset_left = 9.0
@@ -187,3 +88,11 @@ offset_right = 140.0
 offset_bottom = 30.0
 text = "Instruction Label"
 label_settings = SubResource("LabelSettings_luuu8")
+
+[node name="PlaceCursor" parent="." instance=ExtResource("5_qdm8j")]
+animation = &"green_dangle"
+
+[node name="RemoveCursor" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_pmhvp")
+frame = 5
+frame_progress = 1.0

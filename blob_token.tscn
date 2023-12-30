@@ -1,7 +1,8 @@
-[gd_scene load_steps=42 format=3 uid="uid://cb7hvn8h0s4q2"]
+[gd_scene load_steps=43 format=3 uid="uid://cb7hvn8h0s4q2"]
 
 [ext_resource type="Texture2D" uid="uid://dydh2p2wdccmc" path="res://assets/green_slime_all.png" id="1_tpjrp"]
 [ext_resource type="Texture2D" uid="uid://bs2xfgwojttxe" path="res://assets/purple_slime_all.png" id="2_te6dl"]
+[ext_resource type="Script" path="res://blob_token.gd" id="3_1aaqm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ina8u"]
 atlas = ExtResource("1_tpjrp")
@@ -189,7 +190,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"green_drop",
-"speed": 10.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -232,7 +233,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"green_pop",
-"speed": 10.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -241,7 +242,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5eil6")
 }],
-"loop": true,
+"loop": false,
 "name": &"purple_dangle",
 "speed": 5.0
 }, {
@@ -264,9 +265,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_thg3s")
 }],
-"loop": true,
+"loop": false,
 "name": &"purple_drop",
-"speed": 5.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -283,7 +284,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"purple_idle",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -307,11 +308,15 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4daqh")
 }],
-"loop": true,
+"loop": false,
 "name": &"purple_pop",
-"speed": 5.0
+"speed": 15.0
 }]
 
 [node name="BlobToken" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_mpvd6")
-animation = &"purple_pop"
+animation = &"purple_dangle"
+offset = Vector2(0, -5)
+script = ExtResource("3_1aaqm")
+
+[connection signal="animation_finished" from="." to="." method="handle_animation_stop"]

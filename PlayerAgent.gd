@@ -18,7 +18,7 @@ const LABEL_TEXT = {
 
 
 var tile_pos
-var prev_pos
+var prev_pos=Vector3(0,0,0)
 
 const PLAYER_PARTICLE_COLORS = [Color(0,87, 0.53, 1), Color(0.3, 0.93, 0.4)]
 const PLAYER_TOKEN_ANIMS = ["purple","green"]
@@ -34,11 +34,8 @@ func world_to_cube(x):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	if player == 0:
-		$PlaceCursor/purple_particles.emitting = true
-	else:
-		$PlaceCursor/green_particles.emitting = true
-	$PlaceCursor.animation = PLAYER_TOKEN_ANIMS[player]
+	$PlaceCursor.animation = PLAYER_TOKEN_ANIMS[player]+"_dangle"
+	$PlaceCursor.play()
 	$InstructionLabel.hide()
 
 func _input(event):
@@ -59,11 +56,16 @@ func _input(event):
 				event_type = "kick"
 			if event is InputEventMouseMotion:
 				tile_pos = world_to_cube(event.position)
-				if tile_pos in valid_moves:
-					cursor.position = cube_to_world(tile_pos)
-					cursor.show()
-				else:
-					cursor.hide()
+				if prev_pos != tile_pos:
+					if tile_pos in valid_moves:
+						cursor.position = cube_to_world(tile_pos)
+						cursor.show()
+						cursor.frame=0
+						cursor.play()
+					else:
+						cursor.hide()
+					prev_pos = tile_pos
+						
 			elif event is InputEventMouseButton and event.pressed:
 				tile_pos = world_to_cube(event.position)
 				if tile_pos in valid_moves:

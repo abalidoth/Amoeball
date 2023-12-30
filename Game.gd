@@ -9,7 +9,7 @@ var tile_pos
 
 var mouse_pos
 
-var Token = preload("res://Token.tscn")
+var Token = preload("res://blob_token.tscn")
 var token_coords = [[],[]]
 var ball_pos = Vector3(0,0,0)
 var current_player=1 #Because we start the game with an advance
@@ -57,15 +57,17 @@ func taxicab(tile1, tile2):
 
 
 func place_token(tile, player):
+	print("placing token", tile, player)
 	var new_token = Token.instantiate()
 	add_child(new_token) # to make sure label shows correctly
 	move_child(new_token,4)
 
 	new_token.position = cube_to_world(tile)
 	token_coords[player].append(tile)
-	new_token.animation=PLAYER_COLORS[player]
+	new_token.animation=PLAYER_COLORS[player]+"_drop"
 	new_token.name = "token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z)
 	new_token.show()
+	new_token.play()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -195,7 +197,8 @@ func return_kick_locations(move):
 
 func remove_token(tile, player):
 	token_coords[player].erase(tile)
-	get_node("token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z)).queue_free()
+	var destroyed_node = get_node("token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z))
+	destroyed_node.animation=PLAYER_COLORS[player]+"_pop"
 
 func _on_player_make_move(player, move_type, move_cell):
 	if player == current_player:
