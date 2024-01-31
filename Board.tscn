@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cw1ah0hw5wxln"]
+[gd_scene load_steps=26 format=3 uid="uid://cw1ah0hw5wxln"]
 
 [ext_resource type="Texture2D" uid="uid://dxpicsdccprjo" path="res://assets/tileRock_full.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://cqv7kmlogihyx" path="res://assets/tileStone_full.png" id="2"]
@@ -9,9 +9,29 @@
 [ext_resource type="Script" path="res://Game.gd" id="6"]
 [ext_resource type="Texture2D" uid="uid://cgiik40214ckc" path="res://assets/pixel_tiles_32_lineless.png" id="6_tin4n"]
 [ext_resource type="PackedScene" uid="uid://cla1uqq22m1of" path="res://PlayerAgent.tscn" id="7"]
+[ext_resource type="Texture2D" uid="uid://bgmumgyh2clo3" path="res://assets/swamp.png" id="7_oyrj7"]
 [ext_resource type="Texture2D" uid="uid://dn1lejuj7jajq" path="res://assets/soccer-ball.png" id="8_illos"]
 [ext_resource type="Texture2D" uid="uid://kpleavd2rsnp" path="res://assets/pieceGreen_multi11.png" id="8_ta76u"]
 [ext_resource type="Texture2D" uid="uid://b5yqmko7xlhnw" path="res://assets/piecePurple_multi12.png" id="9_pwmb4"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="13_wraq8"]
+
+[sub_resource type="Gradient" id="Gradient_nyu3i"]
+offsets = PackedFloat32Array(0, 0.639456, 1)
+colors = PackedColorArray(0.16, 0.0373333, 0, 1, 0.125629, 0.17105, 0.00596144, 1, 0.185665, 0.317579, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_axowj"]
+noise_type = 2
+frequency = 0.0154
+fractal_lacunarity = 3.0
+cellular_distance_function = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_gttcn"]
+width = 400
+height = 600
+invert = true
+seamless = true
+color_ramp = SubResource("Gradient_nyu3i")
+noise = SubResource("FastNoiseLite_axowj")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tquku"]
 texture = ExtResource("2")
@@ -51,6 +71,16 @@ texture_region_size = Vector2i(32, 32)
 2:0/0 = 0
 2:0/0/texture_origin = Vector2i(0, -4)
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fsh1m"]
+texture = ExtResource("7_oyrj7")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+
 [sub_resource type="TileSet" id="1"]
 tile_shape = 3
 tile_layout = 1
@@ -60,6 +90,7 @@ sources/1 = SubResource("TileSetAtlasSource_m6tu4")
 sources/2 = SubResource("TileSetAtlasSource_cyxia")
 sources/3 = SubResource("TileSetAtlasSource_kjbdp")
 sources/4 = SubResource("TileSetAtlasSource_tj1pn")
+sources/5 = SubResource("TileSetAtlasSource_fsh1m")
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ft3rb"]
 animations = [{
@@ -91,23 +122,55 @@ animations = [{
 [node name="Game" type="Node2D"]
 script = ExtResource("6")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -9.0
+offset_right = 15.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("NoiseTexture2D_gttcn")
+expand_mode = 2
+
 [node name="Board" type="TileMap" parent="."]
+unique_name_in_owner = true
 y_sort_enabled = true
+position = Vector2(185, 101)
 tile_set = SubResource("1")
 format = 2
 layer_0/y_sort_enabled = true
-layer_0/tile_data = PackedInt32Array(524291, 4, 0, 393220, 65540, 0, 458756, 131076, 0, 524292, 65540, 0, 589828, 131076, 0, 655364, 65540, 0, 262149, 131076, 0, 327685, 4, 0, 393221, 131076, 0, 458757, 4, 0, 524293, 131076, 0, 589829, 4, 0, 655365, 131076, 0, 262150, 4, 0, 327686, 65540, 0, 393222, 4, 0, 458758, 65540, 0, 524294, 4, 0, 589830, 65540, 0, 655366, 4, 0, 262151, 65540, 0, 327687, 131076, 0, 393223, 65540, 0, 458759, 131076, 0, 524295, 65540, 0, 589831, 131076, 0, 655367, 65540, 0, 262152, 131076, 0, 327688, 4, 0, 393224, 131076, 0, 458760, 4, 0, 524296, 131076, 0, 589832, 4, 0, 327689, 65540, 0, 393225, 4, 0, 458761, 65540, 0, 720901, 4, 0, 786437, 131076, 0, 720902, 65540, 0, 786438, 4, 0, 720903, 131076, 0, 786439, 65540, 0, 655368, 131076, 0, 720904, 4, 0, 786440, 131076, 0, 262153, 4, 0, 524297, 4, 0, 589833, 65540, 0, 655369, 4, 0, 720905, 65540, 0, 786441, 4, 0, 327690, 131076, 0, 393226, 65540, 0, 458762, 131076, 0, 524298, 65540, 0, 589834, 131076, 0, 655370, 65540, 0, 720906, 131076, 0, 458763, 4, 0, 524299, 131076, 0, 589835, 4, 0)
+layer_0/tile_data = PackedInt32Array(65532, 4, 0, -65539, 65540, 0, -3, 131076, 0, 65533, 65540, 0, 131069, 131076, 0, 196605, 65540, 0, -196610, 131076, 0, -131074, 4, 0, -65538, 131076, 0, -2, 4, 0, 65534, 131076, 0, 131070, 4, 0, 196606, 131076, 0, 262142, 4, 0, 327678, 131076, 0, -196609, 4, 0, -131073, 65540, 0, -65537, 4, 0, -1, 65540, 0, 65535, 4, 0, 131071, 65540, 0, 196607, 4, 0, 262143, 65540, 0, 327679, 4, 0, -262144, 65540, 0, -196608, 131076, 0, -131072, 65540, 0, -65536, 131076, 0, 0, 65540, 0, 65536, 131076, 0, 131072, 65540, 0, 196608, 131076, 0, 262144, 65540, 0, -262143, 131076, 0, -196607, 4, 0, -131071, 131076, 0, -65535, 4, 0, 1, 131076, 0, 65537, 4, 0, 131073, 131076, 0, 196609, 4, 0, 262145, 131076, 0, -262142, 4, 0, -196606, 65540, 0, -131070, 4, 0, -65534, 65540, 0, 2, 4, 0, 65538, 65540, 0, 131074, 4, 0, 196610, 65540, 0, 262146, 4, 0, -196605, 131076, 0, -131069, 65540, 0, -65533, 131076, 0, 3, 65540, 0, 65539, 131076, 0, 131075, 65540, 0, 196611, 131076, 0, -65532, 4, 0, 4, 131076, 0, 65540, 4, 0)
 script = ExtResource("4")
-
-[node name="Ball" parent="." instance=ExtResource("5")]
-position = Vector2(512, 273)
-sprite_frames = SubResource("SpriteFrames_ft3rb")
-animation = &"black"
 
 [node name="Player1" parent="." instance=ExtResource("7")]
 
 [node name="Player2" parent="." instance=ExtResource("7")]
 player = 1
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(212, 121)
+zoom = Vector2(3, 3)
+
+[node name="old_ball" parent="." instance=ExtResource("5")]
+position = Vector2(512, 273)
+sprite_frames = SubResource("SpriteFrames_ft3rb")
+animation = &"black"
+
+[node name="KickCursor1" parent="." instance=ExtResource("13_wraq8")]
+
+[node name="KickCursor2" parent="." instance=ExtResource("13_wraq8")]
+
+[node name="Ball" parent="." instance=ExtResource("13_wraq8")]
+position = Vector2(526, 289)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(212, 121)
 
 [connection signal="make_move" from="Player1" to="." method="_on_player_make_move"]
 [connection signal="make_move" from="Player2" to="." method="_on_player_make_move"]

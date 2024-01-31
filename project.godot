@@ -21,11 +21,11 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="viewport"
 window/stretch/aspect="ignore"
-window/stretch/scale=3.0
 window/stretch/scale_mode="integer"
 
 [editor]
 
+movie_writer/movie_file="/home/gdking/godot/Amoeball/amoeball-2023-12-31.avi"
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 

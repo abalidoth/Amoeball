@@ -17,7 +17,7 @@ enum {ST_INIT, ST_PLACE_1, ST_PLACE_2, ST_REMOVE, ST_KICK, ST_END}
 var state = ST_INIT
 
 const PLAYER_COLORS=["purple","green"]
-const CENTER_TILE = Vector2(7,8) #tile position of the center of the board
+const CENTER_TILE = Vector2(0,0) #tile position of the center of the board
 const TOKEN_POSITION = Vector2(0,0)
 
 var ALL_TILES = []
@@ -37,18 +37,27 @@ func cube_to_tile(cube):
 	# Convert cubic coordinates to tile index.
 	var col = cube.x + (cube.y + posmod(cube.y, 2)) / 2
 	var row = cube.y
-	return Vector2(col,row) + CENTER_TILE
+	var new_vec = Vector2(col,row) + CENTER_TILE
+	return new_vec
 
 func cube_to_world(cube):
 	# Convert cubic coordinates to world position (plus shift for token placement)
-	return $Board.map_to_local(cube_to_tile(cube))+Vector2($Board.tile_set.tile_size)*TOKEN_POSITION
+	return (
+		%Board.map_to_local(cube_to_tile(cube))+
+		Vector2(%Board.tile_set.tile_size)*TOKEN_POSITION +
+		%Board.global_position
+	)
 	
 func world_to_cube(world):
-	return tile_to_cube($Board.local_to_map(to_local(world)))
+	return tile_to_cube(%Board.local_to_map(to_local(world-%Board.global_position)))
 
 func tile_free(tile):
 	#Check if a tile is free or occupied by a token
-	return $Board.get_cell_source_id(0, cube_to_tile(tile)) != -1 and not(tile in token_coords[0]) and not (tile in token_coords[1]) and not tile==ball_pos
+	var taken_pos = (not(tile in token_coords[0]) and
+		not (tile in token_coords[1]) and
+		not tile==ball_pos
+	)
+	return %Board.get_cell_source_id(0, cube_to_tile(tile)) != -1 and taken_pos
 
 func taxicab(tile1, tile2):
 	# Hex distance between two tiles
@@ -60,12 +69,13 @@ func place_token(tile, player):
 	print("placing token", tile, player)
 	var new_token = Token.instantiate()
 	add_child(new_token) # to make sure label shows correctly
-	move_child(new_token,4)
+	move_child(new_token,2)
 
 	new_token.position = cube_to_world(tile)
 	token_coords[player].append(tile)
 	new_token.animation=PLAYER_COLORS[player]+"_drop"
 	new_token.name = "token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z)
+	new_token.flip_h = player
 	new_token.show()
 	new_token.play()
 
@@ -156,8 +166,26 @@ func advance_game_state(most_recent_move):
 #	that_player.valid_moves = determine_valid_moves()
 
 func update_ball_pos(cell):
+	var anim
+	var direction = ball_pos - cell
+	
+	$Ball.position = cube_to_world(ball_pos) #this is to fix drift
 	ball_pos = cell
-	$Ball.position = cube_to_world(cell)
+	print(direction)
+	match direction:
+		Vector3(1,-1,0):
+			anim ="kick_sw"
+		Vector3(1,0,-1):
+			anim ="kick_west"
+		Vector3(0,1,-1):
+			anim ="kick_nw"
+		Vector3(-1,1,0):
+			anim ="kick_ne"
+		Vector3(-1,0,1):
+			anim ="kick_east"
+		Vector3(0,-1,1):
+			anim ="kick_se"
+	$Ball.play_anim(anim)
 
 func determine_valid_moves():
 	var moves = []
@@ -198,7 +226,8 @@ func return_kick_locations(move):
 func remove_token(tile, player):
 	token_coords[player].erase(tile)
 	var destroyed_node = get_node("token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z))
-	destroyed_node.animation=PLAYER_COLORS[player]+"_pop"
+	destroyed_node.animation=PLAYER_COLORS[player]+"_pop" #blob will self delete after
+	
 
 func _on_player_make_move(player, move_type, move_cell):
 	if player == current_player:
@@ -208,3 +237,6 @@ func _on_player_make_move(player, move_type, move_cell):
 			"remove":
 				remove_token(move_cell, current_player)
 		advance_game_state(move_cell)
+
+func on_player_need_cursor(player, move_type, move_cell):
+	pass
