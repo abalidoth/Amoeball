@@ -9,6 +9,7 @@ signal check_cursors(player, move_type, move_cell)
 enum {ST_WAIT, ST_PLACE, ST_REMOVE, ST_KICK}
 var state = ST_WAIT
 var valid_moves = []
+var ball_pos
 
 const LABEL_TEXT = {
 	ST_PLACE:"Player %s, place a token next to an existing token",
@@ -60,6 +61,7 @@ func _input(event):
 						cursor.show()
 						cursor.frame=0
 						cursor.play()
+						if 
 					else:
 						cursor.hide()
 			elif event is InputEventMouseButton and event.pressed:
