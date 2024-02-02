@@ -171,6 +171,3 @@ position = Vector2(526, 289)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(212, 121)
-
-[connection signal="make_move" from="Player1" to="." method="_on_player_make_move"]
-[connection signal="make_move" from="Player2" to="." method="_on_player_make_move"]

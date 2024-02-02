@@ -22,7 +22,6 @@ const LABEL_TEXT = {
 var tile_pos
 var prev_pos=Vector3(0,0,0)
 
-const PLAYER_PARTICLE_COLORS = [Color(0,87, 0.53, 1), Color(0.3, 0.93, 0.4)]
 const PLAYER_TOKEN_ANIMS = ["purple","green"]
 # Declare member variables here. Examples:
 # var a = 2
@@ -45,72 +44,97 @@ func _input(event):
 	#Need to refactor this
 	var cursor
 	var event_type
-	match state:
-		ST_WAIT:
-			pass
-			
-		ST_PLACE:
+	var game_obj = $"/root/Game/AmoeballGame"
+	
+	tile_pos = world_to_cube(get_global_mouse_position())
+	var valid_moves = game_obj.get_moves()
+	
+	
+	match game_obj.current_state:
+		game_obj.STATE_PLACE_1:
 			cursor = $PlaceCursor
-			event_type = "place"
 			if event is InputEventMouseMotion:
-				tile_pos = world_to_cube(get_global_mouse_position())
-				print("moved",get_global_mouse_position(), tile_pos)
 				if prev_pos != tile_pos:
-					if tile_pos in valid_moves:
-						cursor.position = cube_to_world(tile_pos)
-						cursor.show()
-						cursor.frame=0
-						cursor.play()
-						if 
-					else:
-						cursor.hide()
-			elif event is InputEventMouseButton and event.pressed:
-				tile_pos = world_to_cube(get_global_mouse_position())
-				print("clicked",get_global_mouse_position(), tile_pos)
-				if tile_pos in valid_moves:
-					emit_signal("make_move", player, event_type, tile_pos)
-
-		ST_REMOVE:
-			cursor = $RemoveCursor
-			event_type="remove"
-			
-			if event is InputEventMouseMotion:
-				tile_pos = world_to_cube(get_global_mouse_position())
-				if prev_pos != tile_pos:
-					if tile_pos in valid_moves:
+					if tile_pos in game_obj.get_moves():
 						cursor.position = cube_to_world(tile_pos)
 						cursor.show()
 						cursor.frame=0
 						cursor.play()
 					else:
 						cursor.hide()
-					prev_pos = tile_pos
-						
-			elif event is InputEventMouseButton and event.pressed:
-				tile_pos = world_to_cube(get_global_mouse_position())
-				print("clicked",get_global_mouse_position(), tile_pos)
-				if tile_pos in valid_moves:
-					emit_signal("make_move", player, event_type, tile_pos)
-					
-		ST_KICK:
-
-			cursor = $KickCursor
-			event_type = "kick"
-			if event is InputEventMouseMotion:
-				tile_pos = world_to_cube(get_global_mouse_position())
-				if prev_pos != tile_pos:
-					if tile_pos in valid_moves:
-						cursor.position = cube_to_world(tile_pos)
-						cursor.show()
-					else:
-						cursor.hide()
-					prev_pos = tile_pos
-						
-			elif event is InputEventMouseButton and event.pressed:
-				tile_pos = world_to_cube(get_global_mouse_position())
-				print("clicked",get_global_mouse_position(), tile_pos)
-				if tile_pos in valid_moves:
-					emit_signal("make_move", player, event_type, tile_pos)
+			elif (
+				event.is_action_released() and
+				event.button_index == MOUSE_BUTTON_LEFT and 
+				tile_pos in valid_moves
+			):
+				game_obj.make_move(tile_pos)
+	
+	#match state:
+		#ST_WAIT:
+			#pass
+			#
+		#ST_PLACE:
+			#cursor = $PlaceCursor
+			#event_type = "place"
+			#if event is InputEventMouseMotion:
+				#tile_pos = world_to_cube(get_global_mouse_position())
+				#print("moved",get_global_mouse_position(), tile_pos)
+				#if prev_pos != tile_pos:
+					#if tile_pos in valid_moves:
+						#cursor.position = cube_to_world(tile_pos)
+						#cursor.show()
+						#cursor.frame=0
+						#cursor.play()
+						#if 
+					#else:
+						#cursor.hide()
+			#elif event is InputEventMouseButton and event.pressed:
+				#tile_pos = world_to_cube(get_global_mouse_position())
+				#print("clicked",get_global_mouse_position(), tile_pos)
+				#if tile_pos in valid_moves:
+					#emit_signal("make_move", player, event_type, tile_pos)
+#
+		#ST_REMOVE:
+			#cursor = $RemoveCursor
+			#event_type="remove"
+			#
+			#if event is InputEventMouseMotion:
+				#tile_pos = world_to_cube(get_global_mouse_position())
+				#if prev_pos != tile_pos:
+					#if tile_pos in valid_moves:
+						#cursor.position = cube_to_world(tile_pos)
+						#cursor.show()
+						#cursor.frame=0
+						#cursor.play()
+					#else:
+						#cursor.hide()
+					#prev_pos = tile_pos
+						#
+			#elif event is InputEventMouseButton and event.pressed:
+				#tile_pos = world_to_cube(get_global_mouse_position())
+				#print("clicked",get_global_mouse_position(), tile_pos)
+				#if tile_pos in valid_moves:
+					#emit_signal("make_move", player, event_type, tile_pos)
+					#
+		#ST_KICK:
+#
+			#cursor = $KickCursor
+			#event_type = "kick"
+			#if event is InputEventMouseMotion:
+				#tile_pos = world_to_cube(get_global_mouse_position())
+				#if prev_pos != tile_pos:
+					#if tile_pos in valid_moves:
+						#cursor.position = cube_to_world(tile_pos)
+						#cursor.show()
+					#else:
+						#cursor.hide()
+					#prev_pos = tile_pos
+						#
+			#elif event is InputEventMouseButton and event.pressed:
+				#tile_pos = world_to_cube(get_global_mouse_position())
+				#print("clicked",get_global_mouse_position(), tile_pos)
+				#if tile_pos in valid_moves:
+					#emit_signal("make_move", player, event_type, tile_pos)
 			
 					
 func change_state(new_state):
