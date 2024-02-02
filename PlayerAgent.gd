@@ -51,7 +51,8 @@ func _input(event):
 	
 	
 	match game_obj.current_state:
-		game_obj.STATE_PLACE_1:
+		game_obj.STATE_PLACE_1, game_obj.STATE_PLACE_2:
+			#TODO: fancy hover animation
 			cursor = $PlaceCursor
 			if event is InputEventMouseMotion:
 				if prev_pos != tile_pos:
@@ -60,6 +61,7 @@ func _input(event):
 						cursor.show()
 						cursor.frame=0
 						cursor.play()
+						prev_pos = tile_pos
 					else:
 						cursor.hide()
 			elif (
@@ -68,6 +70,13 @@ func _input(event):
 				tile_pos in valid_moves
 			):
 				game_obj.make_move(tile_pos)
+				cursor.hide()
+		game_obj.STATE_KICK_1, game_obj.STATE_KICK_2:
+			#TODO: hover animation
+			pass
+		game_obj.STATE_REMOVE:
+			pass
+		
 	
 	#match state:
 		#ST_WAIT:
