@@ -9,7 +9,7 @@ signal check_cursors(player, move_type, move_cell)
 enum {ST_WAIT, ST_PLACE, ST_REMOVE, ST_KICK}
 var state = ST_WAIT
 var valid_moves = []
-var ball_pos
+var ball_pos = Vector3(0,0,0)
 
 const LABEL_TEXT = {
 	ST_PLACE:"Player %s, place a token next to an existing token",
@@ -26,11 +26,11 @@ const PLAYER_TOKEN_ANIMS = ["purple","green"]
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-func cube_to_world(x):
+func cube_to_world(x:Vector3) -> Vector2:
 	return $"/root/Game".cube_to_world(x)
 	
 
-func world_to_cube(x):
+func world_to_cube(x:Vector2) -> Vector3:
 	return $"/root/Game".world_to_cube(x)
 
 # Called when the node enters the scene tree for the first time.
@@ -51,31 +51,87 @@ func _input(event):
 	
 	
 	match game_obj.current_state:
-		game_obj.STATE_PLACE_1, game_obj.STATE_PLACE_2:
-			#TODO: fancy hover animation
-			cursor = $PlaceCursor
+		game_obj.STATE_REMOVE:
 			if event is InputEventMouseMotion:
 				if prev_pos != tile_pos:
 					if tile_pos in game_obj.get_moves():
-						cursor.position = cube_to_world(tile_pos)
-						cursor.show()
-						cursor.frame=0
-						cursor.play()
-						prev_pos = tile_pos
+						$RemoveCursor.position = cube_to_world(tile_pos)
+						$RemoveCursor.show()
+						$RemoveCursor.frame=0
+						$RemoveCursor.play()
 					else:
-						cursor.hide()
+						$RemoveCursor.hide()
 			elif (
-				event.is_action_released() and
+				event is InputEventMouseButton and
+				event.pressed and
 				event.button_index == MOUSE_BUTTON_LEFT and 
 				tile_pos in valid_moves
 			):
 				game_obj.make_move(tile_pos)
-				cursor.hide()
+				$RemoveCursor.hide()
+				
+		game_obj.STATE_PLACE_1, game_obj.STATE_PLACE_2:
+			cursor = $PlaceCursor
+			if event is InputEventMouseMotion:
+				if prev_pos != tile_pos:
+					if tile_pos in valid_moves:
+						$PlaceCursor.position = cube_to_world(tile_pos)
+						$PlaceCursor.show()
+						$PlaceCursor.frame=0
+						$PlaceCursor.play()
+						prev_pos = tile_pos
+						var moves = game_obj.get_kick_directions(tile_pos)
+						match moves:
+							null:
+								pass
+							[var a, var b]:
+								$KickCursor.position = cube_to_world(a)
+								$KickCursor2.position = cube_to_world(b)
+								$KickCursor.show()
+								$KickCursor2.show()
+							[var a]:
+								$KickCursor.position = cube_to_world(a)
+								$KickCursor.show()
+							[]:
+								$WinCursor.position = cube_to_world(game_obj.ball_pos)
+								$WinCursor.emitting = true
+					else:
+						$PlaceCursor.hide()
+						$KickCursor2.hide()
+						$KickCursor.hide()
+						$WinCursor.emitting = false
+						
+			elif (
+				event is InputEventMouseButton and
+				event.button_index == MOUSE_BUTTON_LEFT and 
+				event.pressed and
+				tile_pos in valid_moves
+			):
+				game_obj.make_move(tile_pos)
+				$PlaceCursor.hide()
+				$KickCursor2.hide()
+				$KickCursor.hide()
+				
+				
 		game_obj.STATE_KICK_1, game_obj.STATE_KICK_2:
-			#TODO: hover animation
-			pass
-		game_obj.STATE_REMOVE:
-			pass
+			if event is InputEventMouseMotion:
+				if prev_pos != tile_pos:
+					if tile_pos in game_obj.get_moves():
+						$KickCursor.position = cube_to_world(tile_pos)
+						$KickCursor.show()
+						prev_pos = tile_pos
+					else:
+						$KickCursor.hide
+			elif (
+				event is InputEventMouseButton and
+				event.is_released and
+				event.button_index == MOUSE_BUTTON_LEFT and 
+				tile_pos in valid_moves
+			):
+				game_obj.make_move(tile_pos)
+				$KickCursor.hide()
+				
+		
 		
 	
 	#match state:
@@ -146,24 +202,5 @@ func _input(event):
 					#emit_signal("make_move", player, event_type, tile_pos)
 			
 					
-func change_state(new_state):
-	$PlaceCursor.hide()
-	$KickCursor.hide()
-	$RemoveCursor.hide()
-	$InstructionLabel.hide() #Will need text here for AI/multiplayer
-	match new_state:
-		"wait":
-			state = ST_WAIT
-		"place":
-			state = ST_PLACE
-			$InstructionLabel.text = LABEL_TEXT[state] % player
-			$InstructionLabel.show()
-		"kick":
-			state = ST_KICK
-			$InstructionLabel.text = LABEL_TEXT[state] % player
-			$InstructionLabel.show()
-		"remove":
-			state = ST_REMOVE
-			$InstructionLabel.text = LABEL_TEXT[state] % player
-			$InstructionLabel.show()
+
 			
