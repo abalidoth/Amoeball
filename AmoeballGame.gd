@@ -102,19 +102,19 @@ func get_moves():
 			for i in free_space:
 				for j in current_tokens:
 					if hex_dist(i,j)==1:
-						if i != last_move:
-							out.append(i)
-							break
+						out.append(i)
+						break
 			return(out)
 			
 		STATE_KICK_1, STATE_KICK_2:
 			return stored_kick_directions
 		STATE_REMOVE:
-			var out = []
-			for i in piece_pos[current_player]:
-				if i != last_move:
-					out.append(i)
-			return out
+			return piece_pos[current_player]
+			#var out = []
+			#for i in piece_pos[current_player]:
+				#if i != last_move:
+					#out.append(i)
+			#return out
 			
 func turn_over():
 	current_state = STATE_PLACE_1

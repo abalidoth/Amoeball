@@ -1,7 +1,6 @@
 extends Node2D
 
 @export var player: int
-@export var player_color: String
 
 signal make_move(player, move_type, move_cell)
 signal check_cursors(player, move_type, move_cell)
@@ -22,7 +21,7 @@ const LABEL_TEXT = {
 var tile_pos
 var prev_pos=Vector3(0,0,0)
 
-const PLAYER_TOKEN_ANIMS = ["purple","green"]
+const PLAYER_TOKEN_ANIMS = ["green","purple"]
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -45,6 +44,9 @@ func _input(event):
 	var cursor
 	var event_type
 	var game_obj = $"/root/Game/AmoeballGame"
+	
+	if game_obj.current_player != player:
+		return
 	
 	tile_pos = world_to_cube(get_global_mouse_position())
 	var valid_moves = game_obj.get_moves()
@@ -79,7 +81,6 @@ func _input(event):
 						$PlaceCursor.show()
 						$PlaceCursor.frame=0
 						$PlaceCursor.play()
-						prev_pos = tile_pos
 						var moves = game_obj.get_kick_directions(tile_pos)
 						match moves:
 							null:
@@ -119,7 +120,6 @@ func _input(event):
 					if tile_pos in game_obj.get_moves():
 						$KickCursor.position = cube_to_world(tile_pos)
 						$KickCursor.show()
-						prev_pos = tile_pos
 					else:
 						$KickCursor.hide
 			elif (
@@ -131,7 +131,8 @@ func _input(event):
 				game_obj.make_move(tile_pos)
 				$KickCursor.hide()
 				
-		
+	if event is InputEventMouseMotion:
+		prev_pos = tile_pos
 		
 	
 	#match state:
