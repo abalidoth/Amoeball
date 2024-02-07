@@ -34,7 +34,7 @@ signal made_new_token(place: Vector3, player:int)
 signal ball_moved(place: Vector3)
 signal removed_token(place: Vector3, player:int)
 signal new_turn(player:int, turn_num:int)
-signal made_move(state:Dictionary)
+signal made_move(new_state:int, player:int)
 
 enum {
 	STATE_PLACE_1,
@@ -55,6 +55,10 @@ func _init():
 			var k=-i-j
 			if (-board_size <= k) and (k <= board_size):
 				all_tiles.append(Vector3(i,j,k))
+				
+func set_state(new_state):
+	made_move.emit(new_state, current_player)
+	current_state = new_state
 				
 	
 func is_space_free(t:Vector3):
@@ -117,9 +121,9 @@ func get_moves():
 			#return out
 			
 func turn_over():
-	current_state = STATE_PLACE_1
 	current_player = 1-current_player
 	current_turn += 1
+	set_state(STATE_PLACE_1)
 	new_turn.emit(current_player, current_turn)
 	
 		
@@ -132,7 +136,6 @@ func make_move(move: Vector3):
 		"ball_pos": ball_pos
 	})
 	last_move = move
-	made_move.emit(state_stack)
 	match current_state:
 		STATE_PLACE_1:
 			piece_pos[current_player].append(move)
@@ -140,30 +143,30 @@ func make_move(move: Vector3):
 			stored_kick_directions = get_kick_directions(move)
 			match stored_kick_directions:
 				null:
-					current_state = STATE_REMOVE
+					set_state(STATE_REMOVE)
 					return
 				[var a]:
 					ball_pos = a
 					ball_moved.emit(a)
-					current_state = STATE_REMOVE
+					set_state(STATE_REMOVE)
 					return
 				[var a, var b]:
-					current_state = STATE_KICK_1
+					set_state(STATE_KICK_1)
 					return
 				[]:
-					current_state = STATE_WIN
+					set_state(STATE_WIN)
 					return
 					
 		STATE_KICK_1:
 			ball_pos = move
 			ball_moved.emit(move)
-			current_state = STATE_REMOVE
+			set_state(STATE_REMOVE)
 			return
 					
 		STATE_REMOVE:
 			piece_pos[current_player].erase(move)
 			removed_token.emit(move, current_player)
-			current_state = STATE_PLACE_2
+			set_state(STATE_PLACE_2)
 			return
 			
 		STATE_PLACE_2:
@@ -180,10 +183,10 @@ func make_move(move: Vector3):
 					turn_over()
 					return
 				[var a, var b]:
-					current_state = STATE_KICK_2
+					set_state(STATE_KICK_2)
 					return
 				[]:
-					current_state = STATE_WIN
+					set_state(STATE_WIN)
 					return
 		
 		STATE_KICK_2:

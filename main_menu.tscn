@@ -1,0 +1,117 @@
+[gd_scene load_steps=13 format=3 uid="uid://cirjou4mnqms4"]
+
+[ext_resource type="Texture2D" uid="uid://d1qai1688mw4d" path="res://assets/title.png" id="2_hplq1"]
+
+[sub_resource type="Gradient" id="Gradient_nyu3i"]
+offsets = PackedFloat32Array(0, 0.553746, 1)
+colors = PackedColorArray(0.06215, 0.11, 0.0605, 1, 0.0330348, 0.0898836, 0.0558463, 1, 0.1085, 0.07, 0.14, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_axowj"]
+noise_type = 2
+frequency = 0.0224
+fractal_lacunarity = 3.0
+cellular_distance_function = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_igxb7"]
+width = 1000
+height = 1000
+invert = true
+seamless = true
+color_ramp = SubResource("Gradient_nyu3i")
+noise = SubResource("FastNoiseLite_axowj")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ccs75"]
+atlas = ExtResource("2_hplq1")
+region = Rect2(0, 0, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p8y7b"]
+atlas = ExtResource("2_hplq1")
+region = Rect2(0, 24, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d25rc"]
+atlas = ExtResource("2_hplq1")
+region = Rect2(0, 48, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ui65c"]
+atlas = ExtResource("2_hplq1")
+region = Rect2(0, 72, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f4g5t"]
+atlas = ExtResource("2_hplq1")
+region = Rect2(0, 96, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4wmld"]
+atlas = ExtResource("2_hplq1")
+region = Rect2(0, 120, 96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hamut"]
+atlas = ExtResource("2_hplq1")
+region = Rect2(0, 144, 96, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_viahe"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ccs75")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p8y7b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d25rc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ui65c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f4g5t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4wmld")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hamut")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -9.0
+offset_right = 15.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("NoiseTexture2D_igxb7")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VBoxContainer"]
+position = Vector2(633, 257)
+scale = Vector2(8.125, 8.125)
+sprite_frames = SubResource("SpriteFrames_viahe")
+frame_progress = 0.38364
+
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="VBoxContainer"]

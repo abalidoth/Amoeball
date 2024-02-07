@@ -2,6 +2,16 @@ extends Node2D
 
 @export var player: int
 
+enum {
+	STATE_PLACE_1,
+	STATE_KICK_1,
+	STATE_REMOVE,
+	STATE_PLACE_2,
+	STATE_KICK_2,
+	STATE_WIN,
+	STATE_IDLE
+}
+
 signal make_move(player, move_type, move_cell)
 signal check_cursors(player, move_type, move_cell)
 
@@ -10,6 +20,8 @@ var state = ST_WAIT
 var valid_moves = []
 var ball_pos = Vector3(0,0,0)
 
+const PURPLE_INDICATOR_POS = Vector2(308,0)
+
 const LABEL_TEXT = {
 	ST_PLACE:"Player %s, place a token next to an existing token",
 	ST_REMOVE:"Player %s, remove one of your tokens",
@@ -17,6 +29,7 @@ const LABEL_TEXT = {
 }
 	
 
+const INDICATOR_DARK = "#777777cc"
 
 var tile_pos
 var prev_pos=Vector3(0,0,0)
@@ -38,6 +51,20 @@ func _ready():
 	$PlaceCursor.flip_h = player
 	$PlaceCursor.play()
 	$InstructionLabel.hide()
+	if player==1:
+		$TurnIndicators.position += PURPLE_INDICATOR_POS
+		$TurnIndicators/PlaceIndicator1.animation = "purple_idle"
+		$TurnIndicators/PlaceIndicator2.animation = "purple_idle"
+		$TurnIndicators/PlaceIndicator1.flip_h = true
+		$TurnIndicators/PlaceIndicator2.flip_h = true
+	_on_amoeball_game_made_move(STATE_PLACE_1, 0)
+		
+
+func set_nodes_dark():
+	for node in $TurnIndicators.get_children():
+		node.modulate = INDICATOR_DARK
+		node.stop()
+	$TurnIndicators/RemoveIndicator.frame = 5
 
 func _input(event):
 	#Need to refactor this
@@ -205,3 +232,26 @@ func _input(event):
 					
 
 			
+
+
+func _on_amoeball_game_made_move(new_state, new_player):
+	set_nodes_dark()
+	var light
+	if new_player==player:
+		match new_state:
+			STATE_WIN:
+				return
+			STATE_PLACE_1:
+				light = $TurnIndicators/PlaceIndicator1
+			STATE_PLACE_2:
+				light = $TurnIndicators/PlaceIndicator2
+			STATE_KICK_1:
+				light = $TurnIndicators/KickIndicator1
+			STATE_KICK_2:
+				light = $TurnIndicators/KickIndicator2
+			STATE_REMOVE:
+				light = $TurnIndicators/RemoveIndicator
+		light.modulate = "#ffffff"
+		light.frame = 0
+		light.play()
+	

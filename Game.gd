@@ -238,8 +238,6 @@ func _on_amoeball_game_ball_moved(place):
 	update_ball_pos(place)
 
 
-func _on_amoeball_game_made_move(state):
-	pass #might not need this
 
 
 func _on_amoeball_game_made_new_token(place, player):
