@@ -1,6 +1,6 @@
 extends AnimatedSprite2D
 
-
+@export var real = true
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -19,4 +19,7 @@ func handle_animation_stop():
 			self.animation = "purple_idle"
 			self.play()
 		"purple_pop", "green_pop":
-			self.queue_free()
+			if real:
+				self.queue_free()
+			else:
+				self.visible=false

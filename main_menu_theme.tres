@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://gm2pdlqwlsb1"]
+
+[ext_resource type="FontFile" uid="uid://bsp7ou2f276qv" path="res://assets/Daydream.ttf" id="1_26kb1"]
+
+[resource]
+default_font = ExtResource("1_26kb1")
+default_font_size = 32

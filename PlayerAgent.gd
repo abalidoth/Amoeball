@@ -38,8 +38,8 @@ const PLAYER_TOKEN_ANIMS = ["green","purple"]
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-func cube_to_world(x:Vector3) -> Vector2:
-	return $"/root/Game".cube_to_world(x)
+func cube_to_world(x:Vector3, ball:bool = false) -> Vector2:
+	return $"/root/Game".cube_to_world(x, ball)
 	
 
 func world_to_cube(x:Vector2) -> Vector3:
@@ -113,12 +113,12 @@ func _input(event):
 							null:
 								pass
 							[var a, var b]:
-								$KickCursor.position = cube_to_world(a)
-								$KickCursor2.position = cube_to_world(b)
+								$KickCursor.position = cube_to_world(a,true)
+								$KickCursor2.position = cube_to_world(b,true)
 								$KickCursor.show()
 								$KickCursor2.show()
 							[var a]:
-								$KickCursor.position = cube_to_world(a)
+								$KickCursor.position = cube_to_world(a,true)
 								$KickCursor.show()
 							[]:
 								$WinCursor.position = cube_to_world(game_obj.ball_pos)
@@ -145,7 +145,7 @@ func _input(event):
 			if event is InputEventMouseMotion:
 				if prev_pos != tile_pos:
 					if tile_pos in game_obj.get_moves():
-						$KickCursor.position = cube_to_world(tile_pos)
+						$KickCursor.position = cube_to_world(tile_pos, true)
 						$KickCursor.show()
 					else:
 						$KickCursor.hide

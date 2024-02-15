@@ -35,6 +35,7 @@ signal ball_moved(place: Vector3)
 signal removed_token(place: Vector3, player:int)
 signal new_turn(player:int, turn_num:int)
 signal made_move(new_state:int, player:int)
+signal game_over(player:int)
 
 enum {
 	STATE_PLACE_1,
@@ -155,6 +156,7 @@ func make_move(move: Vector3):
 					return
 				[]:
 					set_state(STATE_WIN)
+					game_over.emit(current_player)
 					return
 					
 		STATE_KICK_1:
@@ -187,6 +189,7 @@ func make_move(move: Vector3):
 					return
 				[]:
 					set_state(STATE_WIN)
+					game_over.emit(current_player)
 					return
 		
 		STATE_KICK_2:

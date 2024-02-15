@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://cguqjdk16f32h"]
+
+[ext_resource type="Script" path="res://AnimatedSpriteContainer.gd" id="1_u2bqj"]
+[ext_resource type="SpriteFrames" uid="uid://m6lq6p5od0ej" path="res://main_menu_frames.tres" id="2_agtlh"]
+
+[node name="AnimatedSpriteContainer" type="CenterContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_u2bqj")
+frames = ExtResource("2_agtlh")
+sprite_scale = Vector2(3, 3)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="Sprite" type="AnimatedSprite2D" parent="MarginContainer"]
+unique_name_in_owner = true
+scale = Vector2(3, 3)
+sprite_frames = ExtResource("2_agtlh")
+centered = false

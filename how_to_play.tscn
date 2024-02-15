@@ -1,0 +1,338 @@
+[gd_scene load_steps=25 format=3 uid="uid://dcjn6gwvk5j41"]
+
+[ext_resource type="FontFile" uid="uid://dmi84odllf8ul" path="res://assets/Kenney Pixel.ttf" id="1_bdyni"]
+[ext_resource type="Script" path="res://how_to_play.gd" id="2_a3hu7"]
+[ext_resource type="TileSet" uid="uid://cylc7rq1b5wrm" path="res://new_tile_set.tres" id="2_isp2i"]
+[ext_resource type="PackedScene" uid="uid://b3ojajgmvn3ti" path="res://amoeball_button.tscn" id="2_l247g"]
+[ext_resource type="PackedScene" uid="uid://cb7hvn8h0s4q2" path="res://blob_token.tscn" id="3_rvx1k"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="4_5d1tr"]
+[ext_resource type="Script" path="res://Page1.gd" id="4_cb8q8"]
+[ext_resource type="Script" path="res://Page2.gd" id="7_aywg6"]
+[ext_resource type="SpriteFrames" uid="uid://bmrh0vshx27on" path="res://remove.tres" id="8_o82ug"]
+[ext_resource type="Script" path="res://Page3.gd" id="9_eapdo"]
+[ext_resource type="Script" path="res://Page4.gd" id="10_8m34a"]
+[ext_resource type="Script" path="res://Page5.gd" id="11_prsd7"]
+[ext_resource type="Script" path="res://Page6.gd" id="12_ekyhq"]
+[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://main_menu_theme.tres" id="13_v4lif"]
+
+[sub_resource type="Theme" id="Theme_7okgq"]
+default_font = ExtResource("1_bdyni")
+default_font_size = 50
+
+[sub_resource type="Gradient" id="Gradient_nyu3i"]
+offsets = PackedFloat32Array(0, 0.553746, 1)
+colors = PackedColorArray(0.06215, 0.11, 0.0605, 1, 0.0330348, 0.0898836, 0.0558463, 1, 0.1085, 0.07, 0.14, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_axowj"]
+noise_type = 2
+frequency = 0.0224
+fractal_lacunarity = 3.0
+cellular_distance_function = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_w0hl4"]
+width = 1000
+height = 1000
+invert = true
+seamless = true
+color_ramp = SubResource("Gradient_nyu3i")
+noise = SubResource("FastNoiseLite_axowj")
+
+[sub_resource type="Theme" id="Theme_w1fh7"]
+MarginContainer/constants/margin_bottom = 0
+MarginContainer/constants/margin_left = 20
+MarginContainer/constants/margin_right = 0
+MarginContainer/constants/margin_top = 0
+
+[sub_resource type="Curve" id="Curve_ega85"]
+_data = [Vector2(0.0132013, 1), 0.0, 0.0, 0, 0, Vector2(0.676568, 0.733113), 0.0, 0.0, 0, 0, Vector2(0.993399, 0.0185431), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6mxmc"]
+curve = SubResource("Curve_ega85")
+
+[sub_resource type="Gradient" id="Gradient_ofmtb"]
+offsets = PackedFloat32Array(0, 0.152727, 0.341818, 0.498182, 0.676364, 0.84, 1)
+colors = PackedColorArray(1, 0.260006, 0.200836, 1, 0.827162, 0.827162, 3.85046e-07, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0.185496, 0.416209, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gynob"]
+gradient = SubResource("Gradient_ofmtb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_khthf"]
+lifetime_randomness = 0.13
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 5.0
+emission_ring_inner_radius = 0.0
+direction = Vector3(0, -1, 0)
+spread = 30.0
+initial_velocity_min = 100.0
+initial_velocity_max = 200.0
+gravity = Vector3(0, 1600, 0)
+scale_min = 4.0
+scale_max = 4.0
+color_initial_ramp = SubResource("GradientTexture1D_gynob")
+alpha_curve = SubResource("CurveTexture_6mxmc")
+
+[node name="HowToPlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_7okgq")
+script = ExtResource("2_a3hu7")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = -9.0
+offset_right = 8.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("NoiseTexture2D_w0hl4")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextMargin" type="MarginContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_w1fh7")
+
+[node name="HowToText" type="Label" parent="HBoxContainer/TextMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "This is some more text.
+It exists in a state of confusion,"
+
+[node name="RightPane" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="ExampleMargin" type="MarginContainer" parent="HBoxContainer/RightPane"]
+custom_minimum_size = Vector2(700, 300)
+layout_mode = 2
+
+[node name="ExampleCenter" type="CenterContainer" parent="HBoxContainer/RightPane/ExampleMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+
+[node name="Board" type="TileMap" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter"]
+y_sort_enabled = true
+position = Vector2(218, 95)
+scale = Vector2(3, 3)
+tile_set = ExtResource("2_isp2i")
+format = 2
+layer_0/y_sort_enabled = true
+layer_0/tile_data = PackedInt32Array(-327685, 65541, 0, -327684, 5, 1, -327683, 5, 2, -262146, 65540, 0, -196611, 4, 0, -131074, 65540, 0, -65539, 4, 0, -65540, 65540, 0, -65541, 65541, 2, -131077, 65541, 1, -262149, 196613, 0, -131076, 4, 0, -196612, 65540, 0, -131075, 131076, 0, -196613, 131076, 0, -262148, 4, 0, -262147, 131076, 0, -196610, 131076, 0, -262145, 5, 1, -327682, 5, 2, -4, 131077, 2, -3, 131077, 1, -2, 262149, 1, -65538, 5, 2, -131073, 327685, 1, -196609, 65541, 2, -196614, 131077, 2, -393220, 65541, 1, -393219, 65541, 0, -393218, 196613, 0)
+
+[node name="Page1" type="Node2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter"]
+visible = false
+scale = Vector2(3, 3)
+script = ExtResource("4_cb8q8")
+
+[node name="GreenBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page1" instance=ExtResource("3_rvx1k")]
+position = Vector2(44, -8)
+animation = &"purple_idle"
+flip_h = true
+
+[node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page1" instance=ExtResource("3_rvx1k")]
+position = Vector2(-38.3333, -8.33333)
+animation = &"green_idle"
+
+[node name="BallToken" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page1" instance=ExtResource("4_5d1tr")]
+position = Vector2(2.66666, 0.333333)
+
+[node name="Page2" type="Node2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter"]
+visible = false
+scale = Vector2(3, 3)
+script = ExtResource("7_aywg6")
+
+[node name="Green1" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
+position = Vector2(-38.3333, -8.33333)
+
+[node name="Static1" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
+position = Vector2(-25, -20)
+animation = &"green_idle"
+
+[node name="Green2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
+position = Vector2(3.66666, 3.33333)
+animation = &"green_idle"
+real = false
+
+[node name="Static2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
+position = Vector2(-11.6667, 19)
+animation = &"green_idle"
+
+[node name="Green3" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
+visible = false
+position = Vector2(45.6667, -7.33333)
+animation = &"green_idle"
+
+[node name="Static3" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
+position = Vector2(30.3333, 4.33333)
+animation = &"green_idle"
+
+[node name="Remove" type="AnimatedSprite2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2"]
+visible = false
+position = Vector2(2.33333, 0.666667)
+sprite_frames = ExtResource("8_o82ug")
+
+[node name="Page3" type="Node2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter"]
+visible = false
+scale = Vector2(3, 3)
+script = ExtResource("9_eapdo")
+
+[node name="GreenBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page3" instance=ExtResource("3_rvx1k")]
+position = Vector2(16.3333, 17.6667)
+
+[node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page3" instance=ExtResource("3_rvx1k")]
+position = Vector2(-11, 18.6667)
+animation = &"green_idle"
+
+[node name="BallToken" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page3" instance=ExtResource("4_5d1tr")]
+position = Vector2(2.6668, 1.33333)
+
+[node name="Page4" type="Node2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter"]
+visible = false
+scale = Vector2(3, 3)
+script = ExtResource("10_8m34a")
+
+[node name="GreenBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4" instance=ExtResource("3_rvx1k")]
+position = Vector2(16.3333, 17.6667)
+
+[node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4" instance=ExtResource("3_rvx1k")]
+position = Vector2(-11, 18.6667)
+animation = &"green_idle"
+
+[node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4" instance=ExtResource("3_rvx1k")]
+position = Vector2(-11.3333, -6)
+animation = &"purple_idle"
+
+[node name="BallToken" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4" instance=ExtResource("4_5d1tr")]
+position = Vector2(2.66679, 1.33333)
+
+[node name="Page5" type="Node2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter"]
+visible = false
+scale = Vector2(3, 3)
+script = ExtResource("11_prsd7")
+
+[node name="GreenBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" instance=ExtResource("3_rvx1k")]
+position = Vector2(16.3333, 17.6667)
+
+[node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" instance=ExtResource("3_rvx1k")]
+position = Vector2(17.6667, -7)
+animation = &"green_idle"
+
+[node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" instance=ExtResource("3_rvx1k")]
+position = Vector2(-11.3333, -6)
+animation = &"purple_idle"
+
+[node name="PurpleBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" instance=ExtResource("3_rvx1k")]
+position = Vector2(-25.3333, 5.33333)
+animation = &"purple_idle"
+
+[node name="BallToken" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" instance=ExtResource("4_5d1tr")]
+position = Vector2(2.6668, 0.333333)
+
+[node name="Page6" type="Node2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter"]
+visible = false
+scale = Vector2(3, 3)
+script = ExtResource("12_ekyhq")
+
+[node name="GreenBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
+position = Vector2(16.3333, 17.6667)
+
+[node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
+position = Vector2(17.6667, -7)
+animation = &"green_idle"
+
+[node name="GreenBlob3" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
+position = Vector2(-11.6667, 18)
+animation = &"green_idle"
+
+[node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
+position = Vector2(-11.3333, -6)
+animation = &"purple_idle"
+
+[node name="PurpleBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
+position = Vector2(-25.3333, 5.33333)
+animation = &"purple_idle"
+
+[node name="PurpleBlob3" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
+position = Vector2(31.3333, 5.33333)
+animation = &"purple_idle"
+
+[node name="BallToken" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("4_5d1tr")]
+position = Vector2(2.6668, 0.333333)
+
+[node name="WinCursor" type="GPUParticles2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6"]
+position = Vector2(1.66666, 0)
+emitting = false
+amount = 64
+process_material = SubResource("ParticleProcessMaterial_khthf")
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.5
+randomness = 0.49
+trail_enabled = true
+trail_lifetime = 0.2
+
+[node name="Label" type="Label" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6"]
+visible = false
+modulate = Color(0.235294, 0.6, 0.239216, 1)
+offset_left = -131.333
+offset_top = 42.6667
+offset_right = 189.667
+offset_bottom = 84.6667
+theme = ExtResource("13_v4lif")
+theme_override_font_sizes/font_size = 25
+text = "Green Wins!"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/RightPane"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="PrevPage" parent="HBoxContainer/RightPane/HBoxContainer" instance=ExtResource("2_l247g")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 2
+text = "prev page"
+
+[node name="PageNumber" type="Label" parent="HBoxContainer/RightPane/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+text = "1/5"
+
+[node name="NextPage" parent="HBoxContainer/RightPane/HBoxContainer" instance=ExtResource("2_l247g")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "next page"
+
+[connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2/Green1" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" method="_on_green_1_animation_finished"]
+[connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2/Green2" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" method="_on_green_2_animation_finished"]
+[connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2/Remove" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" method="_on_remove_animation_finished"]
+[connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page3/GreenBlob" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page3" method="_on_green_blob_animation_finished"]
+[connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4/GreenBlob" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4" method="_on_green_blob_animation_finished"]
+[connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5/GreenBlob" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" method="_on_green_blob_animation_finished"]
+[connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6/GreenBlob" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" method="_on_green_blob_animation_finished"]
+[connection signal="pressed" from="HBoxContainer/RightPane/HBoxContainer/PrevPage" to="." method="_on_prev_page_pressed"]
+[connection signal="pressed" from="HBoxContainer/RightPane/HBoxContainer/NextPage" to="." method="_on_next_page_pressed"]

@@ -1,9 +1,7 @@
 extends Node2D
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.position=Vector2(0,0)
 	$BallSprite.position = Vector2(0,0)
 	$BallSprite.animation = "stationary"
 
