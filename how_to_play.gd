@@ -31,3 +31,7 @@ func page_turn():
 	%NextPage.set_enabled(cur_page != max_pages)
 	old_page = cur_page
 		
+
+
+func _on_return_button_pressed():
+	get_tree().change_scene_to_file("res://main_menu.tscn")

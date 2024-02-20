@@ -108,15 +108,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TextMargin" type="MarginContainer" parent="HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
+
+[node name="TextMargin" type="MarginContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 theme = SubResource("Theme_w1fh7")
 
-[node name="HowToText" type="Label" parent="HBoxContainer/TextMargin"]
+[node name="HowToText" type="Label" parent="HBoxContainer/VBoxContainer/TextMargin"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "This is some more text.
 It exists in a state of confusion,"
+
+[node name="ReturnButton" parent="HBoxContainer/VBoxContainer" instance=ExtResource("2_l247g")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+text = "Return to main menu"
 
 [node name="RightPane" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
@@ -327,6 +337,7 @@ layout_mode = 2
 size_flags_horizontal = 10
 text = "next page"
 
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/ReturnButton" to="." method="_on_return_button_pressed"]
 [connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2/Green1" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" method="_on_green_1_animation_finished"]
 [connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2/Green2" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" method="_on_green_2_animation_finished"]
 [connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2/Remove" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" method="_on_remove_animation_finished"]
