@@ -34,7 +34,7 @@ signal made_new_token(place: Vector3, player:int)
 signal ball_moved(place: Vector3)
 signal removed_token(place: Vector3, player:int)
 signal new_turn(player:int, turn_num:int)
-signal made_move(new_state:int, player:int)
+signal made_move(new_state:int, player:int, game:Node)
 signal game_over(player:int)
 
 enum {
@@ -58,7 +58,7 @@ func _init():
 				all_tiles.append(Vector3(i,j,k))
 				
 func set_state(new_state):
-	made_move.emit(new_state, current_player)
+	made_move.emit(new_state, current_player, self)
 	current_state = new_state
 				
 	
@@ -127,6 +127,16 @@ func turn_over():
 	set_state(STATE_PLACE_1)
 	new_turn.emit(current_player, current_turn)
 	
+	
+func state_pop():
+	var recent = state_stack.pop_back()
+	var new = state_stack[-1]
+	current_state = new["state"]
+	last_move = new["move"]
+	current_player = new["current_player"]
+	piece_pos = new["piece_pos"]
+	ball_pos = new["ball_pos"]
+	return recent
 		
 func make_move(move: Vector3):
 	state_stack.append({

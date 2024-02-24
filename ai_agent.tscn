@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cui8l3tyh8aap"]
+
+[ext_resource type="Script" path="res://AIAgent.gd" id="1_p8mpu"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="2_rjevp"]
+
+[node name="AIAgent" type="Node2D"]
+script = ExtResource("1_p8mpu")
+
+[node name="ThinkIndicator1" parent="." instance=ExtResource("2_rjevp")]
+position = Vector2(322, 188)
