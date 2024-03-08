@@ -20,6 +20,9 @@ var state = ST_WAIT
 var valid_moves = []
 var ball_pos = Vector3(0,0,0)
 
+@onready
+var game_obj = get_node("/root/Game/AmoeballGame")
+
 const PURPLE_INDICATOR_POS = Vector2(308,0)
 
 const LABEL_TEXT = {
@@ -51,14 +54,18 @@ func _ready():
 	$PlaceCursor.flip_h = player
 	$PlaceCursor.play()
 	$InstructionLabel.hide()
-	if player==1:
-		$TurnIndicators.position += PURPLE_INDICATOR_POS
-		$TurnIndicators/PlaceIndicator1.animation = "purple_idle"
-		$TurnIndicators/PlaceIndicator2.animation = "purple_idle"
-		$TurnIndicators/PlaceIndicator1.flip_h = true
-		$TurnIndicators/PlaceIndicator2.flip_h = true
-	_on_amoeball_game_made_move(STATE_PLACE_1, 0)
+	_on_amoeball_game_made_move(STATE_PLACE_1, 0, null)
 		
+
+func set_p2():
+	$PlaceCursor.animation = PLAYER_TOKEN_ANIMS[player]+"_dangle"
+	$PlaceCursor.flip_h = player
+	$TurnIndicators.position += PURPLE_INDICATOR_POS
+	$TurnIndicators/PlaceIndicator1.animation = "purple_idle"
+	$TurnIndicators/PlaceIndicator2.animation = "purple_idle"
+	$TurnIndicators/PlaceIndicator1.flip_h = true
+	$TurnIndicators/PlaceIndicator2.flip_h = true
+	
 
 func set_nodes_dark():
 	for node in $TurnIndicators.get_children():
@@ -70,7 +77,6 @@ func _input(event):
 	#Need to refactor this
 	var cursor
 	var event_type
-	var game_obj = $"/root/Game/AmoeballGame"
 	
 	if game_obj.current_player != player:
 		return
@@ -162,79 +168,14 @@ func _input(event):
 		prev_pos = tile_pos
 		
 	
-	#match state:
-		#ST_WAIT:
-			#pass
-			#
-		#ST_PLACE:
-			#cursor = $PlaceCursor
-			#event_type = "place"
-			#if event is InputEventMouseMotion:
-				#tile_pos = world_to_cube(get_global_mouse_position())
-				#print("moved",get_global_mouse_position(), tile_pos)
-				#if prev_pos != tile_pos:
-					#if tile_pos in valid_moves:
-						#cursor.position = cube_to_world(tile_pos)
-						#cursor.show()
-						#cursor.frame=0
-						#cursor.play()
-						#if 
-					#else:
-						#cursor.hide()
-			#elif event is InputEventMouseButton and event.pressed:
-				#tile_pos = world_to_cube(get_global_mouse_position())
-				#print("clicked",get_global_mouse_position(), tile_pos)
-				#if tile_pos in valid_moves:
-					#emit_signal("make_move", player, event_type, tile_pos)
-#
-		#ST_REMOVE:
-			#cursor = $RemoveCursor
-			#event_type="remove"
-			#
-			#if event is InputEventMouseMotion:
-				#tile_pos = world_to_cube(get_global_mouse_position())
-				#if prev_pos != tile_pos:
-					#if tile_pos in valid_moves:
-						#cursor.position = cube_to_world(tile_pos)
-						#cursor.show()
-						#cursor.frame=0
-						#cursor.play()
-					#else:
-						#cursor.hide()
-					#prev_pos = tile_pos
-						#
-			#elif event is InputEventMouseButton and event.pressed:
-				#tile_pos = world_to_cube(get_global_mouse_position())
-				#print("clicked",get_global_mouse_position(), tile_pos)
-				#if tile_pos in valid_moves:
-					#emit_signal("make_move", player, event_type, tile_pos)
-					#
-		#ST_KICK:
-#
-			#cursor = $KickCursor
-			#event_type = "kick"
-			#if event is InputEventMouseMotion:
-				#tile_pos = world_to_cube(get_global_mouse_position())
-				#if prev_pos != tile_pos:
-					#if tile_pos in valid_moves:
-						#cursor.position = cube_to_world(tile_pos)
-						#cursor.show()
-					#else:
-						#cursor.hide()
-					#prev_pos = tile_pos
-						#
-			#elif event is InputEventMouseButton and event.pressed:
-				#tile_pos = world_to_cube(get_global_mouse_position())
-				#print("clicked",get_global_mouse_position(), tile_pos)
-				#if tile_pos in valid_moves:
-					#emit_signal("make_move", player, event_type, tile_pos)
+	
 			
 					
 
 			
 
 
-func _on_amoeball_game_made_move(new_state, new_player):
+func _on_amoeball_game_made_move(new_state, new_player, game):
 	set_nodes_dark()
 	var light
 	if new_player==player:

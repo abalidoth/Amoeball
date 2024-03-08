@@ -5,6 +5,7 @@
 
 [node name="AIAgent" type="Node2D"]
 script = ExtResource("1_p8mpu")
+max_plies = 4
 
 [node name="ThinkIndicator1" parent="." instance=ExtResource("2_rjevp")]
 position = Vector2(322, 188)

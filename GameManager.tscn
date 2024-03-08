@@ -1,10 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://d2hxopguhfjkr"]
+[gd_scene load_steps=7 format=3 uid="uid://1o6hivy8862p"]
 
-[ext_resource type="Script" path="res://VsLocal.gd" id="1_145do"]
-[ext_resource type="TileSet" uid="uid://cylc7rq1b5wrm" path="res://new_tile_set.tres" id="2_sr2ol"]
-[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="9_xq8lo"]
-[ext_resource type="PackedScene" uid="uid://cla1uqq22m1of" path="res://PlayerAgent.tscn" id="10_mfrit"]
-[ext_resource type="PackedScene" uid="uid://b26covpwrsamo" path="res://amoeball_game.tscn" id="11_s088v"]
+[ext_resource type="Script" path="res://GameManager.gd" id="1_145do"]
+[ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_sr2ol"]
+[ext_resource type="PackedScene" path="res://ball_token.tscn" id="9_xq8lo"]
+[ext_resource type="PackedScene" uid="uid://df5ef6qdj4fev" path="res://amoeball_game.tscn" id="11_s088v"]
 [ext_resource type="Texture2D" uid="uid://cldq6xlynktw4" path="res://assets/game_over_green.png" id="12_6q4qm"]
 [ext_resource type="Texture2D" uid="uid://f50gr6tej7wb" path="res://assets/game_over_purple.png" id="13_oj5ei"]
 
@@ -25,11 +24,6 @@ layer_0/tile_data = PackedInt32Array(65532, 4, 0, -65539, 65540, 0, -3, 131076, 
 
 [node name="Ball" parent="." instance=ExtResource("9_xq8lo")]
 position = Vector2(526, 289)
-
-[node name="Player1" parent="." instance=ExtResource("10_mfrit")]
-
-[node name="Player2" parent="." instance=ExtResource("10_mfrit")]
-player = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(212, 121)
@@ -76,11 +70,14 @@ texture = ExtResource("12_6q4qm")
 visible = false
 texture = ExtResource("13_oj5ei")
 
+[node name="AITick" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
 [connection signal="ball_moved" from="AmoeballGame" to="." method="_on_amoeball_game_ball_moved"]
 [connection signal="game_over" from="AmoeballGame" to="." method="_on_amoeball_game_game_over"]
-[connection signal="made_move" from="AmoeballGame" to="Player1" method="_on_amoeball_game_made_move"]
-[connection signal="made_move" from="AmoeballGame" to="Player2" method="_on_amoeball_game_made_move"]
 [connection signal="made_new_token" from="AmoeballGame" to="." method="_on_amoeball_game_made_new_token"]
 [connection signal="new_turn" from="AmoeballGame" to="." method="_on_amoeball_game_new_turn"]
 [connection signal="removed_token" from="AmoeballGame" to="." method="_on_amoeball_game_removed_token"]
 [connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
+[connection signal="timeout" from="AITick" to="AmoeballGame" method="_on_ai_tick_timeout"]

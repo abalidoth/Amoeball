@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://ball_token.tscn" id="2_1wyo2"]
 [ext_resource type="SpriteFrames" uid="uid://cyldaey0y6oca" path="res://remove.tres" id="5_cpidy"]
 [ext_resource type="PackedScene" path="res://blob_token.tscn" id="5_qdm8j"]
-[ext_resource type="FontFile" path="res://assets/Kenney Pixel.ttf" id="6_afsd1"]
+[ext_resource type="FontFile" uid="uid://dmi84odllf8ul" path="res://assets/Kenney Pixel.ttf" id="6_afsd1"]
 [ext_resource type="SpriteFrames" uid="uid://c8wtfxep0ctem" path="res://ball_token.tres" id="6_cpw4s"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_luuu8"]

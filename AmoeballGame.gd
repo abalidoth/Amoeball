@@ -21,6 +21,8 @@ const HEX_DIRECS = [
 	
 ]
 
+var move_queue = []
+
 var all_tiles = []
 var current_player = 0
 var current_state = STATE_PLACE_1
@@ -58,8 +60,8 @@ func _init():
 				all_tiles.append(Vector3(i,j,k))
 				
 func set_state(new_state):
-	made_move.emit(new_state, current_player, self)
 	current_state = new_state
+	made_move.emit(new_state, current_player, self)
 				
 	
 func is_space_free(t:Vector3):
@@ -207,3 +209,9 @@ func make_move(move: Vector3):
 			ball_moved.emit(move)
 			turn_over()
 			return
+
+
+
+func _on_ai_tick_timeout():
+	if len(move_queue) >0:
+		make_move(move_queue.pop_back())

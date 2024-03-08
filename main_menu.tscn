@@ -1,9 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cirjou4mnqms4"]
+[gd_scene load_steps=8 format=3 uid="uid://cqfdrt4d333rw"]
 
-[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://main_menu_theme.tres" id="1_l0j0k"]
+[ext_resource type="Theme" path="res://main_menu_theme.tres" id="1_l0j0k"]
 [ext_resource type="Script" path="res://main_menu.gd" id="2_lwwuc"]
-[ext_resource type="PackedScene" uid="uid://b3ojajgmvn3ti" path="res://amoeball_button.tscn" id="3_1cvgt"]
-[ext_resource type="SpriteFrames" uid="uid://m6lq6p5od0ej" path="res://main_menu_frames.tres" id="4_xtthi"]
+[ext_resource type="PackedScene" path="res://amoeball_button.tscn" id="3_1cvgt"]
+[ext_resource type="SpriteFrames" uid="uid://ds3b0kqjdpw2" path="res://main_menu_frames.tres" id="4_xtthi"]
 
 [sub_resource type="Gradient" id="Gradient_7niti"]
 offsets = PackedFloat32Array(0, 0.553746, 1)
@@ -85,16 +85,15 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Vs. Local"
 
-[node name="VsRemote" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "Vs. Remote (Soon!)"
-enabled = false
-
 [node name="VsAI" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Vs. AI (Soon!)"
+
+[node name="VsRemote" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Vs. Remote (Soon!)"
 enabled = false
 
 [node name="Credits" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
@@ -104,3 +103,4 @@ text = "Credits"
 
 [connection signal="pressed" from="VBoxContainer/Control/HowToPlay" to="." method="_on_how_to_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Control/VsLocal" to="." method="_on_vs_local_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/VsAI" to="." method="_on_vs_ai_pressed"]

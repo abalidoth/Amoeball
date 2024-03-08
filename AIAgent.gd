@@ -1,36 +1,49 @@
 extends Node2D
 
 @export var player: int=1
-@export var max_plies: int = 5
+@export var max_plies: int = 0
 
+
+var agame = preload("res://amoeball_game.tscn")
 func _ready():
 		$ThinkIndicator1/BallSprite.animation = "stationary"
 		$ThinkIndicator1/BallSprite.play()
-		$ThinkIndicator.visible= false
+		$ThinkIndicator1.visible= false
 
 func minimax(game, plies):
 	var maxing = (game.current_player == 0)
 	var best_score
 	var best_move
+	var move_subgame
+	var subgame_holder = duplicate_game(game)
 	if maxing:
 		best_score = -1000
 	else:
 		best_score = 1000
 
 	var out_moves = game.get_moves()
-	out_moves.sort_custom(func (a,b): return quick_eval_move(game, a) < quick_eval_move(game,b))
+	if out_moves == []:
+		out_moves = game.get_kick_directions(game.last_move)
+	var moves_sort = []
+	for j in out_moves:
+		moves_sort.append([j,quick_eval_move(game,j)])
+	moves_sort.sort_custom(func (a,b): a[1] < b[1])
+	out_moves=[]
+	for j in moves_sort:
+		out_moves.append(j[0])
 	if maxing:
 		out_moves.reverse()
 	for move in out_moves:
-		var subgame = game.duplicate()
-		subgame.make_move(move)
+		move_subgame = duplicate_game(subgame_holder)
+
+		move_subgame.make_move(move)
 		var curr
-		if subgame.game_state == subgame.STATE_WIN:
-			curr = (100 if subgame.current_player == 0 else -100)
+		if move_subgame.current_state == move_subgame.STATE_WIN:
+			curr = (100 if move_subgame.current_player == 0 else -100)
 		elif plies >0:
-			curr = minimax(subgame, plies-1)[0]
+			curr = minimax(move_subgame, plies-1)[0]
 		else:
-			curr = full_eval_position(subgame)
+			curr = full_eval_position(move_subgame)
 			
 		if maxing:
 			if curr > best_score:
@@ -57,16 +70,41 @@ func quick_eval_move(game, move):
 	var player_multiplier = (1 if game.current_player==player else -1)
 	match game.current_state:
 		game.STATE_PLACE_1, game.STATE_PLACE_2:
-			return player_multiplier/game.hex_dist(game.ball_pos,move)
+			return player_multiplier/game.hex_dist(game.ball_pos,move)+randf()*0.01
 		game.STATE_REMOVE:
-			return -player_multiplier/game.hex_dist(game.ball_pos, move)
+			return -player_multiplier/game.hex_dist(game.ball_pos, move)+randf()*0.01
 		game.STATE_KICK_1, game.STATE_KICK_2:
 			return 0
 	
 
+func duplicate_game(g):
+	var subgame = agame.instantiate()
+	for i in [
+		"current_player",
+		"current_state",
+		"ball_pos",
+		"last_move",
+		"current_turn"
+	]:
+		subgame.set(i,g.get(i))
+	subgame.piece_pos[0] = g.piece_pos[0].duplicate()
+	subgame.piece_pos[1] = g.piece_pos[1].duplicate()
+	if g.stored_kick_directions is Array:
+		subgame.stored_kick_directions = g.stored_kick_directions.duplicate()
+	return subgame
+		
+
 func _on_amoeball_game_made_move(new_state, new_player, game):
 	if new_player == player:
-		$ThinkIndicator.visible = true
-		var move = minimax(game, max_plies)
-		game.make_move(move)
-		$ThinkIndicator.visible = false
+		var subgame = duplicate_game(game)
+		#for cur_signal in subgame.get_signal_list():
+			#var conns = subgame.get_signal_connection_list(cur_signal.name);
+			#for cur_conn in conns:
+				#cur_conn.signal.disconnect(cur_conn.callable)
+		$ThinkIndicator1.visible = true
+		var move = minimax(subgame, max_plies)
+		game.move_queue.push_front(move[1])
+		$ThinkIndicator1.visible = false
+		
+func set_p2():
+	pass
