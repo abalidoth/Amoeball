@@ -138,6 +138,7 @@ func state_pop():
 	current_player = new["current_player"]
 	piece_pos = new["piece_pos"]
 	ball_pos = new["ball_pos"]
+	current_turn = new["current_turn"]
 	return recent
 		
 func make_move(move: Vector3):
@@ -146,7 +147,9 @@ func make_move(move: Vector3):
 		"move":move,
 		"player":current_player,
 		"piece_pos": piece_pos,
-		"ball_pos": ball_pos
+		"ball_pos": ball_pos,
+		"kick_directions": stored_kick_directions,
+		"current_turn": current_turn
 	})
 	last_move = move
 	match current_state:

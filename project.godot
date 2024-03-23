@@ -28,6 +28,10 @@ window/stretch/mode="viewport"
 window/stretch/aspect="ignore"
 window/stretch/scale_mode="integer"
 
+[dotnet]
+
+project/assembly_name="Amoeball"
+
 [editor]
 
 movie_writer/movie_file="/home/gdking/godot/Amoeball/amoeball-2024-02-06.avi"
