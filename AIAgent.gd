@@ -3,19 +3,28 @@ extends Node2D
 @export var player: int=1
 @export var max_plies: int = 0
 
+signal process_signal
 
+var keep_moves := 0.7
+var thinks := 0
 var agame = preload("res://amoeball_game.tscn")
 func _ready():
 		$ThinkIndicator1/BallSprite.animation = "stationary"
 		$ThinkIndicator1/BallSprite.play()
 		$ThinkIndicator1.visible= false
 
-func minimax(game, plies):
-	var maxing = (game.current_player == 0)
-	var best_score
+func alpha_beta(game, alpha, beta, plies, parent=false):
+	thinks += 1
+	if thinks%1000 == 0:
+		print(thinks)
+	var maxing :bool= (game.current_player == 0)
+	var best_score : int
 	var best_move
 	var move_subgame
-	var subgame_holder = duplicate_game(game)
+	if game.current_state == game.STATE_WIN:
+		return [100,null] if game.current_player==0 else [-100,null]
+	if plies == 0:
+		return [full_eval_position(game),null]
 	if maxing:
 		best_score = -1000
 	else:
@@ -34,16 +43,14 @@ func minimax(game, plies):
 	if maxing:
 		out_moves.reverse()
 	for move in out_moves:
-		move_subgame = duplicate_game(subgame_holder)
-
+		move_subgame = duplicate_game(game)
 		move_subgame.make_move(move)
 		var curr
-		if move_subgame.current_state == move_subgame.STATE_WIN:
-			curr = (100 if move_subgame.current_player == 0 else -100)
-		elif plies >0:
-			curr = minimax(move_subgame, plies-1)[0]
-		else:
-			curr = full_eval_position(move_subgame)
+		if maxing:
+			curr = max(best_move,alpha_beta(move_subgame, -INF, INF,plies-1)[0])
+			if curr > beta:
+				break
+			alpha = max(alpha, curr)
 			
 		if maxing:
 			if curr > best_score:
@@ -53,6 +60,60 @@ func minimax(game, plies):
 			if curr < best_score:
 				best_score = curr
 				best_move = move
+	return [best_score, best_move]
+
+
+func minimax(game, plies, parent = false):
+	thinks += 1
+	if thinks%1000 == 0:
+		print(thinks)
+	var maxing = (game.current_player == 0)
+	var best_score
+	var best_move = null
+	var move_subgame
+	if maxing:
+		best_score = -1000
+	else:
+		best_score = 1000
+
+	var out_moves = game.get_moves()
+	if out_moves == []:
+		out_moves = game.get_kick_directions(game.last_move)
+	var moves_sort = []
+	for j in out_moves:
+		moves_sort.append([j,quick_eval_move(game,j)])
+	moves_sort.sort_custom(func (a,b): a[1] < b[1])
+	out_moves=[]
+	for j in moves_sort:
+		out_moves.append(j[0])
+	if maxing:
+		out_moves.reverse()
+		
+	if game.current_state in [game.STATE_PLACE_1, game.STATE_PLACE_2]:
+		var t: int = ceil(len(out_moves)*keep_moves)+1
+		out_moves = out_moves.slice(0,t)
+	for move in out_moves:
+		move_subgame = duplicate_game(game)
+		move_subgame.make_move(move)
+		var curr
+		if move_subgame.current_state == move_subgame.STATE_WIN:
+			curr = (100 if move_subgame.current_player == 0 else -100)
+		elif plies >0:
+			var curr_l = await minimax(move_subgame, plies-1)
+			curr = curr_l[0]
+		else:
+			curr = full_eval_position(move_subgame)
+			
+		if maxing:
+			if curr > best_score:
+				best_score = curr
+				if parent:
+					best_move = move
+		else:
+			if curr < best_score:
+				best_score = curr
+				if parent:
+					best_move = move
 	return [best_score, best_move]
 		
 	
@@ -102,7 +163,7 @@ func _on_amoeball_game_made_move(new_state, new_player, game):
 			#for cur_conn in conns:
 				#cur_conn.signal.disconnect(cur_conn.callable)
 		$ThinkIndicator1.visible = true
-		var move = minimax(subgame, max_plies)
+		var move = await minimax(subgame, max_plies, true)
 		game.move_queue.push_front(move[1])
 		$ThinkIndicator1.visible = false
 		
