@@ -88,7 +88,7 @@ text = "Vs. Local"
 [node name="VsAI" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Vs. AI (Soon!)"
+text = "Vs. AI (Experimental)"
 
 [node name="VsRemote" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
 layout_mode = 2

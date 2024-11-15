@@ -5,7 +5,7 @@ extends Node2D
 
 signal process_signal
 
-var keep_moves := 0.7
+var keep_moves := 0.5
 var thinks := 0
 var agame = preload("res://amoeball_game.tscn")
 func _ready():
