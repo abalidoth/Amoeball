@@ -212,9 +212,3 @@ func make_move(move: Vector3):
 			ball_moved.emit(move)
 			turn_over()
 			return
-
-
-
-func _on_ai_tick_timeout():
-	if len(move_queue) >0:
-		make_move(move_queue.pop_back())

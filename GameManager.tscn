@@ -70,14 +70,9 @@ texture = ExtResource("12_6q4qm")
 visible = false
 texture = ExtResource("13_oj5ei")
 
-[node name="AITick" type="Timer" parent="."]
-wait_time = 0.5
-autostart = true
-
 [connection signal="ball_moved" from="AmoeballGame" to="." method="_on_amoeball_game_ball_moved"]
 [connection signal="game_over" from="AmoeballGame" to="." method="_on_amoeball_game_game_over"]
 [connection signal="made_new_token" from="AmoeballGame" to="." method="_on_amoeball_game_made_new_token"]
 [connection signal="new_turn" from="AmoeballGame" to="." method="_on_amoeball_game_new_turn"]
 [connection signal="removed_token" from="AmoeballGame" to="." method="_on_amoeball_game_removed_token"]
 [connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
-[connection signal="timeout" from="AITick" to="AmoeballGame" method="_on_ai_tick_timeout"]

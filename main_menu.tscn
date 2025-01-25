@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" path="res://main_menu_theme.tres" id="1_l0j0k"]
 [ext_resource type="Script" path="res://main_menu.gd" id="2_lwwuc"]
-[ext_resource type="PackedScene" path="res://amoeball_button.tscn" id="3_1cvgt"]
+[ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://amoeball_button.tscn" id="3_1cvgt"]
 [ext_resource type="SpriteFrames" uid="uid://ds3b0kqjdpw2" path="res://main_menu_frames.tres" id="4_xtthi"]
 
 [sub_resource type="Gradient" id="Gradient_7niti"]
