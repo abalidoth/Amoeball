@@ -16,7 +16,7 @@ var thinking_flag = false
 var moving_flag = false
 var moves_to_make = []
 
-var thinks_per_tick = 10
+var thinks_per_tick = 100
 
 var keep_moves := 0.5
 var thinks := 0

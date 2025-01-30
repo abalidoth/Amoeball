@@ -103,14 +103,18 @@ func hex_dist(coord_1 : Vector3, coord_2: Vector3):
 func get_moves():
 	match current_state:
 		STATE_PLACE_1, STATE_PLACE_2:
-			var current_tokens = piece_pos[current_player]
-			var free_space = get_free()
+			#var current_tokens = piece_pos[current_player]
+			var current_tokens={}
+			for i in piece_pos[current_player]:
+				current_tokens[i]=null #pretending this is a set
+			#var free_space = get_free()
 			var out = []
-			for i in free_space:
-				for j in current_tokens:
-					if hex_dist(i,j)==1:
+			for i in get_free():
+				for j in HEX_DIRECS:
+					if i+j in current_tokens:
 						out.append(i)
 						break
+						
 			return(out)
 			
 		STATE_KICK_1, STATE_KICK_2:
