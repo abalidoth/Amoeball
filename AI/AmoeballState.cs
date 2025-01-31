@@ -14,6 +14,7 @@ public partial class AmoeballState : Resource
     // Efficient fixed-size board representation
     private readonly PieceType[] _board;
     public PieceType CurrentPlayer { get; private set; }
+    public PieceType Winner {get; private set;}
     public int TurnStep { get; private set; }
     private Vector2I _ballPosition;
     public Move LastMove { get; private set; }
@@ -45,6 +46,7 @@ public partial class AmoeballState : Resource
         SetPiece(new Vector2I(0, 4), PieceType.PurpleAmoeba);
 
         CurrentPlayer = PieceType.GreenAmoeba;
+        Winner = PieceType.Empty;
         TurnStep = 1;
     }
 
@@ -90,7 +92,7 @@ public partial class AmoeballState : Resource
 
     public Vector2I GetBallPosition()
     {
-        if (_ballPosition == Vector2I.Zero && GetPiece(_ballPosition) != PieceType.Ball)
+        if (GetPiece(_ballPosition) != PieceType.Ball)
         {
             throw new InvalidOperationException("Ball position is invalid");
         }
@@ -151,109 +153,128 @@ public partial class AmoeballState : Resource
         }
 
         // No valid kicks possible - ball is surrounded
-        return Array.Empty<Vector2I>();
+        return new[]{ ballPos };
     }
 
     // Serialization to byte array for efficient network transmission
-public byte[] Serialize()
-{
-    // Calculate required size:
-    // - 1 byte for current player and turn step (4 bits each)
-    // - board array (2 bits per cell, packed into bytes)
-    int boardBytes = (_board.Length + 3) / 4; // Ceiling division to pack 2-bit values
-    byte[] data = new byte[1 + boardBytes];
-    
-    // Pack current player (2 bits) and turn step (2 bits) into first byte
-    data[0] = (byte)((byte)CurrentPlayer & 0x3);
-    data[0] |= (byte)((TurnStep & 0x3) << 2);
-    
-    // Pack board array - each cell uses 2 bits
-    int byteIndex = 1;
-    int bitPosition = 0;
-    byte currentByte = 0;
-    
-    for (int i = 0; i < _board.Length; i++)
+    public byte[] Serialize()
     {
-        // Pack 2 bits for the current cell
-        currentByte |= (byte)(((byte)_board[i] & 0x3) << bitPosition);
-        bitPosition += 2;
+        // Calculate required size:
+        // - 1 byte for current player and turn step (4 bits each)
+        // - board array (2 bits per cell, packed into bytes)
+        int boardBytes = (_board.Length + 3) / 4; // Ceiling division to pack 2-bit values
+        byte[] data = new byte[1 + boardBytes];
         
-        // When we've packed 4 cells (8 bits), write the byte
-        if (bitPosition == 8)
+        // Pack current player (2 bits) and turn step (2 bits) into first byte
+        data[0] = (byte)((byte)CurrentPlayer & 0x3);
+        data[0] |= (byte)((TurnStep & 0x3) << 2);
+        
+        // Pack board array - each cell uses 2 bits
+        int byteIndex = 1;
+        int bitPosition = 0;
+        byte currentByte = 0;
+        
+        for (int i = 0; i < _board.Length; i++)
         {
-            data[byteIndex++] = currentByte;
-            currentByte = 0;
-            bitPosition = 0;
-        }
-    }
-    
-    // Write final byte if we have any bits pending
-    if (bitPosition > 0)
-    {
-        data[byteIndex] = currentByte;
-    }
-    
-    return data;
-}
-
-public void Deserialize(byte[] data)
-{
-    if (data == null || data.Length < 1)
-        throw new ArgumentException("Invalid serialized data");
-        
-    // Unpack current player and turn step from first byte
-    CurrentPlayer = (PieceType)(data[0] & 0x3);
-    TurnStep = (data[0] >> 2) & 0x3;
-    
-    // Unpack board array and find ball position in single pass
-    int byteIndex = 1;
-    int bitPosition = 0;
-    
-    for (int boardIndex = 0; boardIndex < _board.Length; boardIndex++)
-    {
-        if (byteIndex >= data.Length)
-            throw new ArgumentException("Serialized data too short");
+            // Pack 2 bits for the current cell
+            currentByte |= (byte)(((byte)_board[i] & 0x3) << bitPosition);
+            bitPosition += 2;
             
-        // Extract 2 bits for current cell
-        byte cellValue = (byte)((data[byteIndex] >> bitPosition) & 0x3);
-        _board[boardIndex] = (PieceType)cellValue;
-        
-        // Update ball position if we found the ball
-        if (cellValue == (byte)PieceType.Ball)
-        {
-            _ballPosition = _grid.GetCoordinate(boardIndex);
+            // When we've packed 4 cells (8 bits), write the byte
+            if (bitPosition == 8)
+            {
+                data[byteIndex++] = currentByte;
+                currentByte = 0;
+                bitPosition = 0;
+            }
         }
         
-        bitPosition += 2;
-        if (bitPosition == 8)
+        // Write final byte if we have any bits pending
+        if (bitPosition > 0)
         {
-            byteIndex++;
-            bitPosition = 0;
+            data[byteIndex] = currentByte;
+        }
+        
+        return data;
+    }
+    
+    public void Deserialize(byte[] data)
+    {
+        if (data == null || data.Length < 1)
+            throw new ArgumentException("Invalid serialized data");
+            
+        // Unpack current player and turn step from first byte
+        CurrentPlayer = (PieceType)(data[0] & 0x3);
+        TurnStep = (data[0] >> 2) & 0x3;
+        
+        // Unpack board array and find ball position in single pass
+        int byteIndex = 1;
+        int bitPosition = 0;
+        
+        for (int boardIndex = 0; boardIndex < _board.Length; boardIndex++)
+        {
+            if (byteIndex >= data.Length)
+                throw new ArgumentException("Serialized data too short");
+                
+            // Extract 2 bits for current cell
+            byte cellValue = (byte)((data[byteIndex] >> bitPosition) & 0x3);
+            _board[boardIndex] = (PieceType)cellValue;
+            
+            // Update ball position if we found the ball
+            if (cellValue == (byte)PieceType.Ball)
+            {
+                _ballPosition = _grid.GetCoordinate(boardIndex);
+            }
+            
+            bitPosition += 2;
+            if (bitPosition == 8)
+            {
+                byteIndex++;
+                bitPosition = 0;
+            }
+        }
+    
+        bool isBallSurrounded = true;
+        foreach (var adjacentPos in _grid.GetAdjacentCoordinates(_ballPosition))
+        {
+            if (GetPiece(adjacentPos) == PieceType.Empty)
+            {
+                isBallSurrounded = false;
+                break;
+            }
+        }
+        if (isBallSurrounded)
+        { 
+            Winner = CurrentPlayer;
+            return;
+        }
+        if (TurnStep == 1 || TurnStep == 3)
+        {
+            CheckForLegalMoves();
         }
     }
-}
-
-// Helper method to get data size for a given board radius
-public static int GetSerializedSize(int radius)
-{
-    // Calculate total cells in hexagonal grid of given radius
-    int totalCells = 3 * radius * (radius + 1) + 1;
-    // Calculate bytes needed: 1 for header + ceil(totalCells * 2 / 8) for board
-    return 1 + (totalCells + 3) / 4;
-}
-
+    
+    // Helper method to get data size for a given board radius
+    public static int GetSerializedSize(int radius)
+    {
+        // Calculate total cells in hexagonal grid of given radius
+        int totalCells = 3 * radius * (radius + 1) + 1;
+        // Calculate bytes needed: 1 for header + ceil(totalCells * 2 / 8) for board
+        return 1 + (totalCells + 3) / 4;
+    }
+    
     public struct Move
     {
         public Vector2I Position;
         public Vector2I? KickTarget;  // Only present if this move kicked the ball
-
+    
         public Move(Vector2I position, Vector2I? kickTarget = null)
         {
             Position = position;
             KickTarget = kickTarget;
         }
     }
-
+    
     public AmoeballState Clone()
     {
         var clone = new AmoeballState();
@@ -264,7 +285,7 @@ public static int GetSerializedSize(int radius)
         clone._lastMove = _lastMove;
         return clone;
     }
-
+    
     public IEnumerable<AmoeballState> GetNextStates()
     {
         if (TurnStep == 1 || TurnStep == 3)
@@ -277,7 +298,7 @@ public static int GetSerializedSize(int radius)
                 {
                     // Check if this placement would kick the ball
                     bool willKickBall = _grid.GetDistance(pos, _ballPosition) == 1;
-
+    
                     if (willKickBall)
                     {
                         // Generate a state for each possible kick target
@@ -312,61 +333,86 @@ public static int GetSerializedSize(int radius)
             }
         }
     }
-
     
-public void ApplyMove(Move move)
-{
-    switch (TurnStep)
+        
+    public void ApplyMove(Move move)
     {
-        case 1: // First placement
-        case 3: // Second placement
-            ApplyPlacement(move);
-            break;
-
-        case 2: // Removal
-           ApplyRemoval(move);
-            break;
-
-        default:
-            throw new InvalidOperationException($"Invalid turn step: {TurnStep}");
+        switch (TurnStep)
+        {
+            case 1: // First placement
+            case 3: // Second placement
+                ApplyPlacement(move);
+                break;
+    
+            case 2: // Removal
+               ApplyRemoval(move);
+                break;
+    
+            default:
+                throw new InvalidOperationException($"Invalid turn step: {TurnStep}");
+        }
     }
-}
-
-public void ApplyRemoval(Move move)
-{
- if (GetPiece(move.Position) != CurrentPlayer)
-            {
-                throw new InvalidOperationException("Can only remove your own pieces");
-            }
-            SetPiece(move.Position, PieceType.Empty);
-LastMove = move;
-Turnstep++;
-
-}
-
+    
+    public bool CheckForLegalMoves()
+    {
+                bool hasValidMove = false;
+                for (int i = 0; i < _board.Length; i++)
+                {
+                    var pos = _grid.GetCoordinate(i);
+                    if (IsValidPlacement(pos))
+                    {
+                        hasValidMove = true;
+                        break;
+                    }
+                }
+    
+                if (!hasValidMove)
+                {
+                    Winner = CurrentPlayer == PieceType.GreenAmoeba ? PieceType.PurpleAmoeba : PieceType.GreenAmoeba;
+                }
+    }
+    
+    public void ApplyRemoval(Move move)
+    {
+     if (GetPiece(move.Position) != CurrentPlayer)
+                {
+                    throw new InvalidOperationException("Can only remove your own pieces");
+                }
+                SetPiece(move.Position, PieceType.Empty);
+    LastMove = move;
+    Turnstep++;
+    CheckForLegalMoves();
+    }
+    
+    
     public void ApplyPlacement(Move move)
     {
         // Place the piece
         SetPiece(move.Position, CurrentPlayer);
         LastMove = move;
-
+    
         // If this move includes a kick, move the ball
         if (move.KickTarget.HasValue)
         {
+            if (Move.KickTarget.Value == _ballPosition)
+            {
+                Winner = CurrentPlayer;
+                return;
+            }
             SetPiece(_ballPosition, PieceType.Empty);
             SetPiece(move.KickTarget.Value, PieceType.Ball);
         }
-
+    
         // Update turn state if this was the second placement
         if (TurnStep == 3)
         {
             CurrentPlayer = CurrentPlayer == PieceType.GreenAmoeba ? PieceType.PurpleAmoeba : PieceType.GreenAmoeba;
             TurnStep = 1;
+            CheckForLegalMoves();
         }
         else
         {
             TurnStep++;
         }
-    }
     }
 }
