@@ -73,6 +73,88 @@ func get_ball_position() -> Vector2i:
     assert(get_piece(_ball_position) == PieceType.BALL, "Ball position is invalid")
     return _ball_position
 
+func serialize() -> PackedByteArray:
+    # Calculate required size:
+    # - 1 byte for current player and turn step (4 bits each)
+    # - board array (2 bits per cell, packed into bytes)
+    var board_bytes: int = (_board.size() + 3) / 4  # Ceiling division to pack 2-bit values
+    var data = PackedByteArray()
+    data.resize(1 + board_bytes)
+    
+    # Pack current player (2 bits) and turn step (2 bits) into first byte
+    data[0] = current_player & 0x3
+    data[0] |= (turn_step & 0x3) << 2
+    
+    # Pack board array - each cell uses 2 bits
+    var byte_index = 1
+    var bit_position = 0
+    var current_byte = 0
+    
+    for piece in _board:
+        # Pack 2 bits for the current cell
+        current_byte |= (piece & 0x3) << bit_position
+        bit_position += 2
+        
+        # When we've packed 4 cells (8 bits), write the byte
+        if bit_position == 8:
+            data[byte_index] = current_byte
+            byte_index += 1
+            current_byte = 0
+            bit_position = 0
+    
+    # Write final byte if we have any bits pending
+    if bit_position > 0:
+        data[byte_index] = current_byte
+    
+    return data
+
+func deserialize(data: PackedByteArray) -> void:
+    assert(data != null and data.size() >= 1, "Invalid serialized data")
+    
+    # Unpack current player and turn step from first byte
+    current_player = data[0] & 0x3
+    turn_step = (data[0] >> 2) & 0x3
+    
+    # Unpack board array and find ball position in single pass
+    var byte_index = 1
+    var bit_position = 0
+    
+    for board_index in range(_board.size()):
+        assert(byte_index < data.size(), "Serialized data too short")
+        
+        # Extract 2 bits for current cell
+        var cell_value = (data[byte_index] >> bit_position) & 0x3
+        _board[board_index] = cell_value
+        
+        # Update ball position if we found the ball
+        if cell_value == PieceType.BALL:
+            _ball_position = HexGrid.get_coordinate(board_index)
+        
+        bit_position += 2
+        if bit_position == 8:
+            byte_index += 1
+            bit_position = 0
+    
+    var is_ball_surrounded = true
+    for adjacent_pos in HexGrid.get_adjacent_coordinates(_ball_position):
+        if get_piece(adjacent_pos) == PieceType.EMPTY:
+            is_ball_surrounded = false
+            break
+    
+    if is_ball_surrounded:
+        winner = current_player
+        return
+    
+    if turn_step == 1 or turn_step == 3:
+        check_for_legal_moves()
+
+# Helper method to get data size for a given board radius
+static func get_serialized_size(radius: int) -> int:
+    # Calculate total cells in hexagonal grid of given radius
+    var total_cells = 3 * radius * (radius + 1) + 1
+    # Calculate bytes needed: 1 for header + ceil(totalCells * 2 / 8) for board
+    return 1 + (total_cells + 3) / 4
+
 func get_kick_destination(kicker_pos: Vector2i) -> Array:
     var ball_pos = get_ball_position()
     var kicker_dir = kicker_pos - ball_pos
@@ -109,6 +191,50 @@ func get_kick_destination(kicker_pos: Vector2i) -> Array:
     
     # No valid kicks possible - ball is surrounded
     return [ball_pos]
+
+func duplicate() -> AmoeballState:
+    var clone = AmoeballState.new()
+    clone._board = _board.duplicate()
+    clone.current_player = current_player
+    clone.turn_step = turn_step
+    clone._ball_position = _ball_position
+    clone.last_move = last_move.duplicate() if last_move else {}
+    return clone
+
+func get_next_states() -> Array:
+    var states = []
+    
+    if turn_step == 1 or turn_step == 3:
+        # Find all valid placements
+        for i in range(_board.size()):
+            var pos = HexGrid.get_coordinate(i)
+            if is_valid_placement(pos):
+                # Check if this placement would kick the ball
+                var will_kick_ball = HexGrid.get_distance(pos, _ball_position) == 1
+                
+                if will_kick_ball:
+                    # Generate a state for each possible kick target
+                    for kick_target in get_kick_destination(pos):
+                        var new_state = duplicate()
+                        new_state.apply_move({
+                            "position": pos,
+                            "kick_target": kick_target
+                        })
+                        states.append(new_state)
+                else:
+                    var new_state = duplicate()
+                    new_state.apply_move({"position": pos})
+                    states.append(new_state)
+    else:  # turn_step == 2 (removal)
+        # Find all pieces that can be removed
+        for i in range(_board.size()):
+            if _board[i] == current_player:
+                var pos = HexGrid.get_coordinate(i)
+                var new_state = duplicate()
+                new_state.apply_move({"position": pos})
+                states.append(new_state)
+    
+    return states
 
 func apply_move(move: Dictionary) -> void:
     match turn_step:
