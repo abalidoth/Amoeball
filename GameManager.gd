@@ -67,6 +67,18 @@ func taxicab(tile1:Vector3, tile2:Vector3)->int:
 	var dist = tile1-tile2
 	return max(abs(dist.x), max(abs(dist.y), abs(dist.z)))
 
+func update_shader() -> void:
+	
+	var width : int = 1280
+	var height: int = 720
+	var out=[[],[]]
+	for player in range(2):
+		for i in range(61):
+			if i < len(token_coords[player]):
+				out[player].append(cube_to_world(token_coords[player][i])/Vector2(width,height)*3)
+			else:
+				out[player].append(Vector2(0.0,0.0))
+	$BlobShader.update_slimes(out, [len(token_coords[0]),len(token_coords[1])])
 
 func place_token(tile:Vector3, player:int) -> void:
 	var new_token = Token.instantiate()
@@ -80,6 +92,7 @@ func place_token(tile:Vector3, player:int) -> void:
 	new_token.flip_h = player
 	new_token.show()
 	new_token.play()
+	update_shader()
 
 var Player1
 var Player2
@@ -154,7 +167,7 @@ func remove_token(tile, player):
 	token_coords[player].erase(tile)
 	var destroyed_node = get_node("token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z))
 	destroyed_node.animation=PLAYER_COLORS[player]+"_pop" #blob will self delete after
-	
+	update_shader()
 
 
 func show_win_screen(player:int):
