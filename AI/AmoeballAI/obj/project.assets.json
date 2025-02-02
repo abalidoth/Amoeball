@@ -43,11 +43,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Development\\Amoeball\\Testing\\AmoeballTesting\\AmoeballTesting\\AmoeballTesting.csproj",
-      "projectName": "AmoeballTesting",
-      "projectPath": "D:\\Development\\Amoeball\\Testing\\AmoeballTesting\\AmoeballTesting\\AmoeballTesting.csproj",
+      "projectUniqueName": "D:\\Development\\Amoeball\\Amoeball\\AI\\AmoeballAI\\AmoeballAI.csproj",
+      "projectName": "AmoeballAI",
+      "projectPath": "D:\\Development\\Amoeball\\Amoeball\\AI\\AmoeballAI\\AmoeballAI.csproj",
       "packagesPath": "C:\\Users\\clerm\\.nuget\\packages\\",
-      "outputPath": "D:\\Development\\Amoeball\\Testing\\AmoeballTesting\\AmoeballTesting\\obj\\",
+      "outputPath": "D:\\Development\\Amoeball\\Amoeball\\AI\\AmoeballAI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\clerm\\AppData\\Roaming\\NuGet\\NuGet.Config",
