@@ -9,10 +9,9 @@ public class OrderedGameTree
     private struct Node
     {
         public byte[] State;
-        public Move Move;
         public int ParentIndex;
         public int[] ChildIndices;
-        public Move[] LegalMoves;
+        public Move[] LegalMoves;  // Stores the move that leads to each child
         public int ChildCount;
         public int Depth;
         public bool IsExpanded;
@@ -21,13 +20,12 @@ public class OrderedGameTree
         public int PurpleWins;
         public PieceType CurrentPlayer;
 
-        public Node(byte[] state, Move move, int parentIndex, PieceType currentPlayer, int depth)
+        public Node(byte[] state, int parentIndex, PieceType currentPlayer, int depth)
         {
             State = state;
-            Move = move;
             ParentIndex = parentIndex;
             ChildIndices = new int[12];  // Initial capacity
-            LegalMoves = new Move[12];
+            LegalMoves = new Move[12];   // Same size as ChildIndices
             ChildCount = 0;
             Depth = depth;
             IsExpanded = false;
@@ -41,18 +39,20 @@ public class OrderedGameTree
         {
             if (ChildCount >= ChildIndices.Length)
             {
-                var newArray = new int[ChildIndices.Length * 2];
-                Array.Copy(ChildIndices, newArray, ChildIndices.Length);
-                ChildIndices = newArray;
-                var newArray2 = new Move[LegalMoves.Length * 2];
-                Array.Copy(LegalMoves, newArray2, LegalMoves.Length);
-                LegalMoves = newArray2;
+                var newIndices = new int[ChildIndices.Length * 2];
+                var newMoves = new Move[LegalMoves.Length * 2];
+                Array.Copy(ChildIndices, newIndices, ChildIndices.Length);
+                Array.Copy(LegalMoves, newMoves, LegalMoves.Length);
+                ChildIndices = newIndices;
+                LegalMoves = newMoves;
             }
 
             ChildIndices[ChildCount] = childIndex;
-            LegalMoves[ChildCount++] = move;
+            LegalMoves[ChildCount] = move;
+            ChildCount++;
         }
     }
+
     private readonly int[] _hashTable;
     private readonly Node[] _nodes;
     private readonly int _capacity;
@@ -66,7 +66,7 @@ public class OrderedGameTree
         Array.Fill(_hashTable, -1);  // -1 indicates empty slot
         _nodes = new Node[_capacity];
 
-        InsertNode(initialState.Serialize(), default, -1, initialState.CurrentPlayer, 0);
+        InsertNode(initialState.Serialize(), -1, initialState.CurrentPlayer, 0);
     }
 
     private static int NextPowerOfTwo(int value)
@@ -106,12 +106,11 @@ public class OrderedGameTree
             {
                 var newIndex = InsertNode(
                     serializedNext,
-                    nextState.LastMove,
                     nodeIndex,
                     nextState.CurrentPlayer,
                     node.Depth + 1
                 );
-                node.AddChild(newIndex,nextState.LastMove);
+                node.AddChild(newIndex, nextState.LastMove);
             }
             else
             {
@@ -122,19 +121,16 @@ public class OrderedGameTree
         node.IsExpanded = true;
     }
 
-    private int InsertNode(byte[] state, Move move, int parentIndex, PieceType currentPlayer, int depth)
+    private int InsertNode(byte[] state, int parentIndex, PieceType currentPlayer, int depth)
     {
         if (_count >= _capacity * LOAD_FACTOR_THRESHOLD)
         {
             throw new InvalidOperationException($"Hash table load factor exceeded threshold: {_count}/{_capacity}");
         }
 
-        if (state == null)
-        { throw new Exception("Attempt to insert null state!"); }
-
         // First add to ordered array
         int insertionIndex = _count;
-        _nodes[insertionIndex] = new Node(state, move, parentIndex, currentPlayer, depth);
+        _nodes[insertionIndex] = new Node(state, parentIndex, currentPlayer, depth);
 
         // Then add to hash table
         int hash = ComputeStateHash(state);
@@ -149,6 +145,7 @@ public class OrderedGameTree
         _count++;
         return insertionIndex;
     }
+
 
     private int FindNodeIndex(byte[] state)
     {
@@ -168,7 +165,7 @@ public class OrderedGameTree
         return -1;
     }
 
-    public void BackPropagate(int nodeIndex, PieceType winner)
+    public void Backpropagate(int nodeIndex, PieceType winner)
     {
         while (nodeIndex != -1)
         {
@@ -186,33 +183,25 @@ public class OrderedGameTree
         }
     }
 
-    public void SetParent(int nodeIndex, int ParentIndex, Move move)
+
+    public void SetParent(int nodeIndex, int parentIndex)
     {
-        ref Node node = ref _nodes[nodeIndex];
-        node.ParentIndex = ParentIndex;
-        node.Move = move;
+        _nodes[nodeIndex].ParentIndex = parentIndex;
     }
 
-    public int[] GetChildIndices(int nodeIndex)
+    public (int[] indices, Move[] moves) GetChildEdges(int nodeIndex)
     {
         if (nodeIndex == -1)
         {
-            return [];
+            return (Array.Empty<int>(), Array.Empty<Move>());
         }
         ref Node node = ref _nodes[nodeIndex];
 
-        return node.ChildIndices.Take(node.ChildCount).ToArray();
-    }
-
-    public (int[], Move[]) GetChildEdges(int nodeIndex)
-    {
-        if (nodeIndex == -1)
-        {
-            return ([], []);
-        }
-        ref Node node = ref _nodes[nodeIndex];
-
-        return (node.ChildIndices.Take(node.ChildCount).ToArray(), node.LegalMoves.Take(node.ChildCount).ToArray());
+        var indices = new int[node.ChildCount];
+        var moves = new Move[node.ChildCount];
+        Array.Copy(node.ChildIndices, indices, node.ChildCount);
+        Array.Copy(node.LegalMoves, moves, node.ChildCount);
+        return (indices, moves);
     }
 
     public AmoeballState GetState(int nodeIndex)
@@ -231,8 +220,6 @@ public class OrderedGameTree
     public int GetParentVisits(int nodeIndex) => GetVisits(GetParent(nodeIndex));
 
     public PieceType GetCurrentPlayer(int nodeIndex) => _nodes[nodeIndex].CurrentPlayer;
-
-    public Move GetMove(int nodeIndex) => _nodes[nodeIndex].Move;
 
     public float GetWinRatio(int nodeIndex, PieceType player)
     {
@@ -272,20 +259,6 @@ public class OrderedGameTree
             hash *= FNV_PRIME;
         }
         return hash;
-    }
-
-    public IEnumerable<Move> GetPathToRoot(int nodeIndex)
-    {
-        if (nodeIndex == -1)
-        {
-            yield break;
-        }
-
-        while (_nodes[nodeIndex].ParentIndex != -1)
-        {
-            yield return _nodes[nodeIndex].Move;
-            nodeIndex = _nodes[nodeIndex].ParentIndex;
-        }
     }
 
     public int[] GetNodesAtDepth(int targetDepth)

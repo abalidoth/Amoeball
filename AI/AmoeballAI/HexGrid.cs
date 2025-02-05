@@ -97,4 +97,11 @@ public int GetDistance(Vector2I a, Vector2I b)
     int ds = Math.Abs(-diff.X - diff.Y);
     return (dq + dr + ds) / 2;
 }
+    public Vector2I TransformCoordinate(Vector2I coord, int[,] matrix, int[,] translation)
+    {
+        // Apply transformation matrix and translation
+        int newX = matrix[0, 0] * coord.X + matrix[0, 1] * coord.Y + translation[0, 0];
+        int newY = matrix[1, 0] * coord.X + matrix[1, 1] * coord.Y + translation[1, 0];
+        return new Vector2I(newX, newY);
+    }
 }

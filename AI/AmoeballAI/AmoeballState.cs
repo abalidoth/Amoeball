@@ -404,6 +404,49 @@ public partial class AmoeballState
         }
     }
 
+    // FNV hash constants
+    private const int FNV_PRIME = 16777619;
+    private const int FNV_OFFSET_BASIS = -2128831035;
+
+    public override int GetHashCode()
+    {
+        var serialized = Serialize();
+        int hash = FNV_OFFSET_BASIS;
+        for (int i = 0; i < serialized.Length; i++)
+        {
+            hash ^= serialized[i];
+            hash *= FNV_PRIME;
+        }
+        return hash;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is AmoeballState other)
+        {
+            // First compare hashes
+            if (GetHashCode() != other.GetHashCode())
+            {
+                return false;
+            }
+            // If hashes match, do full comparison
+            return Serialize().SequenceEqual(other.Serialize());
+        }
+        return false;
+    }
+
+    public static bool operator ==(AmoeballState left, AmoeballState right)
+    {
+        if (ReferenceEquals(left, null))
+            return ReferenceEquals(right, null);
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(AmoeballState left, AmoeballState right)
+    {
+        return !(left == right);
+    }
+
 
     public struct Move
     {
