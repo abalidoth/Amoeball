@@ -21,6 +21,11 @@ shader_parameter/green_slimes = null
 shader_parameter/num_green = null
 shader_parameter/purple_slimes = null
 shader_parameter/num_purple = 1
+shader_parameter/current_player = null
+shader_parameter/ball_position = null
+shader_parameter/progress = null
+shader_parameter/move_position = null
+shader_parameter/move_type = null
 shader_parameter/noise = SubResource("NoiseTexture2D_wkc16")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_khcqw"]
@@ -49,6 +54,10 @@ material = SubResource("ShaderMaterial_u634q")
 offset_right = 425.0
 offset_bottom = 241.0
 script = ExtResource("5_x24mk")
+
+[node name="Timer" type="Timer" parent="BlobShader"]
+wait_time = 0.5
+one_shot = true
 
 [node name="testshader" type="ColorRect" parent="."]
 visible = false

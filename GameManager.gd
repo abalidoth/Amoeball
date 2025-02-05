@@ -67,18 +67,29 @@ func taxicab(tile1:Vector3, tile2:Vector3)->int:
 	var dist = tile1-tile2
 	return max(abs(dist.x), max(abs(dist.y), abs(dist.z)))
 
-func update_shader() -> void:
+func update_shader(move_pos:Vector3, move_type:String) -> void:
 	
 	var width : int = 1280
 	var height: int = 720
+	var uv_factor = Vector2(width,height)/3
 	var out=[[],[]]
+	var out_ball = cube_to_world(ball_pos)/uv_factor
 	for player in range(2):
 		for i in range(61):
 			if i < len(token_coords[player]):
-				out[player].append(cube_to_world(token_coords[player][i])/Vector2(width,height)*3)
+				out[player].append(cube_to_world(token_coords[player][i])/uv_factor)
 			else:
 				out[player].append(Vector2(0.0,0.0))
-	$BlobShader.update_slimes(out, [len(token_coords[0]),len(token_coords[1])])
+				
+	var out_move= cube_to_world(move_pos)/uv_factor
+	$BlobShader.update_slimes(
+		out,
+		[len(token_coords[0]),len(token_coords[1])],
+		out_ball,
+		out_move,
+		move_type,
+		$AmoeballGame.current_player
+	)
 
 func place_token(tile:Vector3, player:int) -> void:
 	var new_token = Token.instantiate()
@@ -92,7 +103,7 @@ func place_token(tile:Vector3, player:int) -> void:
 	new_token.flip_h = player
 	new_token.show()
 	new_token.play()
-	update_shader()
+	update_shader(tile, "place")
 
 var Player1
 var Player2
@@ -163,11 +174,10 @@ func update_ball_pos(cell):
 
 
 func remove_token(tile, player):
-	print(%AmoeballGame.piece_pos, tile)
 	token_coords[player].erase(tile)
 	var destroyed_node = get_node("token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z))
 	destroyed_node.animation=PLAYER_COLORS[player]+"_pop" #blob will self delete after
-	update_shader()
+	update_shader(tile,"remove")
 
 
 func show_win_screen(player:int):
