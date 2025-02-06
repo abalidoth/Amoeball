@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using static AmoeballState;
+﻿using static AmoeballState;
 
 public class AmoeballMCTS
 {
-    private readonly OrderedGameTree _gameTree;
+    public readonly OrderedGameTree _gameTree;
     private readonly Random _random;
     private const double ExplorationConstant = 1.41; // UCT exploration parameter
+    private readonly AmoeballState _initialState;
 
     public AmoeballMCTS(AmoeballState initialState)
     {
         _gameTree = new OrderedGameTree(initialState);
         _random = new Random();
+        _initialState = initialState;
     }
 
     public void RunIterations(int iterations)
@@ -24,13 +23,31 @@ public class AmoeballMCTS
         }
     }
 
-    public Move FindBestMove(int simulations)
+    public Move FindBestMove(int simulations, bool randomizeSymmetry = false)
     {
         RunIterations(simulations);
-        return GetBestMove();
+        var canonicalMove = GetBestMove();
+
+        // Transform the canonical move to match the current board state
+        return TransformMoveToCurrentState(canonicalMove, randomizeSymmetry);
     }
 
-    private (int finalNodeIndex, AmoeballState.PieceType winner) SelectAndSimulate()
+    private Move TransformMoveToCurrentState(Move canonicalMove, bool randomize = false)
+    {
+        // Get all possible transformations of the move from canonical form to current state
+        var transformedMoves = Transformations.GetTransformedMoves(
+            canonicalMove,
+            _gameTree.GetState(0), // Canonical form
+            _initialState         // Current state
+        ).ToList();
+
+        // Return either first or random transformation based on parameter
+        return randomize ?
+            transformedMoves[_random.Next(transformedMoves.Count)] :
+            transformedMoves.First();
+    }
+
+    private (int finalNodeIndex, PieceType winner) SelectAndSimulate()
     {
         int currentNodeIndex = 0; // Root node
         bool explorationPhase = true; // True during selection, false during simulation
@@ -43,19 +60,29 @@ public class AmoeballMCTS
                 explorationPhase = false; // Switch to simulation phase
             }
 
-            var (childIndices, moves) = _gameTree.GetChildEdges(currentNodeIndex);
+            int[] childIndices;
+            if (currentNodeIndex == 0)
+            {
+                var (indices, _) = _gameTree.GetRootEdges();
+                childIndices = indices;
+            }
+            else
+            {
+                childIndices = _gameTree.GetChildIndices(currentNodeIndex);
+            }
+
             if (childIndices.Length == 0)
             {
-                // Terminal state - need to deserialize to determine winner
+                // Terminal state - need to determine winner
                 var state = _gameTree.GetState(currentNodeIndex);
-                if (state.Winner != AmoeballState.PieceType.Empty)
+                if (state.Winner != PieceType.Empty)
                 {
                     return (currentNodeIndex, state.Winner);
                 }
                 // No winner set but game is over - current player loses
                 var loser = _gameTree.GetCurrentPlayer(currentNodeIndex);
-                return (currentNodeIndex, loser == AmoeballState.PieceType.GreenAmoeba ?
-                    AmoeballState.PieceType.PurpleAmoeba : AmoeballState.PieceType.GreenAmoeba);
+                return (currentNodeIndex, loser == PieceType.GreenAmoeba ?
+                    PieceType.PurpleAmoeba : PieceType.GreenAmoeba);
             }
 
             // Select next node - use UCT during exploration, random during simulation
@@ -79,7 +106,7 @@ public class AmoeballMCTS
     {
         double bestScore = double.MinValue;
         int bestChildIndex = -1;
-        AmoeballState.PieceType currentPlayer = _gameTree.GetCurrentPlayer(nodeIndex);
+        PieceType currentPlayer = _gameTree.GetCurrentPlayer(nodeIndex);
 
         foreach (int childIndex in childIndices)
         {
@@ -94,7 +121,7 @@ public class AmoeballMCTS
         return bestChildIndex;
     }
 
-    private double CalculateUCTScore(int nodeIndex, AmoeballState.PieceType perspective)
+    private double CalculateUCTScore(int nodeIndex, PieceType perspective)
     {
         int parentVisits = _gameTree.GetVisits(_gameTree.GetParent(nodeIndex));
         int nodeVisits = _gameTree.GetVisits(nodeIndex);
@@ -110,9 +137,9 @@ public class AmoeballMCTS
         return exploitation + ExplorationConstant * exploration;
     }
 
-    public Move GetBestMove()
+    private Move GetBestMove()
     {
-        var (childIndices, moves) = _gameTree.GetChildEdges(0);
+        var (childIndices, canonicalMoves) = _gameTree.GetRootEdges();
         int mostVisitedIndex = -1;
         int maxVisits = -1;
 
@@ -126,19 +153,29 @@ public class AmoeballMCTS
             }
         }
 
-        return moves[mostVisitedIndex];
+        return canonicalMoves[mostVisitedIndex];
     }
 
     // Method to get statistics about possible moves
-    public IEnumerable<(Move move, int visits, float winRatio)> GetMoveStatistics()
+    public IEnumerable<(Move move, int visits, float winRatio)> GetMoveStatistics(bool randomizeSymmetry = false)
     {
-        var (childIndices, moves) = _gameTree.GetChildEdges(0);
+        var (childIndices, canonicalMoves) = _gameTree.GetRootEdges();
         var rootPlayer = _gameTree.GetCurrentPlayer(0);
 
-        return Enumerable.Range(0, childIndices.Length).Select(i => (
-            moves[i],
-            _gameTree.GetVisits(childIndices[i]),
-            _gameTree.GetWinRatio(childIndices[i], rootPlayer)
-        )).OrderByDescending(stats => stats.Item2);
+        var stats = Enumerable.Range(0, childIndices.Length)
+            .Select(i => (
+                canonicalMoves[i],
+                _gameTree.GetVisits(childIndices[i]),
+                _gameTree.GetWinRatio(childIndices[i], rootPlayer)
+            ))
+            .OrderByDescending(stats => stats.Item2)
+            .ToList();
+
+        // Transform moves to match current board state
+        return stats.Select(stat => (
+            TransformMoveToCurrentState(stat.Item1, randomizeSymmetry),
+            stat.Item2,
+            stat.Item3
+        ));
     }
 }

@@ -1,82 +1,104 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using static AmoeballState;
 
-public class MCTSConvergenceTest
+public class MCTSBenchmark
 {
-    // Checkpoints where we'll record statistics
-    private static readonly int[] CHECKPOINTS = { 100, 200, 500, 1000, 2000, 5000, 10000 };
-
-    public static void RunConvergenceTest()
+    public static void Main(string[] args)
     {
+        Console.WriteLine("Starting MCTS Convergence Benchmark");
+        Console.WriteLine("==================================");
+
+        // Create initial game state
         var state = new AmoeballState();
         state.SetupInitialPosition();
 
-        Console.WriteLine("Starting MCTS convergence test from initial position...\n");
+        // Define simulation counts to test
+        int[] simulationCounts = { 1, 10, 50, 100 };
+        int samplesPerCount = 1;  // Number of times to run each simulation count
 
-        // Track stats for each move at each checkpoint
-        var moveStats = new Dictionary<string, List<(int sims, int visits, double winRate)>>();
-
-        foreach (int numSims in CHECKPOINTS)
+        foreach (int simCount in simulationCounts)
         {
-            Console.WriteLine($"\nRunning {numSims} simulations...");
+            Console.WriteLine($"\nTesting with {simCount} simulations:");
+            Console.WriteLine("--------------------------------");
 
-            var mcts = new AmoeballMCTS(state);
-            var move = mcts.FindBestMove(numSims);
+            var moves = new List<Move>();
+            var visitCounts = new List<int>();
+            var winRatios = new List<float>();
+            var times = new List<double>();
 
-            // Get statistics for all possible moves
-            var stats = mcts.GetMoveStatistics().ToList();
-
-            // Print detailed stats for this checkpoint
-            Console.WriteLine("\nMove statistics:");
-            Console.WriteLine($"{"Position",-12} {"Kick Target",-12} {"Visits",-8} {"Visit %",-8} {"Win %",-8}");
-            Console.WriteLine(new string('-', 50));
-
-            foreach (var (mv, visits, winRate) in stats)
+            for (int sample = 0; sample < samplesPerCount; sample++)
             {
-                string moveKey = $"{mv.Position.X},{mv.Position.Y}";
-                string kickTarget = mv.KickTarget.HasValue ?
-                    $"({mv.KickTarget.Value.X},{mv.KickTarget.Value.Y})" : "None";
+                var sw = Stopwatch.StartNew();
+                var mcts = new AmoeballMCTS(state);
+                var bestMove = mcts.FindBestMove(simCount, randomizeSymmetry: false);
+                sw.Stop();
 
-                // Store stats for tracking convergence
-                if (!moveStats.ContainsKey(moveKey))
-                {
-                    moveStats[moveKey] = new List<(int, int, double)>();
-                }
-                moveStats[moveKey].Add((numSims, visits, winRate));
+                // Get statistics for the chosen move
+                var stats = mcts.GetMoveStatistics(randomizeSymmetry: false)
+                    .First(s => MovesAreEquivalent(s.move, bestMove));
 
-                // Print current stats
-                Console.WriteLine(
-                    $"({mv.Position.X},{mv.Position.Y}){"",-4} " +
-                    $"{kickTarget,-12} " +
-                    $"{visits,-8} " +
-                    $"{((double)visits / numSims):P1} " +
-                    $"{winRate:P1}");
+                moves.Add(bestMove);
+                visitCounts.Add(stats.visits);
+                winRatios.Add(stats.winRatio);
+                times.Add(sw.ElapsedMilliseconds);
+
+                // Print progress
+                Console.Write(".");
+                if ((sample + 1) % 10 == 0) Console.WriteLine();
             }
-        }
 
-        // Print convergence summary for each move
-        Console.WriteLine("\nConvergence Summary:");
-        foreach (var (moveKey, stats) in moveStats)
-        {
-            Console.WriteLine($"\nMove {moveKey}:");
-            Console.WriteLine($"{"Sims",-8} {"Visits",-8} {"Visit %",-8} {"Win %",-8}");
-            Console.WriteLine(new string('-', 40));
+            Console.WriteLine("\nResults:");
 
-            foreach (var (sims, visits, winRate) in stats)
+            // Analyze move consistency
+            var moveGroups = moves.GroupBy(m => GetMoveKey(m))
+                .OrderByDescending(g => g.Count());
+
+            Console.WriteLine($"Move distribution across {samplesPerCount} samples:");
+            foreach (var group in moveGroups)
             {
-                Console.WriteLine(
-                    $"{sims,-8} " +
-                    $"{visits,-8} " +
-                    $"{((double)visits / sims):P1} " +
-                    $"{winRate:P1}");
+                var percentage = (double)group.Count() / samplesPerCount * 100;
+                Console.WriteLine($"  Move {FormatMove(group.First())}: {group.Count()} times ({percentage:F1}%)");
             }
+
+            // Print statistics
+            Console.WriteLine($"Average visit count: {visitCounts.Average():F1}");
+            Console.WriteLine($"Visit count std dev: {StdDev(visitCounts):F1}");
+            Console.WriteLine($"Average win ratio: {winRatios.Average():F3}");
+            Console.WriteLine($"Win ratio std dev: {StdDev(winRatios):F3}");
+            Console.WriteLine($"Average time: {times.Average():F1}ms");
+            Console.WriteLine($"Time std dev: {StdDev(times):F1}ms");
         }
     }
 
-    public static void Main()
+    private static bool MovesAreEquivalent(Move a, Move b)
     {
-        RunConvergenceTest();
+        if (!a.Position.Equals(b.Position)) return false;
+        if (a.KickTarget.HasValue != b.KickTarget.HasValue) return false;
+        if (a.KickTarget.HasValue && b.KickTarget.HasValue)
+        {
+            return a.KickTarget.Value.Equals(b.KickTarget.Value);
+        }
+        return true;
+    }
+
+    private static string GetMoveKey(Move move)
+    {
+        return move.KickTarget.HasValue
+            ? $"{move.Position}=>{move.KickTarget.Value}"
+            : move.Position.ToString();
+    }
+
+    private static string FormatMove(Move move)
+    {
+        return move.KickTarget.HasValue
+            ? $"Place at {move.Position}, kick to {move.KickTarget.Value}"
+            : $"Place at {move.Position}";
+    }
+
+    private static double StdDev<T>(IEnumerable<T> values) where T : IConvertible
+    {
+        var doubles = values.Select(x => Convert.ToDouble(x)).ToList();
+        double avg = doubles.Average();
+        return Math.Sqrt(doubles.Average(v => Math.Pow(v - avg, 2)));
     }
 }

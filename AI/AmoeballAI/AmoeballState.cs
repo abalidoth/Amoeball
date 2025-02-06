@@ -21,6 +21,8 @@ public partial class AmoeballState
 
     private readonly HexGrid _grid;
 
+    private static readonly Vector2I nullPosition = new Vector2I(5,5);
+
     public AmoeballState()
     {
         _grid = HexGrid.Instance;
@@ -92,7 +94,7 @@ public partial class AmoeballState
 
     public Vector2I GetBallPosition()
     {
-        if (GetPiece(_ballPosition) != PieceType.Ball)
+        if (_ballPosition == nullPosition || GetPiece(_ballPosition) != PieceType.Ball)
         {
             throw new InvalidOperationException("Ball position is invalid");
         }
@@ -207,9 +209,14 @@ public partial class AmoeballState
         CurrentPlayer = (PieceType)(data[0] & 0x3);
         TurnStep = (data[0] >> 2) & 0x3;
 
+        if (CurrentPlayer == PieceType.Empty || CurrentPlayer == PieceType.Ball)
+            throw new ArgumentException("Invalid current player");
+
         // Unpack board array and find ball position in single pass
         int byteIndex = 1;
         int bitPosition = 0;
+
+        _ballPosition = nullPosition;
 
         for (int boardIndex = 0; boardIndex < _board.Length; boardIndex++)
         {
@@ -233,6 +240,9 @@ public partial class AmoeballState
                 bitPosition = 0;
             }
         }
+
+        if (_ballPosition == nullPosition)
+        { throw new ArgumentException("Ball position not found"); }
 
         bool isBallSurrounded = true;
         foreach (var adjacentPos in _grid.GetAdjacentCoordinates(_ballPosition))
@@ -273,6 +283,8 @@ public partial class AmoeballState
         clone.LastMove = LastMove;
         return clone;
     }
+
+
 
     public IEnumerable<AmoeballState> GetNextStates()
     {
@@ -408,29 +420,39 @@ public partial class AmoeballState
     private const int FNV_PRIME = 16777619;
     private const int FNV_OFFSET_BASIS = -2128831035;
 
-    public override int GetHashCode()
+    public static int ComputeHash(byte[] data)
     {
-        var serialized = Serialize();
+        const int FNV_PRIME = 16777619;
+        const int FNV_OFFSET_BASIS = -2128831035;
+
         int hash = FNV_OFFSET_BASIS;
-        for (int i = 0; i < serialized.Length; i++)
+        for (int i = 0; i < data.Length; i++)
         {
-            hash ^= serialized[i];
+            hash ^= data[i];
             hash *= FNV_PRIME;
         }
         return hash;
+    }
+
+    public override int GetHashCode()
+    {
+        var serialized = Serialize();
+        return ComputeHash(serialized);
     }
 
     public override bool Equals(object? obj)
     {
         if (obj is AmoeballState other)
         {
+            var serialized = Serialize();
+            var otherSerialized = other.Serialize();
             // First compare hashes
-            if (GetHashCode() != other.GetHashCode())
+            if (ComputeHash(serialized) == ComputeHash(otherSerialized))
             {
                 return false;
             }
             // If hashes match, do full comparison
-            return Serialize().SequenceEqual(other.Serialize());
+            return serialized.SequenceEqual(otherSerialized);
         }
         return false;
     }

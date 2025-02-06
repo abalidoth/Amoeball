@@ -6,9 +6,8 @@ using static AmoeballState;
 
 public readonly struct TransformationCache
 {
-    private readonly int _canonicalHash;
-    private readonly AmoeballState _canonicalForm;
-    private readonly HashSet<int> _equivalentHashes;
+    private readonly SerializedState _canonicalForm;
+    private readonly SerializedState[] _equivalentForms;
 
     public TransformationCache(AmoeballState state)
     {
@@ -16,25 +15,22 @@ public readonly struct TransformationCache
         var transformedStates = Transformations.GetAllTransformedStates(state).ToList();
 
         // Find canonical form (state with minimum hash)
-        _canonicalForm = transformedStates.MinBy(s => s.GetHashCode())!;
-        _canonicalHash = _canonicalForm.GetHashCode();
+        _canonicalForm = new SerializedState(transformedStates.MinBy(s => s.GetHashCode())!);
 
-        // Cache just the hashes of equivalent states
-        _equivalentHashes = new HashSet<int>(transformedStates.Select(s => s.GetHashCode()));
+        _equivalentForms = transformedStates.Select(s => new SerializedState(s)).ToArray();
     }
 
     /// <summary>
     /// Checks if a state is equivalent under any transformation to the cached state
     /// </summary>
-    public bool Contains(AmoeballState state)
-    {
-        return _equivalentHashes.Contains(state.GetHashCode());
-    }
+    public bool Contains(SerializedState state) => _equivalentForms.Contains(state);
+    public bool Contains(AmoeballState state) => Contains(new SerializedState(state));
+
 
     /// <summary>
     /// Gets the canonical form of the cached state
     /// </summary>
-    public AmoeballState CanonicalForm => _canonicalForm;
+    public AmoeballState CanonicalForm => _canonicalForm.Deserialize();
 
     public override bool Equals(object? obj)
     {
@@ -43,12 +39,12 @@ public readonly struct TransformationCache
 
     public bool Equals(TransformationCache other)
     {
-        return _canonicalHash == other._canonicalHash;
+       return CanonicalForm.Equals(other.CanonicalForm);
     }
 
     public override int GetHashCode()
     {
-        return _canonicalHash;
+        return _canonicalForm.GetHashCode();
     }
 
     public static bool operator ==(TransformationCache left, TransformationCache right)
@@ -107,6 +103,10 @@ public partial class AmoeballState
         {
             var newState = new AmoeballState();
             var grid = HexGrid.Instance;
+
+            newState.CurrentPlayer = state.CurrentPlayer;
+            newState.TurnStep = state.TurnStep;
+            newState.Winner = state.Winner;
 
             for (int i = 0; i < grid.TotalCells; i++)
             {

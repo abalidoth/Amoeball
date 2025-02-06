@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using static AmoeballState;
+﻿using static AmoeballState;
 
 public class OrderedGameTree
 {
     private struct Node
     {
-        public byte[] State;
+        public TransformationCache StateCache;
         public int ParentIndex;
         public int[] ChildIndices;
-        public Move[] LegalMoves;  // Stores the move that leads to each child
         public int ChildCount;
         public int Depth;
         public bool IsExpanded;
@@ -20,35 +15,30 @@ public class OrderedGameTree
         public int PurpleWins;
         public PieceType CurrentPlayer;
 
-        public Node(byte[] state, int parentIndex, PieceType currentPlayer, int depth)
+        public Node(AmoeballState state, int parentIndex, int depth)
         {
-            State = state;
+            StateCache = new TransformationCache(state);
             ParentIndex = parentIndex;
             ChildIndices = new int[12];  // Initial capacity
-            LegalMoves = new Move[12];   // Same size as ChildIndices
             ChildCount = 0;
             Depth = depth;
             IsExpanded = false;
             Visits = 0;
             GreenWins = 0;
             PurpleWins = 0;
-            CurrentPlayer = currentPlayer;
+            CurrentPlayer = state.CurrentPlayer;
         }
 
-        public void AddChild(int childIndex, Move move)
+        public void AddChild(int childIndex)
         {
             if (ChildCount >= ChildIndices.Length)
             {
                 var newIndices = new int[ChildIndices.Length * 2];
-                var newMoves = new Move[LegalMoves.Length * 2];
                 Array.Copy(ChildIndices, newIndices, ChildIndices.Length);
-                Array.Copy(LegalMoves, newMoves, LegalMoves.Length);
                 ChildIndices = newIndices;
-                LegalMoves = newMoves;
             }
 
             ChildIndices[ChildCount] = childIndex;
-            LegalMoves[ChildCount] = move;
             ChildCount++;
         }
     }
@@ -59,14 +49,21 @@ public class OrderedGameTree
     private int _count;
     private const double LOAD_FACTOR_THRESHOLD = 0.7;
 
-    public OrderedGameTree(AmoeballState initialState, int initialCapacity = 100000)
+    // Store root moves in canonical form
+    private Move[] _rootMoves;
+    private int _rootMoveCount;
+
+    public OrderedGameTree(AmoeballState initialState, int initialCapacity = 1000000)
     {
         _capacity = NextPowerOfTwo(Math.Max(initialCapacity, 16));
         _hashTable = new int[_capacity];
         Array.Fill(_hashTable, -1);  // -1 indicates empty slot
         _nodes = new Node[_capacity];
+        _rootMoves = new Move[12];  // Initial capacity for root moves
+        _rootMoveCount = 0;
+        _count = 0;
 
-        InsertNode(initialState.Serialize(), -1, initialState.CurrentPlayer, 0);
+        InsertNode(initialState, -1, 0);
     }
 
     private static int NextPowerOfTwo(int value)
@@ -83,7 +80,21 @@ public class OrderedGameTree
 
     public int FindStateIndex(AmoeballState state)
     {
-        return FindNodeIndex(state.Serialize());
+        var cache = new TransformationCache(state);
+        int hash = cache.GetHashCode();
+        int index = Math.Abs(hash) & (_capacity - 1);
+
+        while (_hashTable[index] != -1)
+        {
+            int nodeIndex = _hashTable[index];
+            if (_nodes[nodeIndex].StateCache.Contains(state))
+            {
+                return nodeIndex;
+            }
+            index = (index + 1) & (_capacity - 1);
+        }
+
+        return -1;
     }
 
     public void Expand(int nodeIndex)
@@ -94,34 +105,49 @@ public class OrderedGameTree
         }
 
         ref Node node = ref _nodes[nodeIndex];
-        var state = new AmoeballState();
-        state.Deserialize(node.State);
+        var state = node.StateCache.CanonicalForm;
 
         foreach (var nextState in state.GetNextStates())
         {
-            var serializedNext = nextState.Serialize();
-            var existingIndex = FindNodeIndex(serializedNext);
+            var existingIndex = FindStateIndex(nextState);
 
             if (existingIndex == -1)
             {
                 var newIndex = InsertNode(
-                    serializedNext,
+                    nextState,
                     nodeIndex,
-                    nextState.CurrentPlayer,
                     node.Depth + 1
                 );
-                node.AddChild(newIndex, nextState.LastMove);
+                node.AddChild(newIndex);
+
+                // If this is the root node, store the move in canonical form
+                if (nodeIndex == 0)
+                {
+                    AddRootMove(nextState.LastMove);
+                }
             }
             else
             {
-                node.AddChild(existingIndex, nextState.LastMove);
+                node.AddChild(existingIndex);
             }
         }
 
         node.IsExpanded = true;
     }
 
-    private int InsertNode(byte[] state, int parentIndex, PieceType currentPlayer, int depth)
+    private void AddRootMove(Move move)
+    {
+        if (_rootMoveCount >= _rootMoves.Length)
+        {
+            var newMoves = new Move[_rootMoves.Length * 2];
+            Array.Copy(_rootMoves, newMoves, _rootMoves.Length);
+            _rootMoves = newMoves;
+        }
+
+        _rootMoves[_rootMoveCount++] = move;
+    }
+
+    private int InsertNode(AmoeballState state, int parentIndex, int depth)
     {
         if (_count >= _capacity * LOAD_FACTOR_THRESHOLD)
         {
@@ -130,10 +156,10 @@ public class OrderedGameTree
 
         // First add to ordered array
         int insertionIndex = _count;
-        _nodes[insertionIndex] = new Node(state, parentIndex, currentPlayer, depth);
+        _nodes[insertionIndex] = new Node(state, parentIndex, depth);
 
         // Then add to hash table
-        int hash = ComputeStateHash(state);
+        int hash = _nodes[insertionIndex].StateCache.GetHashCode();
         int index = Math.Abs(hash) & (_capacity - 1);
 
         while (_hashTable[index] != -1)
@@ -144,25 +170,6 @@ public class OrderedGameTree
         _hashTable[index] = insertionIndex;
         _count++;
         return insertionIndex;
-    }
-
-
-    private int FindNodeIndex(byte[] state)
-    {
-        int hash = ComputeStateHash(state);
-        int index = Math.Abs(hash) & (_capacity - 1);
-
-        while (_hashTable[index] != -1)
-        {
-            int nodeIndex = _hashTable[index];
-            if (_nodes[nodeIndex].State.SequenceEqual(state))
-            {
-                return nodeIndex;
-            }
-            index = (index + 1) & (_capacity - 1);
-        }
-
-        return -1;
     }
 
     public void Backpropagate(int nodeIndex, PieceType winner)
@@ -183,25 +190,31 @@ public class OrderedGameTree
         }
     }
 
-
     public void SetParent(int nodeIndex, int parentIndex)
     {
         _nodes[nodeIndex].ParentIndex = parentIndex;
     }
 
-    public (int[] indices, Move[] moves) GetChildEdges(int nodeIndex)
+    public (int[] indices, Move[] canonicalMoves) GetRootEdges()
+    {
+        ref Node rootNode = ref _nodes[0];
+        var indices = new int[rootNode.ChildCount];
+        var moves = new Move[_rootMoveCount];
+        Array.Copy(rootNode.ChildIndices, indices, rootNode.ChildCount);
+        Array.Copy(_rootMoves, moves, _rootMoveCount);
+        return (indices, moves);
+    }
+
+    public int[] GetChildIndices(int nodeIndex)
     {
         if (nodeIndex == -1)
         {
-            return (Array.Empty<int>(), Array.Empty<Move>());
+            return Array.Empty<int>();
         }
         ref Node node = ref _nodes[nodeIndex];
-
         var indices = new int[node.ChildCount];
-        var moves = new Move[node.ChildCount];
         Array.Copy(node.ChildIndices, indices, node.ChildCount);
-        Array.Copy(node.LegalMoves, moves, node.ChildCount);
-        return (indices, moves);
+        return indices;
     }
 
     public AmoeballState GetState(int nodeIndex)
@@ -210,9 +223,7 @@ public class OrderedGameTree
         {
             throw new ArgumentException("Invalid node index");
         }
-        var state = new AmoeballState();
-        state.Deserialize(_nodes[nodeIndex].State);
-        return state;
+        return _nodes[nodeIndex].StateCache.CanonicalForm;
     }
 
     public int GetParent(int nodeIndex) => _nodes[nodeIndex].ParentIndex;
@@ -245,70 +256,4 @@ public class OrderedGameTree
     }
 
     public int GetNodeCount() => _count;
-
-    private static int ComputeStateHash(byte[] state)
-    {
-        // FNV-1a hash
-        const int FNV_PRIME = 16777619;
-        const int FNV_OFFSET_BASIS = -2128831035;
-
-        int hash = FNV_OFFSET_BASIS;
-        for (int i = 0; i < state.Length; i++)
-        {
-            hash ^= state[i];
-            hash *= FNV_PRIME;
-        }
-        return hash;
-    }
-
-    public int[] GetNodesAtDepth(int targetDepth)
-    {
-        // Simply scan the nodes array up to _count
-        int count = 0;
-        for (int i = 0; i < _count; i++)
-        {
-            if (_nodes[i].Depth == targetDepth)
-            {
-                count++;
-            }
-        }
-
-        int[] result = new int[count];
-        int resultIndex = 0;
-        for (int i = 0; i < _count; i++)
-        {
-            if (_nodes[i].Depth == targetDepth)
-            {
-                result[resultIndex++] = i;
-            }
-        }
-
-        return result;
-    }
-
-    public double GetAverageProbeLength()
-    {
-        long totalProbes = 0;
-        int nonEmptySlots = 0;
-
-        for (int i = 0; i < _capacity; i++)
-        {
-            int stateIndex = _hashTable[i];
-            if (stateIndex != -1 && _nodes[stateIndex].State != null)
-            {
-                int hash = Math.Abs(ComputeStateHash(_nodes[stateIndex].State));
-                int idealIndex = hash & (_capacity - 1);
-                int actualIndex = i;
-
-                int probeLength = actualIndex >= idealIndex ?
-                    actualIndex - idealIndex :
-                    _capacity - idealIndex + actualIndex;
-
-                totalProbes += probeLength + 1;
-                nonEmptySlots++;
-            }
-        }
-
-        return nonEmptySlots > 0 ? (double)totalProbes / nonEmptySlots : 0;
-    }
 }
