@@ -22,7 +22,15 @@ const float blob_radius = 0.035; //as a percent of screen width
 const float blob_exponent = 2.5;
 const float blob_threshold = pow(blob_radius,-blob_exponent);
 
+const float spec_internal_radius = 0.75;
+const float spec_external_radius = 0.90;
+const float spec_internal_threshold = pow(blob_radius*spec_internal_radius,-blob_exponent);
+const float spec_external_threshold = pow(blob_radius*spec_external_radius,-blob_exponent);
+const float spec_cos_threshold = 0.9;
+
 uniform vec2 ball_position;
+
+const vec2 light_direction = vec2(-sqrt(0.5),sqrt(0.5));
 
 const float scroll_speed = 0.05;
 const float bubble_multiplier = 0.35;
@@ -33,9 +41,12 @@ uniform int move_type;
 
 const vec4 green_color = vec4(0.0,0.5,0.0,0.5);
 const vec4 purple_color = vec4(0.3,0.0,0.3,0.5);
+const vec4 spec_green_color = vec4(0.7,1.0,0.7,0.7);
+const vec4 spec_purple_color = vec4(1.0,0.5,1.0,0.7);
 
 void fragment() {
-	vec2 pixel_uv = floor(UV*screen)/screen;
+	//vec2 pixel_uv = floor(UV*screen)/screen;
+	vec2 pixel_uv = UV;
 	// Called for every pixel the material is visible on.
 	COLOR = vec4(0.0,0.0,0.0,0.0);
 	float distance_count=0.0;
@@ -78,14 +89,33 @@ void fragment() {
 	//}
 	//distance_count *= ball_mult;
 	
+	vec2 local_gradient = vec2(dFdx(distance_count),dFdy(distance_count));
+	float local_grad_norm = sqrt(pow(local_gradient.x,2)+pow(local_gradient.y,2));
+	vec2 local_normal = local_gradient/local_grad_norm;
+	float light_parallel = dot(local_normal, light_direction);
 	
 	
 	if(distance_count>(blob_threshold)){
 		COLOR=green_color;
+		if(
+			light_parallel>spec_cos_threshold &&
+			abs(distance_count)<spec_internal_threshold &&
+			abs(distance_count)>spec_external_threshold
+		){
+			COLOR = spec_green_color;
+		}
 	}
 	if(distance_count<(-blob_threshold)){
 		COLOR=purple_color;
+		if(
+			light_parallel<-spec_cos_threshold &&
+			abs(distance_count)<spec_internal_threshold &&
+			abs(distance_count)>spec_external_threshold
+		){
+			COLOR = spec_purple_color;
+		}
 	}
+	
 }
 
 //void light() {

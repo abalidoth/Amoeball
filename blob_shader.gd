@@ -42,3 +42,5 @@ func _process(delta:float) -> void:
 	var progress = 1 - $Timer.time_left/timer_time
 	if not $Timer.is_stopped():
 		material.set_shader_parameter("progress", progress)
+	else:
+		material.set_shader_parameter("move_type",-1)

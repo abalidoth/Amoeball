@@ -13,6 +13,7 @@
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_0r3p5"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkc16"]
+seamless = true
 noise = SubResource("FastNoiseLite_0r3p5")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u634q"]
@@ -25,7 +26,7 @@ shader_parameter/current_player = null
 shader_parameter/ball_position = null
 shader_parameter/progress = null
 shader_parameter/move_position = null
-shader_parameter/move_type = null
+shader_parameter/move_type = -1
 shader_parameter/noise = SubResource("NoiseTexture2D_wkc16")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_khcqw"]
@@ -56,7 +57,7 @@ offset_bottom = 241.0
 script = ExtResource("5_x24mk")
 
 [node name="Timer" type="Timer" parent="BlobShader"]
-wait_time = 0.5
+wait_time = 0.3
 one_shot = true
 
 [node name="testshader" type="ColorRect" parent="."]
