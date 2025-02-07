@@ -14,7 +14,7 @@ public class MCTSBenchmark
 
         // Define simulation counts to test
         int[] simulationCounts = { 1, 10, 50, 100 };
-        int samplesPerCount = 1;  // Number of times to run each simulation count
+        int samplesPerCount = 10;  // Number of times to run each simulation count
 
         foreach (int simCount in simulationCounts)
         {

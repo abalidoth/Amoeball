@@ -10,6 +10,8 @@ public class AmoeballMCTS
     public AmoeballMCTS(AmoeballState initialState)
     {
         _gameTree = new OrderedGameTree(initialState);
+        AmoeballState canonicalForm = _gameTree.GetState(0);
+        TransformationValidation.ValidateTransformation(initialState, canonicalForm);
         _random = new Random();
         _initialState = initialState;
     }
@@ -34,17 +36,18 @@ public class AmoeballMCTS
 
     private Move TransformMoveToCurrentState(Move canonicalMove, bool randomize = false)
     {
+        AmoeballState canonicalForm = _gameTree.GetState(0);
         // Get all possible transformations of the move from canonical form to current state
         var transformedMoves = Transformations.GetTransformedMoves(
             canonicalMove,
-            _gameTree.GetState(0), // Canonical form
-            _initialState         // Current state
+            canonicalForm, // Canonical form
+            _initialState  // Current state
         ).ToList();
-
+        TransformationValidation.ValidateTransformation(_initialState, canonicalForm);
         // Return either first or random transformation based on parameter
         return randomize ?
             transformedMoves[_random.Next(transformedMoves.Count)] :
-            transformedMoves.First();
+            transformedMoves.MinBy(s=>s.Order());
     }
 
     private (int finalNodeIndex, PieceType winner) SelectAndSimulate()

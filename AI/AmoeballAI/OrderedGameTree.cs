@@ -31,6 +31,7 @@ public class OrderedGameTree
 
         public void AddChild(int childIndex)
         {
+            if (ChildIndices.Contains(childIndex)) return;
             if (ChildCount >= ChildIndices.Length)
             {
                 var newIndices = new int[ChildIndices.Length * 2];

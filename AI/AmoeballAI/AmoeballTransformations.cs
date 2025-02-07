@@ -18,6 +18,7 @@ public readonly struct TransformationCache
         _canonicalForm = new SerializedState(transformedStates.MinBy(s => s.GetHashCode())!);
 
         _equivalentForms = transformedStates.Select(s => new SerializedState(s)).ToArray();
+        
     }
 
     /// <summary>
@@ -62,44 +63,27 @@ public partial class AmoeballState
 {
     public static class Transformations
     {
-        // Static transformation matrices for 60° rotations in axial coordinates
-        public static readonly (int[,], int[,])[] RotationMatrices = new[]
+        // The 12 elements of the dihedral group D6
+        // Each matrix represents either a rotation or a reflection-rotation combination
+        public static readonly int[][,] D6Matrices = new[]
         {
-        // Identity (0°)
-        (new[,] {{1, 0}, {0, 1}}, new[,] {{0, 0}, {0, 0}}),
-        // 60° clockwise
-        (new[,] {{1, -1}, {1, 0}}, new[,] {{0, 0}, {0, 0}}),
-        // 120° clockwise
-        (new[,] {{0, -1}, {1, -1}}, new[,] {{0, 0}, {0, 0}}),
-        // 180°
-        (new[,] {{-1, 0}, {0, -1}}, new[,] {{0, 0}, {0, 0}}),
-        // 120° counterclockwise
-        (new[,] {{-1, 1}, {-1, 0}}, new[,] {{0, 0}, {0, 0}}),
-        // 60° counterclockwise
-        (new[,] {{0, 1}, {-1, 1}}, new[,] {{0, 0}, {0, 0}})
+        // Pure rotations (6)
+        new[,] {{1, 0}, {0, 1}},         // Identity
+        new[,] {{0, -1}, {1, 1}},        // Rotate 60° clockwise: (q,r) -> (-r, q+r)
+        new[,] {{-1, -1}, {1, 0}},       // Rotate 120° clockwise: (q,r) -> (-q-r, q)
+        new[,] {{-1, 0}, {0, -1}},       // Rotate 180°: (q,r) -> (-q, -r)
+        new[,] {{0, 1}, {-1, -1}},       // Rotate 240° clockwise: (q,r) -> (r, -q-r)
+        new[,] {{1, 1}, {-1, 0}},        // Rotate 300° clockwise: (q,r) -> (q+r, -q)
+        
+        // Reflections (6) - composed with rotations to preserve coordinate constraints
+        new[,] {{-1, -1}, {0, 1}},       // Reflect in primary axis
+        new[,] {{-1, 0}, {1, 1}},        // Reflect and rotate 60°
+        new[,] {{0, 1}, {1, 0}},         // Reflect and rotate 120°
+        new[,] {{1, 1}, {0, -1}},        // Reflect and rotate 180°
+        new[,] {{1, 0}, {-1, -1}},       // Reflect and rotate 240°
+        new[,] {{0, -1}, {-1, 0}}        // Reflect and rotate 300°
     };
-
-        // Reflection matrices along the 6 symmetry axes
-        public static readonly (int[,], int[,])[] ReflectionMatrices = new[]
-        {
-        // Reflect across vertical axis
-        (new[,] {{-1, 0}, {0, 1}}, new[,] {{0, 0}, {0, 0}}),
-        // Reflect across 30° axis
-        (new[,] {{0, -1}, {-1, 0}}, new[,] {{0, 0}, {0, 0}}),
-        // Reflect across 60° axis
-        (new[,] {{1, -1}, {0, -1}}, new[,] {{0, 0}, {0, 0}}),
-        // Reflect across 90° axis
-        (new[,] {{1, 0}, {1, -1}}, new[,] {{0, 0}, {0, 0}}),
-        // Reflect across 120° axis
-        (new[,] {{0, 1}, {1, 0}}, new[,] {{0, 0}, {0, 0}}),
-        // Reflect across 150° axis
-        (new[,] {{-1, 1}, {0, 1}}, new[,] {{0, 0}, {0, 0}})
-    };
-
-        /// <summary>
-        /// Transforms a state using the given transformation matrix and translation
-        /// </summary>
-        public static AmoeballState TransformState(AmoeballState state, int[,] matrix, int[,] translation)
+        public static AmoeballState TransformState(AmoeballState state, int[,] matrix)
         {
             var newState = new AmoeballState();
             var grid = HexGrid.Instance;
@@ -108,6 +92,8 @@ public partial class AmoeballState
             newState.TurnStep = state.TurnStep;
             newState.Winner = state.Winner;
 
+            //bool bugReproduced = (matrix[0, 0] == 1 && matrix[0, 1] == -1 && matrix[1, 0] == 1 && matrix[1, 1] == 0);
+
             for (int i = 0; i < grid.TotalCells; i++)
             {
                 var oldPos = grid.GetCoordinate(i);
@@ -115,7 +101,7 @@ public partial class AmoeballState
 
                 if (piece != PieceType.Empty)
                 {
-                    var newPos = grid.TransformCoordinate(oldPos, matrix, translation);
+                    var newPos = grid.TransformCoordinate(oldPos, matrix);
                     if (grid.IsValidCoordinate(newPos))
                     {
                         newState.SetPiece(newPos, piece);
@@ -123,121 +109,68 @@ public partial class AmoeballState
                 }
             }
 
+            TransformationValidation.ValidateTransformation(state, newState);
+
             return newState;
         }
 
-        /// <summary>
-        /// Transforms a move using the given transformation matrix and translation
-        /// </summary>
-        public static Move TransformMove(Move move, int[,] matrix, int[,] translation)
+        public static Move TransformMove(Move move, int[,] matrix)
         {
             var grid = HexGrid.Instance;
 
-            var newPosition = grid.TransformCoordinate(move.Position, matrix, translation);
+            var newPosition = grid.TransformCoordinate(move.Position, matrix);
 
             Vector2I? newKickTarget = null;
             if (move.KickTarget.HasValue)
             {
-                newKickTarget = grid.TransformCoordinate(move.KickTarget.Value, matrix, translation);
+                newKickTarget = grid.TransformCoordinate(move.KickTarget.Value, matrix);
             }
 
             return new Move(newPosition, newKickTarget);
         }
 
-        /// <summary>
-        /// Gets all states that are equivalent under any combination of rotation and reflection
-        /// </summary>
         public static IEnumerable<AmoeballState> GetAllTransformedStates(AmoeballState state)
         {
-            foreach (var (rotMatrix, rotTranslation) in RotationMatrices)
+            
+            foreach (var sym in D6Matrices)
             {
-                var rotatedState = TransformState(state, rotMatrix, rotTranslation);
-                yield return rotatedState;
+                var transformed = TransformState(state, sym);
+                yield return transformed;
 
-                foreach (var (reflMatrix, reflTranslation) in ReflectionMatrices)
-                {
-                    yield return TransformState(rotatedState, reflMatrix, reflTranslation);
-                }
             }
         }
 
-        /// <summary>
-        /// Gets the canonical form of a state (state with minimum hash value)
-        /// </summary>
         public static AmoeballState GetCanonicalForm(AmoeballState state)
         {
             return GetAllTransformedStates(state).MinBy(s => s.GetHashCode())!;
         }
 
-        /// <summary>
-        /// Composes two transformations into a single transformation
-        /// </summary>
-        public static (int[,] matrix, int[,] translation) ComposeTransformations(
-            int[,] matrix1, int[,] translation1,
-            int[,] matrix2, int[,] translation2)
+
+        public static IEnumerable<int[,]> GetTransformations(
+            AmoeballState sourceState,
+            AmoeballState targetState)
         {
-            // Matrix multiplication for the transformation matrices
-            var resultMatrix = new int[2, 2];
-            for (int i = 0; i < 2; i++)
+
+
+
+            foreach (var sym in D6Matrices)
             {
-                for (int j = 0; j < 2; j++)
+                var transformed = TransformState(sourceState, sym);
+                if (transformed == targetState)
                 {
-                    resultMatrix[i, j] =
-                        matrix1[i, 0] * matrix2[0, j] +
-                        matrix1[i, 1] * matrix2[1, j];
-                }
-            }
-
-            // Compose the translations
-            var resultTranslation = new int[2, 2];
-            resultTranslation[0, 0] = translation1[0, 0] + translation2[0, 0];
-            resultTranslation[1, 0] = translation1[1, 0] + translation2[1, 0];
-
-            return (resultMatrix, resultTranslation);
-        }
-
-        /// <summary>
-        /// Finds all transformations that convert sourceState into targetState.
-        /// Returns empty enumerable if states are not equivalent.
-        /// </summary>
-        public static IEnumerable<(int[,] matrix, int[,] translation)> GetTransformations(
-            AmoeballState sourceState, AmoeballState targetState)
-        {
-            // Early exit if states aren't equivalent
-            if (GetCanonicalForm(sourceState).GetHashCode() != GetCanonicalForm(targetState).GetHashCode())
-            {
-                yield break;
-            }
-
-            foreach (var (rotMatrix, rotTranslation) in RotationMatrices)
-            {
-                var rotated = TransformState(sourceState, rotMatrix, rotTranslation);
-                if (rotated == targetState)
-                {
-                    yield return (rotMatrix, rotTranslation);
-                }
-
-                foreach (var (reflMatrix, reflTranslation) in ReflectionMatrices)
-                {
-                    var transformed = TransformState(rotated, reflMatrix, reflTranslation);
-                    if (transformed == targetState)
-                    {
-                        yield return ComposeTransformations(
-                            rotMatrix, rotTranslation,
-                            reflMatrix, reflTranslation);
-                    }
+                    yield return sym;
                 }
             }
         }
 
-        /// <summary>
-        /// For each valid transformation between states, yields the resulting transformed move
-        /// </summary>
-        public static IEnumerable<Move> GetTransformedMoves(Move move, AmoeballState sourceState, AmoeballState targetState)
+        public static IEnumerable<Move> GetTransformedMoves(
+            Move move,
+            AmoeballState sourceState,
+            AmoeballState targetState)
         {
-            foreach (var transform in GetTransformations(sourceState, targetState))
+            foreach (var matrix in GetTransformations(sourceState, targetState))
             {
-                yield return TransformMove(move, transform.matrix, transform.translation);
+                yield return TransformMove(move, matrix);
             }
         }
     }

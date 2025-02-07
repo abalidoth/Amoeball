@@ -36,7 +36,7 @@ public class HexGrid
         {
             for (int r = -RADIUS; r <= RADIUS; r++)
             {
-                if (Math.Abs(q) <= RADIUS && Math.Abs(r) <= RADIUS && Math.Abs(-q - r) <= RADIUS)
+                if (Math.Abs(q + r) <= RADIUS)
                 {
                     var coord = new Vector2I(q, r);
                     _coordToIndex[coord] = coords.Count;
@@ -97,8 +97,10 @@ public int GetDistance(Vector2I a, Vector2I b)
     int ds = Math.Abs(-diff.X - diff.Y);
     return (dq + dr + ds) / 2;
 }
-    public Vector2I TransformCoordinate(Vector2I coord, int[,] matrix, int[,] translation)
+    public Vector2I TransformCoordinate(Vector2I coord, int[,] matrix, int[,]? translation = null)
     {
+        translation ??= new int[,] { { 0, 0 }, { 0, 0 } };
+
         // Apply transformation matrix and translation
         int newX = matrix[0, 0] * coord.X + matrix[0, 1] * coord.Y + translation[0, 0];
         int newY = matrix[1, 0] * coord.X + matrix[1, 1] * coord.Y + translation[1, 0];

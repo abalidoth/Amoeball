@@ -37,15 +37,15 @@ public partial class AmoeballState
         _ballPosition = Vector2I.Zero;
         SetPiece(_ballPosition, PieceType.Ball);
 
-        // Place green amoebas in alternate corners
-        SetPiece(new Vector2I(4, -4), PieceType.GreenAmoeba);
-        SetPiece(new Vector2I(-4, 4), PieceType.GreenAmoeba);
-        SetPiece(new Vector2I(0, -4), PieceType.GreenAmoeba);
+        // Place green amoebas in alternate corners (clockwise from east)
+        SetPiece(new Vector2I(4, 0), PieceType.GreenAmoeba);   // East
+        SetPiece(new Vector2I(-4, 4), PieceType.GreenAmoeba);  // Southwest
+        SetPiece(new Vector2I(0, -4), PieceType.GreenAmoeba); // Northwest
 
-        // Place purple amoebas in remaining corners
-        SetPiece(new Vector2I(-4, 0), PieceType.PurpleAmoeba);
-        SetPiece(new Vector2I(4, 0), PieceType.PurpleAmoeba);
-        SetPiece(new Vector2I(0, 4), PieceType.PurpleAmoeba);
+        // Place purple amoebas in remaining corners (clockwise from southeast)
+        SetPiece(new Vector2I(0, 4), PieceType.PurpleAmoeba);  // Southeast
+        SetPiece(new Vector2I(4, -4), PieceType.PurpleAmoeba); // West
+        SetPiece(new Vector2I(-4, 0), PieceType.PurpleAmoeba); // Northeast
 
         CurrentPlayer = PieceType.GreenAmoeba;
         Winner = PieceType.Empty;
@@ -447,7 +447,7 @@ public partial class AmoeballState
             var serialized = Serialize();
             var otherSerialized = other.Serialize();
             // First compare hashes
-            if (ComputeHash(serialized) == ComputeHash(otherSerialized))
+            if (ComputeHash(serialized) != ComputeHash(otherSerialized))
             {
                 return false;
             }
@@ -479,6 +479,13 @@ public partial class AmoeballState
         {
             Position = position;
             KickTarget = kickTarget;
+        }
+
+        public int Order()
+        {
+            var _grid = HexGrid.Instance;
+            int kickIndex = KickTarget.HasValue ? _grid.GetIndex(KickTarget.Value) : 0;
+            return _grid.GetIndex(Position) * _grid.TotalCells + kickIndex;
         }
     }
 
