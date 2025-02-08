@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://cb7hvn8h0s4q2"]
+[gd_scene load_steps=43 format=3 uid="uid://cbiyr00uk66gd"]
 
 [ext_resource type="Texture2D" uid="uid://dydh2p2wdccmc" path="res://assets/green_slime_all.png" id="1_tpjrp"]
 [ext_resource type="Texture2D" uid="uid://bs2xfgwojttxe" path="res://assets/purple_slime_all.png" id="2_te6dl"]
@@ -321,7 +321,7 @@ animations = [{
 
 [node name="BlobToken" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_mpvd6")
-animation = &"green_drop"
+animation = &"green_dangle"
 offset = Vector2(0, -5)
 script = ExtResource("3_1aaqm")
 

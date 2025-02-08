@@ -24,9 +24,12 @@ const float blob_threshold = pow(blob_radius,-blob_exponent);
 
 const float spec_internal_radius = 0.75;
 const float spec_external_radius = 0.90;
+const float shadow_radius = 1.4;
 const float spec_internal_threshold = pow(blob_radius*spec_internal_radius,-blob_exponent);
 const float spec_external_threshold = pow(blob_radius*spec_external_radius,-blob_exponent);
+const float shadow_threshold = pow(blob_radius*shadow_radius, -blob_exponent);
 const float spec_cos_threshold = 0.9;
+const float shadow_cos_threshold = 0.7;
 
 uniform vec2 ball_position;
 
@@ -39,10 +42,11 @@ uniform float progress;
 uniform vec2 move_position;
 uniform int move_type;
 
-const vec4 green_color = vec4(0.0,0.5,0.0,0.5);
-const vec4 purple_color = vec4(0.3,0.0,0.3,0.5);
+const vec4 green_color = vec4(0.0,0.5,0.0,0.3);
+const vec4 purple_color = vec4(0.3,0.0,0.3,0.3);
 const vec4 spec_green_color = vec4(0.7,1.0,0.7,0.7);
 const vec4 spec_purple_color = vec4(1.0,0.5,1.0,0.7);
+const vec4 shadow_color = vec4(0.0,0.0,0.0,0.5);
 
 void fragment() {
 	//vec2 pixel_uv = floor(UV*screen)/screen;
@@ -94,9 +98,18 @@ void fragment() {
 	vec2 local_normal = local_gradient/local_grad_norm;
 	float light_parallel = dot(local_normal, light_direction);
 	
+	float generalized_distance = sign(distance_count)*pow(abs(distance_count), -1.0/blob_exponent);
+	float thickness;
+	if(abs(generalized_distance)<blob_radius){
+		thickness = 1.0-abs(generalized_distance)/blob_radius;
+	}else{
+		thickness=0.0;
+	}
 	
+	//color in purple blobs
 	if(distance_count>(blob_threshold)){
-		COLOR=green_color;
+		COLOR=green_color + vec4(-0.2,-0.2,-0.2,0.4)*thickness;
+		//color in purple specular
 		if(
 			light_parallel>spec_cos_threshold &&
 			abs(distance_count)<spec_internal_threshold &&
@@ -105,8 +118,10 @@ void fragment() {
 			COLOR = spec_green_color;
 		}
 	}
+	//color in purple blobs
 	if(distance_count<(-blob_threshold)){
-		COLOR=purple_color;
+		COLOR=purple_color+ vec4(-0.2,-0.2,-0.2,0.4)*thickness;
+		//color in purple speculars
 		if(
 			light_parallel<-spec_cos_threshold &&
 			abs(distance_count)<spec_internal_threshold &&
