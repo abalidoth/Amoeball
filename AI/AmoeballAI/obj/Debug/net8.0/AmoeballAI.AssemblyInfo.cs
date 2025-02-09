@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AmoeballAI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94f475b874769c212a293bec08e23cf85a23dfb9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+80231d1da9f2b8cdd2389737cdb2856b7fa21964")]
 [assembly: System.Reflection.AssemblyProductAttribute("AmoeballAI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AmoeballAI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

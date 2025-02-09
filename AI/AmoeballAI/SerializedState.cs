@@ -6,6 +6,8 @@ public readonly struct SerializedState : IEquatable<SerializedState>
     private readonly byte[] _data;
     private readonly int _hash;
 
+    public IEnumerable<byte> Data => _data;
+
     public SerializedState(AmoeballState state)
     {
         _data = state.Serialize();

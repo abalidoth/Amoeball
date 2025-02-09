@@ -1,4 +1,5 @@
-﻿using static AmoeballState;
+﻿using Godot;
+using static AmoeballState;
 
 public class OrderedGameTree
 {
@@ -255,6 +256,8 @@ public class OrderedGameTree
     {
         return nodeIndex != -1 && _nodes[nodeIndex].IsExpanded;
     }
+
+    public int GetDepth(int nodeIndex) => _nodes[nodeIndex].Depth;
 
     public int GetNodeCount() => _count;
 }
