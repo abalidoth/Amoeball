@@ -30,7 +30,8 @@ public class MCTSBenchmark
             {
                 var sw = Stopwatch.StartNew();
                 var mcts = new AmoeballMCTS(state);
-                var bestMove = mcts.FindBestMove(simCount, randomizeSymmetry: false);
+                mcts.RunSimulations(simCount);
+                var bestMove = mcts.GetBestMove(randomizeSymmetry: false);
                 sw.Stop();
 
                 // Get statistics for the chosen move

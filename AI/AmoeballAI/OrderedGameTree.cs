@@ -1,7 +1,7 @@
 ﻿using Godot;
 using static AmoeballState;
 
-public class OrderedGameTree
+public partial class OrderedGameTree
 {
     private struct Node
     {

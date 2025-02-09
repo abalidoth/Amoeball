@@ -2,41 +2,51 @@
 
 public class AmoeballMCTS
 {
-    public readonly OrderedGameTree _gameTree;
+    public readonly OrderedGameTree _tree;
     private readonly Random _random;
-    private const double ExplorationConstant = 1.41; // UCT exploration parameter
     private readonly AmoeballState _initialState;
+    private readonly int _maxDepth;
+    private const double EXPLORATION_CONSTANT = 1.41421356237; // √2
 
-    public AmoeballMCTS(AmoeballState initialState)
+    public AmoeballMCTS(AmoeballState initialState, int maxDepth = int.MaxValue)
     {
-        _gameTree = new OrderedGameTree(initialState);
-        AmoeballState canonicalForm = _gameTree.GetState(0);
-        //TransformationValidation.ValidateTransformation(initialState, canonicalForm);
-        _random = new Random();
         _initialState = initialState;
+        _tree = new OrderedGameTree(initialState);
+        _random = new Random();
+        _maxDepth = maxDepth;
     }
 
-    public void RunIterations(int iterations)
+    public void RunSimulations(int simulations, CancellationToken cancellationToken = default)
     {
-        for (int i = 0; i < iterations; i++)
+        for (int i = 0; i < simulations && !cancellationToken.IsCancellationRequested; i++)
         {
-            var (finalNodeIndex, winner) = SelectAndSimulate();
-            _gameTree.Backpropagate(finalNodeIndex, winner);
+            var leafIndex = Select();
+
+            // Keep expanding randomly until we hit max depth
+            while (_tree.GetDepth(leafIndex) < _maxDepth)
+            {
+                _tree.Expand(leafIndex);
+                var children = _tree.GetChildIndices(leafIndex);
+                if (children.Length == 0) break;
+
+                // Select a random child to expand next
+                leafIndex = children[_random.Next(children.Length)];
+            }
+
+            var winner = SimulateFromNode(leafIndex);
+            _tree.Backpropagate(leafIndex, winner);
         }
     }
 
-    public Move FindBestMove(int simulations, bool randomizeSymmetry = false)
+    public Move GetBestMove(bool randomizeSymmetry = false)
     {
-        RunIterations(simulations);
-        var canonicalMove = GetBestMove();
-
-        // Transform the canonical move to match the current board state
+        var canonicalMove = GetBestRootMove();
         return TransformMoveToCurrentState(canonicalMove, randomizeSymmetry);
     }
 
     private Move TransformMoveToCurrentState(Move canonicalMove, bool randomize = false)
     {
-        AmoeballState canonicalForm = _gameTree.GetState(0);
+        AmoeballState canonicalForm = _tree.GetState(0);
         // Get all possible transformations of the move from canonical form to current state
         var transformedMoves = BoardPermutations.Instance.TransformMove(
             canonicalMove,
@@ -49,126 +59,86 @@ public class AmoeballMCTS
             transformedMoves.First();
     }
 
-    private (int finalNodeIndex, PieceType winner) SelectAndSimulate()
+    private int Select()
     {
-        int currentNodeIndex = 0; // Root node
-        bool explorationPhase = true; // True during selection, false during simulation
+        int currentIndex = 0;
 
-        while (true)
+        while (_tree.IsExpanded(currentIndex) &&
+               _tree.GetDepth(currentIndex) < _maxDepth)
         {
-            if (!_gameTree.IsExpanded(currentNodeIndex))
-            {
-                _gameTree.Expand(currentNodeIndex);
-                explorationPhase = false; // Switch to simulation phase
-            }
+            var childIndices = _tree.GetChildIndices(currentIndex);
+            if (childIndices.Length == 0) break;
 
-            int[] childIndices;
-            if (currentNodeIndex == 0)
-            {
-                var (indices, _) = _gameTree.GetRootEdges();
-                childIndices = indices;
-            }
-            else
-            {
-                childIndices = _gameTree.GetChildIndices(currentNodeIndex);
-            }
-
-            if (childIndices.Length == 0)
-            {
-                // Terminal state - need to determine winner
-                var state = _gameTree.GetState(currentNodeIndex);
-                if (state.Winner != PieceType.Empty)
-                {
-                    return (currentNodeIndex, state.Winner);
-                }
-                // No winner set but game is over - current player loses
-                var loser = _gameTree.GetCurrentPlayer(currentNodeIndex);
-                return (currentNodeIndex, loser == PieceType.GreenAmoeba ?
-                    PieceType.PurpleAmoeba : PieceType.GreenAmoeba);
-            }
-
-            // Select next node - use UCT during exploration, random during simulation
-            int nextNodeIndex;
-            if (explorationPhase)
-            {
-                nextNodeIndex = SelectBestUCTChild(currentNodeIndex, childIndices);
-            }
-            else
-            {
-                int randomIndex = _random.Next(childIndices.Length);
-                nextNodeIndex = childIndices[randomIndex];
-            }
-
-            _gameTree.SetParent(nextNodeIndex, currentNodeIndex);
-            currentNodeIndex = nextNodeIndex;
-        }
-    }
-
-    private int SelectBestUCTChild(int nodeIndex, int[] childIndices)
-    {
-        double bestScore = double.MinValue;
-        int bestChildIndex = -1;
-        PieceType currentPlayer = _gameTree.GetCurrentPlayer(nodeIndex);
-
-        foreach (int childIndex in childIndices)
-        {
-            double score = CalculateUCTScore(childIndex, currentPlayer);
-            if (score > bestScore)
-            {
-                bestScore = score;
-                bestChildIndex = childIndex;
-            }
+            currentIndex = SelectChild(currentIndex);
         }
 
-        return bestChildIndex;
+        return currentIndex;
     }
 
-    private double CalculateUCTScore(int nodeIndex, PieceType perspective)
+    private int SelectChild(int nodeIndex)
     {
-        int parentVisits = _gameTree.GetVisits(_gameTree.GetParent(nodeIndex));
-        int nodeVisits = _gameTree.GetVisits(nodeIndex);
+        var childIndices = _tree.GetChildIndices(nodeIndex);
+        var currentPlayer = _tree.GetCurrentPlayer(nodeIndex);
 
-        if (nodeVisits == 0)
+        return childIndices.MaxBy(childIndex =>
         {
-            return double.MaxValue; // Ensures unvisited nodes are explored
+            double exploitation = _tree.GetWinRatio(childIndex, currentPlayer);
+            double exploration = Math.Sqrt(Math.Log(_tree.GetParentVisits(childIndex)) /
+                                        (1 + _tree.GetVisits(childIndex)));
+            return exploitation + EXPLORATION_CONSTANT * exploration;
+        });
+    }
+
+    private PieceType SimulateFromNode(int nodeIndex)
+    {
+        var state = _tree.GetState(nodeIndex).Clone();
+
+        while (state.Winner == PieceType.Empty)
+        {
+            var possibleMoves = state.GetNextStates().ToList();
+            if (possibleMoves.Count == 0) break;
+
+            state = possibleMoves[_random.Next(possibleMoves.Count)];
         }
 
-        double exploitation = _gameTree.GetWinRatio(nodeIndex, perspective);
-        double exploration = Math.Sqrt(Math.Log(parentVisits) / nodeVisits);
-
-        return exploitation + ExplorationConstant * exploration;
+        return state.Winner;
     }
 
-    private Move GetBestMove()
+    private Move GetBestRootMove()
     {
-        var (childIndices, canonicalMoves) = _gameTree.GetRootEdges();
-        int mostVisitedIndex = -1;
-        int maxVisits = -1;
+        var (indices, moves) = _tree.GetRootEdges();
+        if (indices.Length == 0)
+            throw new InvalidOperationException("No moves available");
 
-        for (int i = 0; i < childIndices.Length; i++)
+        // Select move with highest visit count
+        int bestIndex = 0;
+        int maxVisits = _tree.GetVisits(indices[0]);
+
+        for (int i = 1; i < indices.Length; i++)
         {
-            int visits = _gameTree.GetVisits(childIndices[i]);
+            int visits = _tree.GetVisits(indices[i]);
             if (visits > maxVisits)
             {
                 maxVisits = visits;
-                mostVisitedIndex = i;
+                bestIndex = i;
             }
         }
 
-        return canonicalMoves[mostVisitedIndex];
+        return moves[bestIndex];
     }
 
-    // Method to get statistics about possible moves
-    public IEnumerable<(Move move, int visits, float winRatio)> GetMoveStatistics(bool randomizeSymmetry = false)
+
+// Method to get statistics about possible moves
+public IEnumerable<(Move move, int visits, float winRatio)> GetMoveStatistics(bool randomizeSymmetry = false)
     {
-        var (childIndices, canonicalMoves) = _gameTree.GetRootEdges();
-        var rootPlayer = _gameTree.GetCurrentPlayer(0);
+        var (childIndices, canonicalMoves) = _tree.GetRootEdges();
+        var rootPlayer = _tree.GetCurrentPlayer(0);
 
         var stats = Enumerable.Range(0, childIndices.Length)
             .Select(i => (
                 canonicalMoves[i],
-                _gameTree.GetVisits(childIndices[i]),
-                _gameTree.GetWinRatio(childIndices[i], rootPlayer)
+                _tree.GetVisits(childIndices[i]),
+                _tree.GetWinRatio(childIndices[i], rootPlayer)
             ))
             .OrderByDescending(stats => stats.Item2)
             .ToList();
@@ -180,4 +150,6 @@ public class AmoeballMCTS
             stat.Item3
         ));
     }
+
+    public void SaveToFile(string filename) => _tree.SaveToFile(filename);
 }
