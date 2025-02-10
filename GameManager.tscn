@@ -5,7 +5,7 @@
 [ext_resource type="Shader" path="res://BlobShader.gdshader" id="4_t2aaw"]
 [ext_resource type="Script" path="res://blob_shader.gd" id="5_x24mk"]
 [ext_resource type="Shader" uid="uid://cd34bwinalrli" path="res://GameManager.tres" id="6_qqc4o"]
-[ext_resource type="PackedScene" path="res://ball_token.tscn" id="9_xq8lo"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="9_xq8lo"]
 [ext_resource type="PackedScene" uid="uid://df5ef6qdj4fev" path="res://amoeball_game.tscn" id="11_s088v"]
 [ext_resource type="Texture2D" uid="uid://cldq6xlynktw4" path="res://assets/game_over_green.png" id="12_6q4qm"]
 [ext_resource type="Texture2D" uid="uid://f50gr6tej7wb" path="res://assets/game_over_purple.png" id="13_oj5ei"]
