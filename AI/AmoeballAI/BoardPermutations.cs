@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Godot;
+﻿using Godot;
 using static AmoeballState;
 
 public class BoardPermutations
 {
-    private static readonly Lazy<BoardPermutations> _instance = new(() => new BoardPermutations());
+    private static readonly Lazy<BoardPermutations> _instance = new();
     public static BoardPermutations Instance => _instance.Value;
 
     // The 12 elements of the dihedral group D6 as transformation matrices
-    private static readonly int[][,] D6Matrices = new[]
-    {
+    private static readonly int[][,] D6Matrices =
+    [
         // Pure rotations (6)
         new[,] {{1, 0}, {0, 1}},      // Identity
         new[,] {{0, -1}, {1, 1}},     // Rotate 60° clockwise: (q,r) -> (-r, q+r)
@@ -26,7 +24,7 @@ public class BoardPermutations
         new[,] {{1, 1}, {0, -1}},     // Reflect and rotate 180°
         new[,] {{1, 0}, {-1, -1}},    // Reflect and rotate 240°
         new[,] {{0, -1}, {-1, 0}}     // Reflect and rotate 300°
-    };
+    ];
 
     // The 12 elements of the dihedral group D6 as index permutations
     private readonly int[][] _permutations;

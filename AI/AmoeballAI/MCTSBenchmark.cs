@@ -29,13 +29,13 @@ public class MCTSBenchmark
             for (int sample = 0; sample < samplesPerCount; sample++)
             {
                 var sw = Stopwatch.StartNew();
-                var mcts = new AmoeballMCTS(state);
-                mcts.RunSimulations(simCount);
-                var bestMove = mcts.GetBestMove(randomizeSymmetry: false);
+                var tree = new OrderedGameTree(state);
+                AmoeballMCTS.RunSimulations (tree, simCount);
+                var bestMove = AmoeballMCTS.GetBestMove(tree, state);
                 sw.Stop();
 
                 // Get statistics for the chosen move
-                var stats = mcts.GetMoveStatistics(randomizeSymmetry: false)
+                var stats = AmoeballMCTS.GetMoveStatistics(tree, state)
                     .First(s => MovesAreEquivalent(s.move, bestMove));
 
                 moves.Add(bestMove);

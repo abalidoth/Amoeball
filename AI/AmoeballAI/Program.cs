@@ -11,21 +11,21 @@ public class Program
 
         var initialState = new AmoeballState();
         initialState.SetupInitialPosition();
-        var mcts = new AmoeballMCTS(initialState, 9);
+        var tree = new OrderedGameTree(initialState);
 
         int totalSimulations = 0;
 
         while (!cts.IsCancellationRequested)
         {
-            mcts.RunSimulations(1000, cts.Token);
+            AmoeballMCTS.RunSimulations(tree, 1000, 9, cts.Token);
             totalSimulations += 1000;
             Console.WriteLine("Simulations Completed: {0}", totalSimulations);
             Console.WriteLine("Elapsed Time: {0} minutes", stopwatch.Elapsed.TotalMinutes);
-            Console.WriteLine("Current Best Move: {0}", mcts.GetBestMove().Position);
+            Console.WriteLine("Current Best Move: {0}", AmoeballMCTS.GetBestMove(tree, initialState).Position);
             Console.WriteLine();
         }
 
-        mcts.SaveToFile("MCTSResults.dat");
+        tree.SaveToFile("MCTSResults.dat");
     }
 
     //public static void Main() => RunMCTS();

@@ -1,12 +1,10 @@
 using Godot;
-using System.Numerics;
-using System;
-using System.Collections.Generic;
+
 
 public class HexGrid
 {
-    private static HexGrid? _instance;
-    public static HexGrid Instance => _instance ??= new HexGrid();
+    private static readonly Lazy<HexGrid> _instance = new();
+    public static HexGrid Instance => _instance.Value;
 
     public const int RADIUS = 4;
     public readonly int TotalCells;
