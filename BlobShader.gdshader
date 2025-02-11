@@ -18,7 +18,7 @@ uniform vec2 purple_slimes[61];
 uniform int num_purple;
 uniform int current_player;
 
-const vec2 offset = vec2(0.0,-0.03);
+const vec2 offset = vec2(0.0,-0.025);
 const float blob_radius = 0.035; //as a percent of screen width
 const float blob_exponent = 2.5;
 const float blob_threshold = pow(blob_radius,-blob_exponent);
