@@ -1,4 +1,5 @@
-﻿using static AmoeballState;
+﻿using System.IO;
+using static AmoeballState;
 
 public partial class OrderedGameTree
 {
@@ -179,7 +180,6 @@ public partial class OrderedGameTree
         // Create and populate node
         var node = new Node(state, parentIndex, depth)
         {
-            ChildCount = childCount,
             IsExpanded = isExpanded,
             Visits = visits,
             GreenWins = greenWins,
@@ -189,7 +189,8 @@ public partial class OrderedGameTree
         // Read child indices
         for (int i = 0; i < childCount; i++)
         {
-            node.ChildIndices[i] = reader.ReadInt32();
+            
+            node.AddChild(reader.ReadInt32());
         }
 
         return node;

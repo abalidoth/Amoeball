@@ -11,7 +11,7 @@ public class AmoeballMCTS
     public AmoeballMCTS(AmoeballState initialState, int maxDepth = int.MaxValue)
     {
         _initialState = initialState;
-        _tree = new OrderedGameTree(initialState);
+        _tree = new OrderedGameTree(initialState,10000000);
         _random = new Random();
         _maxDepth = maxDepth;
     }
@@ -69,7 +69,10 @@ public class AmoeballMCTS
             var childIndices = _tree.GetChildIndices(currentIndex);
             if (childIndices.Length == 0) break;
 
-            currentIndex = SelectChild(currentIndex);
+            var childIndex = SelectChild(currentIndex);
+            _tree.SetParent(childIndex, currentIndex);
+            currentIndex = childIndex;
+
         }
 
         return currentIndex;

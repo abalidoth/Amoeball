@@ -42,6 +42,8 @@
     /// </summary>
     public AmoeballState CanonicalForm => _allForms[_canonicalIndex].Deserialize();
 
+    public SerializedState CanonicalState => _allForms[_canonicalIndex];
+
     /// <summary>
     /// Checks if a state is equivalent under any transformation to the cached state
     /// </summary>

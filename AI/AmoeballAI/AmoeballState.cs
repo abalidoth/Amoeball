@@ -155,7 +155,7 @@ public partial class AmoeballState
         }
 
         // No valid kicks possible - ball is surrounded
-        return new[] { ballPos };
+        return [ballPos];
     }
 
     // Serialization to byte array for efficient network transmission
@@ -281,6 +281,7 @@ public partial class AmoeballState
         clone.TurnStep = TurnStep;
         clone._ballPosition = _ballPosition;
         clone.LastMove = LastMove;
+        clone.Winner = Winner;
         return clone;
     }
 
@@ -305,7 +306,7 @@ public partial class AmoeballState
                         foreach (var kickTarget in GetKickDestination(pos))
                         {
                             var newState = Clone();
-                            newState.ApplyMove(new Move(pos, kickTarget));
+                            newState.ApplyPlacement(new Move(pos, kickTarget));
                             yield return newState;
                         }
                     }
@@ -416,9 +417,6 @@ public partial class AmoeballState
         }
     }
 
-    // FNV hash constants
-    private const int FNV_PRIME = 16777619;
-    private const int FNV_OFFSET_BASIS = -2128831035;
 
     public static int ComputeHash(byte[] data)
     {

@@ -1,32 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Godot;
+using System.IO;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public class Program
 {
-    public static void Main()
+    public static void RunMCTS()
     {
-        MCTSBenchmark.RunTest();
-        using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(45));
+        using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(120));
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         var initialState = new AmoeballState();
         initialState.SetupInitialPosition();
-        var mcts = new AmoeballMCTS(initialState, 8);
+        var mcts = new AmoeballMCTS(initialState, 9);
 
         int totalSimulations = 0;
 
         while (!cts.IsCancellationRequested)
         {
-            mcts.RunSimulations(100, cts.Token);
-            totalSimulations += 100;
+            mcts.RunSimulations(1000, cts.Token);
+            totalSimulations += 1000;
             Console.WriteLine("Simulations Completed: {0}", totalSimulations);
             Console.WriteLine("Elapsed Time: {0} minutes", stopwatch.Elapsed.TotalMinutes);
+            Console.WriteLine("Current Best Move: {0}", mcts.GetBestMove().Position);
+            Console.WriteLine();
         }
 
         mcts.SaveToFile("MCTSResults.dat");
     }
+
+    //public static void Main() => RunMCTS();
+
+    public static void ProcessResults()
+    {
+        OrderedGameTree tree = OrderedGameTree.LoadFromFile("MCTSResults.dat");
+        using var stream = new FileStream("MCTSResults.csv", FileMode.Create);
+        using var writer = new StreamWriter(stream);
+        writer.WriteLine("Hex Representation, Visits, Green Win Rate");
+
+        for (int i = 0; i < tree.GetNodeCount(); i++)
+        {
+            if (tree.GetDepth(i) == 8)
+            {
+                writer.WriteLine("{0}, {1}, {2}", tree.GetState(i).Serialize().HexEncode(), tree.GetVisits(i), tree.GetWinRatio(i, AmoeballState.PieceType.GreenAmoeba));
+            }
+            
+        }
+    }
+
+
 }
