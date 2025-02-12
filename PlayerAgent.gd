@@ -51,7 +51,7 @@ func world_to_cube(x:Vector2) -> Vector3:
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$PlaceCursor.animation = PLAYER_TOKEN_ANIMS[player]+"_dangle"
-	$PlaceCursor.flip_h = player
+	$PlaceCursor.flip_h = false
 	$PlaceCursor.play()
 	$InstructionLabel.hide()
 	_on_amoeball_game_made_move(STATE_PLACE_1, 0, null)
@@ -59,12 +59,12 @@ func _ready():
 
 func set_p2():
 	$PlaceCursor.animation = PLAYER_TOKEN_ANIMS[player]+"_dangle"
-	$PlaceCursor.flip_h = player
+	$PlaceCursor.flip_h = false
 	$TurnIndicators.position += PURPLE_INDICATOR_POS
 	$TurnIndicators/PlaceIndicator1.animation = "purple_idle"
 	$TurnIndicators/PlaceIndicator2.animation = "purple_idle"
-	$TurnIndicators/PlaceIndicator1.flip_h = true
-	$TurnIndicators/PlaceIndicator2.flip_h = true
+	$TurnIndicators/PlaceIndicator1.flip_h = false
+	$TurnIndicators/PlaceIndicator2.flip_h = false
 	
 
 func set_nodes_dark():

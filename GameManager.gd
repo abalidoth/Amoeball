@@ -100,7 +100,7 @@ func place_token(tile:Vector3, player:int) -> void:
 	token_coords[player].append(tile)
 	new_token.animation=PLAYER_COLORS[player]+"_drop"
 	new_token.name = "token"+"_"+str(tile.x)+"_"+str(tile.y)+"_"+str(tile.z)
-	new_token.flip_h = player
+	new_token.flip_h = false
 	new_token.show()
 	new_token.play()
 	update_shader(tile, "place")

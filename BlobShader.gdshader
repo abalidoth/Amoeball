@@ -43,8 +43,8 @@ uniform float progress;
 uniform vec2 move_position;
 uniform int move_type;
 
-const vec4 green_color = vec4(0.0,0.5,0.0,0.3);
-const vec4 purple_color = vec4(0.3,0.0,0.3,0.3);
+const vec4 green_color = vec4(0.0,0.5,0.0,0.4);
+const vec4 purple_color = vec4(0.3,0.0,0.3,0.4);
 const vec4 spec_green_color = vec4(0.7,1.0,0.7,0.7);
 const vec4 spec_purple_color = vec4(1.0,0.5,1.0,0.7);
 const vec4 shadow_color = vec4(0.0,0.0,0.0,0.5);
