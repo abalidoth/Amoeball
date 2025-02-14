@@ -450,5 +450,32 @@ namespace AmoeballAI
                     $"Graph has unreachable nodes: {string.Join(", ", unreachable)}");
             }
         }
+        public AmoeballState PopState()
+        {
+            int bestNodeIndex = 0;
+            int maxVisits = -1;
+            int nodeCount = GetNodeCount();
+            int targetDepth = GetDepth(0) + 1;
+
+            // Linear scan through all nodes
+            for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+            {
+                if (GetDepth(nodeIndex) == targetDepth)
+                {
+                    int visits = GetVisits(nodeIndex);
+                    if (visits > maxVisits)
+                    {
+                        maxVisits = visits;
+                        bestNodeIndex = nodeIndex;
+                    }
+                }
+            }
+
+            if (maxVisits <= 0) throw new InvalidOperationException("No nodes visited at target depth.");
+            // Return the most visited state at the target depth
+            var resultState = GetState(bestNodeIndex);
+            Prune(bestNodeIndex);
+            return resultState;
+        }
     }
 }

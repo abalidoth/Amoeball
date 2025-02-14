@@ -31,12 +31,12 @@ public class Program
     public static void Main()
     {
         var mcts = new MCTSPlayer(TimeSpan.FromSeconds(3),9, false);
-        var mcts2 = new MCTSPlayer(TimeSpan.FromSeconds(5), 9, false);
+        var mcts2 = new MCTSPlayer(TimeSpan.FromSeconds(1), 9, false);
         var random = new RandomPlayer();
         var random2 = new RandomPlayer();
         var oneply = new OnePlyPlayer();
         var oneply2 = new OnePlyPlayer();
-        var runner = new GameRunner(mcts, oneply, verbose: true);
+        var runner = new GameRunner(mcts, mcts2, verbose: true);
         runner.RunGames(1000);
     }
 

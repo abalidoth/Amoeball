@@ -38,10 +38,10 @@ namespace AmoeballAI
             }
 
             GameOver = (resultState.Winner != PieceType.Empty);
-            if (GameOver && resultState.Winner == _playerColor)
+            if (GameOver)
             {
-                _gamesPlayed++;
-                _gamesWon++;
+                if (resultState.Winner == _playerColor) NotifyWin();
+                else NotifyLoss();
             }
 
             return resultState;
@@ -50,17 +50,18 @@ namespace AmoeballAI
         public void NotifyLoss()
         {
             _gamesPlayed++;
+            OnGameComplete();
         }
 
         public void NotifyWin()
         {
             _gamesPlayed++;
             _gamesWon++;
+            OnGameComplete();
         }
 
-        protected virtual void ProcessTurn(AmoeballState currentState)
-        {        }
-
+        protected virtual void ProcessTurn(AmoeballState currentState){ }
+        protected virtual void OnGameComplete() { }
         protected abstract AmoeballState SelectSingleMove(AmoeballState currentState);
     }
 }

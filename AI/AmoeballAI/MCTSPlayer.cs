@@ -8,8 +8,10 @@ namespace AmoeballAI
         private readonly int _maxDepth;
         private readonly bool _verbose;
 
+
         // Game state tracking
         private OrderedGameTree? _gameTree;
+
 
         public MCTSPlayer(TimeSpan turnLength, int maxDepth = int.MaxValue, bool verbose = false)
         {
@@ -87,8 +89,16 @@ namespace AmoeballAI
 
         protected override AmoeballState SelectSingleMove(AmoeballState currentState)
         {
-            return AmoeballMCTS.PopState(_gameTree!);
+            return _gameTree!.PopState();
         }
+
+        protected override void OnGameComplete()
+        {
+            // Clear the game tree after each game to prevent memory buildup
+            _gameTree = null;
+        }
+
+
 
         public (int nodeCount, int totalSimulations) GetTreeStats()
         {

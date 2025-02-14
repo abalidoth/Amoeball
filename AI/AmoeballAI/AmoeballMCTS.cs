@@ -140,34 +140,6 @@ namespace AmoeballAI
                 stat.Item3
             ));
         }
-
-
-        public static AmoeballState PopState(OrderedGameTree tree)
-        {
-            int bestNodeIndex = 0;
-            int maxVisits = -1;
-            int nodeCount = tree.GetNodeCount();
-            int targetDepth = tree.GetDepth(0) + 1;
-
-            // Linear scan through all nodes
-            for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
-            {
-                if (tree.GetDepth(nodeIndex) == targetDepth)
-                {
-                    int visits = tree.GetVisits(nodeIndex);
-                    if (visits > maxVisits)
-                    {
-                        maxVisits = visits;
-                        bestNodeIndex = nodeIndex;
-                    }
-                }
-            }
-
-            if (maxVisits <= 0) throw new InvalidOperationException("No nodes visited at target depth.");
-            // Return the most visited state at the target depth
-            var resultState = tree.GetState(bestNodeIndex);
-            tree.Prune(bestNodeIndex);
-            return resultState;
-        }
+    
     }
-}
+    }
