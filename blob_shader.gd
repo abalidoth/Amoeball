@@ -1,4 +1,4 @@
-@tool
+
 extends ColorRect
 
 var current_move:Vector2
