@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bqk5sv2mk1qps"
+
+[deps]
+
+files=["res://AI/AmoeballAI/bin/Debug/net8.0/MCTSResults. Visits.translation", "res://AI/AmoeballAI/bin/Debug/net8.0/MCTSResults. Green Win Rate.translation"]
+
+source_file="res://AI/AmoeballAI/bin/Debug/net8.0/MCTSResults.csv"
+dest_files=["res://AI/AmoeballAI/bin/Debug/net8.0/MCTSResults. Visits.translation", "res://AI/AmoeballAI/bin/Debug/net8.0/MCTSResults. Green Win Rate.translation"]
+
+[params]
+
+compress=true
+delimiter=0

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmoeballAI", "AmoeballAI\AmoeballAI.csproj", "{B445C963-52F9-4CD9-B146-E7B8908C21F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmoeballAIConsole", "AmoeballAIConsole\AmoeballAIConsole.csproj", "{3E12843A-8957-43C6-8FD7-8192CD0670BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTreeExplorer", "GameTreeExplorer\GameTreeExplorer.csproj", "{D302EB79-1A70-4D6F-B6FA-F82B9A384B68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B445C963-52F9-4CD9-B146-E7B8908C21F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B445C963-52F9-4CD9-B146-E7B8908C21F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B445C963-52F9-4CD9-B146-E7B8908C21F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B445C963-52F9-4CD9-B146-E7B8908C21F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E12843A-8957-43C6-8FD7-8192CD0670BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E12843A-8957-43C6-8FD7-8192CD0670BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E12843A-8957-43C6-8FD7-8192CD0670BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E12843A-8957-43C6-8FD7-8192CD0670BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D302EB79-1A70-4D6F-B6FA-F82B9A384B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D302EB79-1A70-4D6F-B6FA-F82B9A384B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D302EB79-1A70-4D6F-B6FA-F82B9A384B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D302EB79-1A70-4D6F-B6FA-F82B9A384B68}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

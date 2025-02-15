@@ -1,0 +1,17 @@
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\bin\Debug\net8.0\AmoeballTesting.exe
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\bin\Debug\net8.0\AmoeballTesting.deps.json
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\bin\Debug\net8.0\AmoeballTesting.runtimeconfig.json
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\bin\Debug\net8.0\AmoeballTesting.dll
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\bin\Debug\net8.0\AmoeballTesting.pdb
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\bin\Debug\net8.0\GodotSharp.dll
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.csproj.AssemblyReference.cache
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.GeneratedMSBuildEditorConfig.editorconfig
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.AssemblyInfoInputs.cache
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.AssemblyInfo.cs
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.csproj.CoreCompileInputs.cache
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\Amoeball.3D8BF0D6.Up2Date
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.dll
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\refint\AmoeballTesting.dll
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.pdb
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\AmoeballTesting.genruntimeconfig.cache
+D:\Development\Amoeball\Testing\AmoeballTesting\AmoeballTesting\obj\Debug\net8.0\ref\AmoeballTesting.dll
