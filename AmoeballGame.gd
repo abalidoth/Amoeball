@@ -1,43 +1,12 @@
 extends Node
+class_name AmoeballGame
 
-var board_size:int = 4
-var piece_pos : Array = [[
-	Vector3(-board_size,board_size,0),
-	Vector3(0,-board_size,board_size),
-	Vector3(board_size,0,-board_size)
-],[
-	Vector3(board_size,-board_size,0),
-	Vector3(0,board_size,-board_size),
-	Vector3(-board_size,0,board_size)
-]]
-
-const HEX_DIRECS = [
-	Vector3(1,-1,0),
-	Vector3(1,0,-1),
-	Vector3(0,1,-1),
-	Vector3(0,-1,1),
-	Vector3(-1,0,1),
-	Vector3(-1,1,0),
-	
-]
-
-var move_queue = []
-
-var all_tiles = []
-var current_player = 0
-var current_state = STATE_PLACE_1
-var ball_pos = Vector3(0,0,0)
-
-var last_move = Vector3(0,0,0)
-
-var stored_kick_directions
-
-signal made_new_token(place: Vector3, player:int)
+signal made_new_token(place: Vector3, player: int)
 signal ball_moved(place: Vector3)
-signal removed_token(place: Vector3, player:int)
-signal new_turn(player:int, turn_num:int)
-signal made_move(new_state:int, player:int, game:Node)
-signal game_over(player:int)
+signal removed_token(place: Vector3, player: int)
+signal new_turn(player: int, turn_num: int)
+signal made_move(new_state: int, player: int, game: Node)
+signal game_over(player: int)
 
 enum {
 	STATE_PLACE_1,
@@ -48,171 +17,164 @@ enum {
 	STATE_WIN,
 	STATE_IDLE
 }
-var state_stack = []
-var current_turn = 0
+
+var current_player: int:
+	get: return int(_state.CurrentPlayer) - 1
+var current_state: int:
+	get: return _convert_state_to_enum(_state.TurnStep)
+var ball_pos: Vector3:
+	get: return _axial_to_cubic(_state.GetBallPosition())
+var last_move: Vector3
+var current_turn: int = 0
+
+var _state: AmoeballState
+var stored_kick_directions
+var pending_placement = null
 
 func _init():
-	# get the full set of possible board coords
-	for i in range(-board_size,board_size+1):
-		for j in range(-board_size,board_size+1):
-			var k=-i-j
-			if (-board_size <= k) and (k <= board_size):
-				all_tiles.append(Vector3(i,j,k))
-				
-func set_state(new_state):
-	current_state = new_state
-	made_move.emit(new_state, current_player, self)
-				
+	_state = AmoeballState.new()
+	_state.SetupInitialPosition()
+	last_move = Vector3.ZERO
+
+func _convert_state_to_enum(step: int) -> int:
+	match step:
+		1: return STATE_PLACE_1
+		2: return STATE_REMOVE
+		3: return STATE_PLACE_2
+	return STATE_IDLE
+
+func _cubic_to_axial(v: Vector3) -> Vector2I:
+	return Vector2I(v.x, v.y)
+
+func _axial_to_cubic(v: Vector2I) -> Vector3:
+	return Vector3(v.x, v.y, -v.x - v.y)
+
+func is_space_free(t: Vector3) -> bool:
+	var pos = _cubic_to_axial(t)
+	return _state.GetPiece(pos) == AmoeballState.PieceType.Empty
+
+func get_moves() -> Array:
+	if current_state == STATE_KICK_1 or current_state == STATE_KICK_2:
+		return stored_kick_directions
 	
-func is_space_free(t:Vector3):
-	return (t in all_tiles) and (t not in ([ball_pos]+piece_pos[0]+piece_pos[1]))
+	var legal_moves = _state.GetLegalMoves()
+	var result = []
+	for move in legal_moves:
+		result.append(_axial_to_cubic(move.Position))
+	return result
 
-func get_free():
-	var taken = ([ball_pos]+piece_pos[0]+piece_pos[1])
-	var out = [] #gdscript does not have comprehensions
-	for i in all_tiles:
-		if i not in taken:
-			out.append(i)
-	return out
+func get_kick_directions(place: Vector3) -> Array:
+	var pos = _cubic_to_axial(place)
+	if not _is_adjacent_to_ball(pos):
+		return []
+		
+	var kick_targets = _state.GetKickDestination(pos)
+	var result = []
+	for target in kick_targets:
+		result.append(_axial_to_cubic(target))
+	return result
 
-func get_kick_directions(place: Vector3):
-	if place-ball_pos not in HEX_DIRECS:
-		return null
-	var curve = []
-	var sharp = []
-	for i in HEX_DIRECS:
-		if not is_space_free(ball_pos+i):
-			continue
-		if ball_pos-i == place:
-			return [ball_pos+i] #straight shot
-		var d = hex_dist(ball_pos+i,place)
-		if d==1:
-			sharp.append(ball_pos+i)
-		elif d==2:
-			curve.append(ball_pos+i)
-	if curve != []:
-		return curve
-	if sharp != []:
-		return sharp
-	return [] #game is over
+func _is_adjacent_to_ball(pos: Vector2I) -> bool:
+	return _state.GetDistance(pos, _state.GetBallPosition()) == 1
 
-func hex_dist(coord_1 : Vector3, coord_2: Vector3):
-	var pos = abs(coord_1-coord_2)
-	return max(pos.x, pos.y, pos.z)
+func hex_dist(coord_1: Vector3, coord_2: Vector3) -> int:
+	var pos1 = _cubic_to_axial(coord_1)
+	var pos2 = _cubic_to_axial(coord_2)
+	return _state.GetDistance(pos1, pos2)
 
-func get_moves():
-	match current_state:
-		STATE_PLACE_1, STATE_PLACE_2:
-			#var current_tokens = piece_pos[current_player]
-			var current_tokens={}
-			for i in piece_pos[current_player]:
-				current_tokens[i]=null #pretending this is a set
-			#var free_space = get_free()
-			var out = []
-			for i in get_free():
-				for j in HEX_DIRECS:
-					if i+j in current_tokens:
-						out.append(i)
-						break
-						
-			return(out)
-			
-		STATE_KICK_1, STATE_KICK_2:
-			return stored_kick_directions
-		STATE_REMOVE:
-			return piece_pos[current_player]
-			#var out = []
-			#for i in piece_pos[current_player]:
-				#if i != last_move:
-					#out.append(i)
-			#return out
-			
-func turn_over():
-	current_player = 1-current_player
+func set_state(new_state: int) -> void:
+	made_move.emit(new_state, current_player, self)
+
+func turn_over() -> void:
+	current_player = 1 - current_player
 	current_turn += 1
 	set_state(STATE_PLACE_1)
 	new_turn.emit(current_player, current_turn)
-	
-	
-func state_pop():
-	var recent = state_stack.pop_back()
-	var new = state_stack[-1]
-	current_state = new["state"]
-	last_move = new["move"]
-	current_player = new["current_player"]
-	piece_pos = new["piece_pos"]
-	ball_pos = new["ball_pos"]
-	current_turn = new["current_turn"]
-	return recent
-		
-func make_move(move: Vector3):
-	state_stack.append({
-		"state":current_state,
-		"move":move,
-		"player":current_player,
-		"piece_pos": piece_pos,
-		"ball_pos": ball_pos,
-		"kick_directions": stored_kick_directions,
-		"current_turn": current_turn
-	})
+
+func _handle_placement(move: Vector3, is_second_placement: bool) -> void:
+	var pos = _cubic_to_axial(move)
+	if not _state.IsValidPlacement(pos):
+		push_error("Invalid placement position")
+		return
+	made_new_token.emit(move, current_player)
+	stored_kick_directions = get_kick_directions(move)
 	last_move = move
+	
+	match stored_kick_directions:
+		null:
+			# No kick needed
+			var placement_move = AmoeballState.Move.new(pos)
+			if not _state.IsLegalMove(placement_move):
+				push_error("Illegal placement move attempted")
+				return
+			_state.ApplyMove(placement_move)
+			if is_second_placement:
+				turn_over()
+			else:
+				set_state(STATE_REMOVE)
+		[var a]:
+			# Single kick target - automatic
+			var kick_move = AmoeballState.Move.new(pos, _cubic_to_axial(a))
+			if not _state.IsLegalMove(kick_move):
+				push_error("Illegal placement with kick move attempted")
+				return
+			_state.ApplyMove(kick_move)
+			ball_moved.emit(a)
+			if is_second_placement:
+				turn_over()
+			else:
+				set_state(STATE_REMOVE)
+		[var a, var b]:
+			# Multiple kick targets - store placement and wait for kick choice
+			pending_placement = move
+			set_state(STATE_KICK_2 if is_second_placement else STATE_KICK_1)
+		[]:
+			# Ball surrounded - game over
+			var placement_move = AmoeballState.Move.new(pos)
+			if not _state.IsLegalMove(placement_move):
+				push_error("Illegal placement move attempted")
+				return
+			_state.ApplyMove(placement_move)
+			set_state(STATE_WIN)
+			game_over.emit(current_player)
+
+func _handle_kick(move: Vector3, is_second_kick: bool) -> void:
+	var placement_pos = _cubic_to_axial(pending_placement)
+	var kick_pos = _cubic_to_axial(move)
+	var kick_move = AmoeballState.Move.new(placement_pos, kick_pos)
+	
+	# Validate the combined placement and kick move
+	if not _state.IsLegalMove(kick_move):
+		push_error("Illegal kick move attempted")
+		return
+		
+	_state.ApplyMove(kick_move)
+	ball_moved.emit(move)
+	last_move = pending_placement
+	pending_placement = null
+	
+	if is_second_kick:
+		turn_over()
+	else:
+		set_state(STATE_REMOVE)
+
+func make_move(move: Vector3) -> void:
 	match current_state:
 		STATE_PLACE_1:
-			piece_pos[current_player].append(move)
-			made_new_token.emit(move, current_player)
-			stored_kick_directions = get_kick_directions(move)
-			match stored_kick_directions:
-				null:
-					set_state(STATE_REMOVE)
-					return
-				[var a]:
-					ball_pos = a
-					ball_moved.emit(a)
-					set_state(STATE_REMOVE)
-					return
-				[var a, var b]:
-					set_state(STATE_KICK_1)
-					return
-				[]:
-					set_state(STATE_WIN)
-					game_over.emit(current_player)
-					return
-					
+			_handle_placement(move, false)
+		STATE_PLACE_2:
+			_handle_placement(move, true)
 		STATE_KICK_1:
-			ball_pos = move
-			ball_moved.emit(move)
-			set_state(STATE_REMOVE)
-			return
-					
+			_handle_kick(move, false)
+		STATE_KICK_2:
+			_handle_kick(move, true)
 		STATE_REMOVE:
-			piece_pos[current_player].erase(move)
+			var pos = _cubic_to_axial(move)
+			var remove_move = AmoeballState.Move.new(pos)
+			if not _state.IsLegalMove(remove_move):
+				push_error("Illegal remove move attempted")
+				return
+			_state.ApplyMove(remove_move)
+			last_move = move
 			removed_token.emit(move, current_player)
 			set_state(STATE_PLACE_2)
-			return
-			
-		STATE_PLACE_2:
-			piece_pos[current_player].append(move)
-			made_new_token.emit(move, current_player)
-			stored_kick_directions = get_kick_directions(move)
-			match stored_kick_directions:
-				null:
-					turn_over()
-					return
-				[var a]:
-					ball_pos = a
-					ball_moved.emit(a)
-					turn_over()
-					return
-				[var a, var b]:
-					set_state(STATE_KICK_2)
-					return
-				[]:
-					set_state(STATE_WIN)
-					game_over.emit(current_player)
-					return
-		
-		STATE_KICK_2:
-			ball_pos = move
-			ball_moved.emit(move)
-			turn_over()
-			return
