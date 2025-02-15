@@ -81,19 +81,68 @@ namespace AmoeballAI
             }
         }
 
+        // Existing coordinate-based method
         public bool IsValidPlacement(Vector2I pos)
         {
-            if (!_grid.IsValidCoordinate(pos) || GetPiece(pos) != PieceType.Empty)
+            int index = _grid.GetIndex(pos);
+            return IsValidPlacement(index);
+        }
+
+        // New index-based overload
+        public bool IsValidPlacement(int index)
+        {
+            if (index == -1 || _board[index] != PieceType.Empty)
                 return false;
 
-            // Check if adjacent to current player's amoeba
-            foreach (var adjacentPos in _grid.GetAdjacentCoordinates(pos))
+            foreach (int adjacentIndex in _grid.GetAdjacentIndices(index))
             {
-                if (GetPiece(adjacentPos) == CurrentPlayer)
+                if (_board[adjacentIndex] == CurrentPlayer)
                     return true;
             }
 
             return false;
+        }
+
+        public IEnumerable<Move> GetLegalMoves()
+        {
+            if (TurnStep == 1 || TurnStep == 3)
+            {
+                // Find all valid placements
+                for (int i = 0; i < _board.Length; i++)
+                {
+                    if (!IsValidPlacement(i))
+                        continue;
+
+                    var pos = _grid.GetCoordinate(i);
+
+                    // Check if this placement would kick the ball
+                    bool willKickBall = _grid.GetDistance(pos, _ballPosition) == 1;
+
+                    if (willKickBall)
+                    {
+                        // Generate a move for each possible kick target
+                        foreach (var kickTarget in GetKickDestination(pos))
+                        {
+                            yield return new Move(pos, kickTarget);
+                        }
+                    }
+                    else
+                    {
+                        yield return new Move(pos);
+                    }
+                }
+            }
+            else // TurnStep == 2 (removal)
+            {
+                // Find all pieces that can be removed
+                for (int i = 0; i < _board.Length; i++)
+                {
+                    if (_board[i] == CurrentPlayer)
+                    {
+                        yield return new Move(_grid.GetCoordinate(i));
+                    }
+                }
+            }
         }
 
         public Vector2I GetBallPosition()
@@ -293,49 +342,11 @@ namespace AmoeballAI
 
         public IEnumerable<AmoeballState> GetNextStates()
         {
-            if (TurnStep == 1 || TurnStep == 3)
+            foreach (var move in GetLegalMoves())
             {
-                // Find all valid placements
-                for (int i = 0; i < _board.Length; i++)
-                {
-                    var pos = _grid.GetCoordinate(i);
-                    if (IsValidPlacement(pos))
-                    {
-                        // Check if this placement would kick the ball
-                        bool willKickBall = _grid.GetDistance(pos, _ballPosition) == 1;
-
-                        if (willKickBall)
-                        {
-                            // Generate a state for each possible kick target
-                            foreach (var kickTarget in GetKickDestination(pos))
-                            {
-                                var newState = Clone();
-                                newState.ApplyPlacement(new Move(pos, kickTarget));
-                                yield return newState;
-                            }
-                        }
-                        else
-                        {
-                            var newState = Clone();
-                            newState.ApplyPlacement(new Move(pos));
-                            yield return newState;
-                        }
-                    }
-                }
-            }
-            else // TurnStep == 2 (removal)
-            {
-                // Find all pieces that can be removed
-                for (int i = 0; i < _board.Length; i++)
-                {
-                    if (_board[i] == CurrentPlayer)
-                    {
-                        var pos = _grid.GetCoordinate(i);
-                        var newState = Clone();
-                        newState.ApplyRemoval(new Move(pos));
-                        yield return newState;
-                    }
-                }
+                var newState = Clone();
+                newState.ApplyMove(move);
+                yield return newState;
             }
         }
 
@@ -358,20 +369,9 @@ namespace AmoeballAI
             }
         }
 
-        public void CheckForLegalMoves()
+        private void CheckForLegalMoves()
         {
-            bool hasValidMove = false;
-            for (int i = 0; i < _board.Length; i++)
-            {
-                var pos = _grid.GetCoordinate(i);
-                if (IsValidPlacement(pos))
-                {
-                    hasValidMove = true;
-                    break;
-                }
-            }
-
-            if (!hasValidMove)
+            if (!GetLegalMoves().Any())
             {
                 Winner = CurrentPlayer == PieceType.GreenAmoeba ? PieceType.PurpleAmoeba : PieceType.GreenAmoeba;
             }

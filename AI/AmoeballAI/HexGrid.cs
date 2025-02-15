@@ -13,6 +13,7 @@ namespace AmoeballAI
 
         // Mapping between hex coordinates and array indices
         private readonly Dictionary<Vector2I, int> _coordToIndex;
+        private int[][] _adjacencyTable;
         private readonly Vector2I[] _indexToCoord;
 
         // Fixed array of hex directions for efficient lookup
@@ -47,6 +48,25 @@ namespace AmoeballAI
 
             TotalCells = coords.Count;
             _indexToCoord = coords.ToArray();
+
+            // Precompute adjacency table
+            _adjacencyTable = new int[TotalCells][];
+            for (int i = 0; i < TotalCells; i++)
+            {
+                var adjacentIndices = new List<int>();
+                var coord = _indexToCoord[i];
+
+                foreach (var dir in Directions)
+                {
+                    var adjacent = coord + dir;
+                    if (_coordToIndex.TryGetValue(adjacent, out int adjacentIndex))
+                    {
+                        adjacentIndices.Add(adjacentIndex);
+                    }
+                }
+
+                _adjacencyTable[i] = adjacentIndices.ToArray();
+            }
         }
 
         public bool IsValidCoordinate(Vector2I coord)
@@ -68,23 +88,21 @@ namespace AmoeballAI
 
         public IEnumerable<Vector2I> GetAdjacentCoordinates(Vector2I coord)
         {
-            foreach (var dir in Directions)
+            int index = GetIndex(coord);
+            if (index != -1)
             {
-                var adjacent = coord + dir;
-                if (IsValidCoordinate(adjacent))
-                    yield return adjacent;
+                foreach (int adjacentIndex in _adjacencyTable[index])
+                {
+                    yield return _indexToCoord[adjacentIndex];
+                }
             }
         }
 
         public IEnumerable<int> GetAdjacentIndices(int index)
         {
-            var coord = GetCoordinate(index);
-            foreach (var dir in Directions)
-            {
-                var adjacent = coord + dir;
-                if (_coordToIndex.TryGetValue(adjacent, out int adjacentIndex))
-                    yield return adjacentIndex;
-            }
+            if (index < 0 || index >= TotalCells)
+                return [];
+            return _adjacencyTable[index];
         }
 
         public int GetDistance(Vector2I a, Vector2I b)
