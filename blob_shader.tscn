@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://bgqir3v53t4mt"]
+
+[ext_resource type="Shader" path="res://BlobShader.gdshader" id="1_jg5ei"]
+[ext_resource type="Script" path="res://blob_shader.gd" id="2_4ggj6"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0r3p5"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wkc16"]
+seamless = true
+noise = SubResource("FastNoiseLite_0r3p5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u634q"]
+shader = ExtResource("1_jg5ei")
+shader_parameter/green_slimes = null
+shader_parameter/num_green = null
+shader_parameter/purple_slimes = null
+shader_parameter/num_purple = 1
+shader_parameter/current_player = null
+shader_parameter/ball_position = null
+shader_parameter/progress = null
+shader_parameter/move_position = null
+shader_parameter/move_type = -1
+shader_parameter/noise = SubResource("NoiseTexture2D_wkc16")
+
+[node name="BlobShader" type="ColorRect"]
+material = SubResource("ShaderMaterial_u634q")
+offset_right = 425.0
+offset_bottom = 241.0
+script = ExtResource("2_4ggj6")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.3
+one_shot = true

@@ -1,19 +1,20 @@
-[gd_scene load_steps=25 format=3 uid="uid://dcjn6gwvk5j41"]
+[gd_scene load_steps=26 format=3 uid="uid://crb4rxska7wsb"]
 
 [ext_resource type="FontFile" uid="uid://dmi84odllf8ul" path="res://assets/Kenney Pixel.ttf" id="1_bdyni"]
 [ext_resource type="Script" path="res://how_to_play.gd" id="2_a3hu7"]
-[ext_resource type="TileSet" uid="uid://cylc7rq1b5wrm" path="res://new_tile_set.tres" id="2_isp2i"]
-[ext_resource type="PackedScene" uid="uid://b3ojajgmvn3ti" path="res://amoeball_button.tscn" id="2_l247g"]
-[ext_resource type="PackedScene" uid="uid://cb7hvn8h0s4q2" path="res://blob_token.tscn" id="3_rvx1k"]
-[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="4_5d1tr"]
+[ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_isp2i"]
+[ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://amoeball_button.tscn" id="2_l247g"]
+[ext_resource type="PackedScene" uid="uid://cbiyr00uk66gd" path="res://blob_token.tscn" id="3_rvx1k"]
+[ext_resource type="PackedScene" path="res://ball_token.tscn" id="4_5d1tr"]
 [ext_resource type="Script" path="res://Page1.gd" id="4_cb8q8"]
 [ext_resource type="Script" path="res://Page2.gd" id="7_aywg6"]
-[ext_resource type="SpriteFrames" uid="uid://bmrh0vshx27on" path="res://remove.tres" id="8_o82ug"]
+[ext_resource type="SpriteFrames" uid="uid://cyldaey0y6oca" path="res://remove.tres" id="8_o82ug"]
 [ext_resource type="Script" path="res://Page3.gd" id="9_eapdo"]
 [ext_resource type="Script" path="res://Page4.gd" id="10_8m34a"]
 [ext_resource type="Script" path="res://Page5.gd" id="11_prsd7"]
 [ext_resource type="Script" path="res://Page6.gd" id="12_ekyhq"]
-[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://main_menu_theme.tres" id="13_v4lif"]
+[ext_resource type="Theme" path="res://main_menu_theme.tres" id="13_v4lif"]
+[ext_resource type="PackedScene" uid="uid://bgqir3v53t4mt" path="res://blob_shader.tscn" id="15_1fvww"]
 
 [sub_resource type="Theme" id="Theme_7okgq"]
 default_font = ExtResource("1_bdyni")
@@ -336,6 +337,9 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 text = "next page"
+
+[node name="BlobShader" parent="." instance=ExtResource("15_1fvww")]
+layout_mode = 0
 
 [connection signal="pressed" from="HBoxContainer/VBoxContainer/ReturnButton" to="." method="_on_return_button_pressed"]
 [connection signal="animation_finished" from="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2/Green1" to="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" method="_on_green_1_animation_finished"]
