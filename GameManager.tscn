@@ -1,14 +1,28 @@
-[gd_scene load_steps=7 format=3 uid="uid://1o6hivy8862p"]
+[gd_scene load_steps=8 format=3 uid="uid://1o6hivy8862p"]
 
+[ext_resource type="Script" path="res://GameUI.gd" id="1_5xws6"]
 [ext_resource type="Script" path="res://GameManager.gd" id="1_145do"]
 [ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_sr2ol"]
-[ext_resource type="PackedScene" path="res://ball_token.tscn" id="9_xq8lo"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="9_xq8lo"]
 [ext_resource type="PackedScene" uid="uid://df5ef6qdj4fev" path="res://amoeball_game.tscn" id="11_s088v"]
 [ext_resource type="Texture2D" uid="uid://cldq6xlynktw4" path="res://assets/game_over_green.png" id="12_6q4qm"]
 [ext_resource type="Texture2D" uid="uid://f50gr6tej7wb" path="res://assets/game_over_purple.png" id="13_oj5ei"]
 
-[node name="Game" type="Node2D"]
+[node name="GameUI" type="Node2D" node_paths=PackedStringArray("board", "game_manager", "ball", "game", "win_screen_layer", "game_over_timer", "green_wins_label", "purple_wins_label")]
+script = ExtResource("1_5xws6")
+board = NodePath("Board")
+game_manager = NodePath("GameManager")
+ball = NodePath("Ball")
+game = NodePath("AmoeballGame")
+win_screen_layer = NodePath("WinScreenLayer")
+game_over_timer = NodePath("GameOverTimer")
+green_wins_label = NodePath("WinScreenLayer/ColorRect/Control/GreenWins")
+purple_wins_label = NodePath("WinScreenLayer/ColorRect/Control/PurpleWins")
+
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("game", "ui")]
 script = ExtResource("1_145do")
+game = NodePath("../AmoeballGame")
+ui = NodePath("..")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1

@@ -56,7 +56,8 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\clerm\\.nuget\\packages\\": {}
+    "C:\\Users\\clerm\\.nuget\\packages\\": {},
+    "D:\\VisualStudio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -67,8 +68,12 @@
       "packagesPath": "C:\\Users\\clerm\\.nuget\\packages\\",
       "outputPath": "D:\\Development\\Amoeball\\Amoeball\\AI\\GameTreeExplorer\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "D:\\VisualStudio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\clerm\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -98,7 +103,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0-windows7.0": {
@@ -122,7 +127,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

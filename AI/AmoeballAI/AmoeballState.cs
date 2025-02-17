@@ -482,13 +482,6 @@ namespace AmoeballAI
                 Position = position;
                 KickTarget = kickTarget;
             }
-
-            //public int Order()
-            //{
-            //    var _grid = HexGrid.Instance;
-            //    int kickIndex = KickTarget.HasValue ? _grid.GetIndex(KickTarget.Value) : 0;
-            //    return _grid.GetIndex(Position) * _grid.TotalCells + kickIndex;
-            //}
         }
 
     }

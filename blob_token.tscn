@@ -321,7 +321,7 @@ animations = [{
 
 [node name="BlobToken" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_mpvd6")
-animation = &"green_drop"
+animation = &"green_idle"
 offset = Vector2(0, -5)
 script = ExtResource("3_1aaqm")
 

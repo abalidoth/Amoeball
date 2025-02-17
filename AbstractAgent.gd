@@ -13,7 +13,10 @@ enum GameState {
 	STATE_IDLE
 }
 
-@export var player: int = 0  # 0 for green, 1 for purple
+var player: int = 0  # 0 for green, 1 for purple
+var initialized: bool = false
+var game_board: AmoeballGame = null
+var game_ui: GameUI = null
 
 # Common signals
 signal make_move(player, move_type, move_cell)
@@ -23,8 +26,21 @@ signal check_cursors(player, move_type, move_cell)
 const PURPLE_INDICATOR_POS = Vector2(308, 0)
 const PLAYER_TOKEN_ANIMS = ["green", "purple"]
 
-# Common references
-@onready var game_obj = get_node("/root/Game/AmoeballGame")
+# Initialization
+func init(agent_name: String, player_id: int, game: AmoeballGame, ui: GameUI):
+	if initialized:
+		push_error("Agent already initialized")
+		return
+		
+	name = agent_name
+	player = player_id
+	game_board = game
+	game_ui = ui
+	game.made_move.connect(_handle_game_state_change)
+	
+	_setup_common()
+	_setup_agent_specific()
+	initialized = true
 
 # Abstract methods that must be implemented by children
 func _handle_game_state_change(new_state, new_player, game):
@@ -33,17 +49,12 @@ func _handle_game_state_change(new_state, new_player, game):
 func _setup_agent_specific():
 	push_error("Abstract method _setup_agent_specific must be implemented")
 
-# Common utility methods
-func cube_to_world(x: Vector3, ball: bool = false) -> Vector2:
-	return $"/root/Game".cube_to_world(x, ball)
+# Use GameUI's coordinate conversion methods
+func world_to_axial(world_pos: Vector2) -> Vector2i:
+	return game_ui.world_to_axial(world_pos)
 
-func world_to_cube(x: Vector2) -> Vector3:
-	return $"/root/Game".world_to_cube(x)
-
-# Common initialization
-func _ready():
-	_setup_agent_specific()
-	_setup_common()
+func axial_to_world(axial_pos: Vector2i, is_ball: bool = false) -> Vector2:
+	return game_ui.axial_to_world(axial_pos, is_ball)
 
 func _setup_common():
 	if player == 1:  # Purple player setup

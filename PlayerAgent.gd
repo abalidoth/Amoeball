@@ -1,18 +1,24 @@
 extends AbstractAgent
 class_name PlayerAgent
 
-var valid_moves = []
-var ball_pos = Vector3(0,0,0)
-var tile_pos
-var prev_pos = Vector3(0,0,0)
+
+var tile_pos: Vector2i
+var prev_pos: Vector2i = Vector2i(0, 0)
 
 const INDICATOR_DARK = "#777777cc"
 
+@export var place_cursor: AnimatedSprite2D
+@export var remove_cursor: AnimatedSprite2D
+@export var kick_cursor: BallToken
+@export var kick_cursor2: BallToken
+@export var win_cursor: GPUParticles2D
+@export var instruction_label: Label
+
 func _setup_agent_specific():
-	$PlaceCursor.animation = PLAYER_TOKEN_ANIMS[player] + "_dangle"
-	$PlaceCursor.flip_h = player
-	$PlaceCursor.play()
-	$InstructionLabel.hide()
+	place_cursor.animation = PLAYER_TOKEN_ANIMS[player] + "_dangle"
+	place_cursor.flip_h = player
+	place_cursor.play()
+	instruction_label.hide()
 	_handle_game_state_change(GameState.STATE_PLACE_1, 0, null)
 
 func _handle_game_state_change(new_state, new_player, game):
@@ -43,13 +49,13 @@ func set_nodes_dark():
 	$TurnIndicators/RemoveIndicator.frame = 5
 
 func _input(event):
-	if game_obj.current_player != player:
+	if game_board.current_player != player:
 		return
 		
-	tile_pos = world_to_cube(get_global_mouse_position())
-	var valid_moves = game_obj.get_moves()
+	tile_pos = world_to_axial(get_global_mouse_position())
+	var valid_moves = game_board.get_moves()
 	
-	match game_obj.current_state:
+	match game_board.current_state:
 		GameState.STATE_REMOVE:
 			_handle_remove_state(event, valid_moves)
 		GameState.STATE_PLACE_1, GameState.STATE_PLACE_2:
@@ -64,18 +70,18 @@ func _handle_remove_state(event, valid_moves):
 	if event is InputEventMouseMotion:
 		if prev_pos != tile_pos:
 			if tile_pos in valid_moves:
-				$RemoveCursor.position = cube_to_world(tile_pos)
-				$RemoveCursor.show()
-				$RemoveCursor.frame = 0
-				$RemoveCursor.play()
+				remove_cursor.position = axial_to_world(tile_pos)
+				remove_cursor.show()
+				remove_cursor.frame = 0
+				remove_cursor.play()
 			else:
-				$RemoveCursor.hide()
+				remove_cursor.hide()
 	elif (event is InputEventMouseButton and
 		event.pressed and
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		tile_pos in valid_moves):
-		game_obj.make_move(tile_pos)
-		$RemoveCursor.hide()
+		game_board.make_move(tile_pos)
+		remove_cursor.hide()
 
 func _handle_place_state(event, valid_moves):
 	if event is InputEventMouseMotion:
@@ -85,52 +91,52 @@ func _handle_place_state(event, valid_moves):
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		event.pressed and
 		tile_pos in valid_moves):
-		game_obj.make_move(tile_pos)
-		$PlaceCursor.hide()
-		$KickCursor2.hide()
-		$KickCursor.hide()
+		game_board.make_move(tile_pos)
+		place_cursor.hide()
+		kick_cursor2.hide()
+		kick_cursor.hide()
 
 func _update_place_cursors(valid_moves):
 	if tile_pos in valid_moves:
-		$PlaceCursor.position = cube_to_world(tile_pos)
-		$PlaceCursor.show()
-		$PlaceCursor.frame = 0
-		$PlaceCursor.play()
+		place_cursor.position = axial_to_world(tile_pos)
+		place_cursor.show()
+		place_cursor.frame = 0
+		place_cursor.play()
 		_update_kick_preview()
 	else:
-		$PlaceCursor.hide()
-		$KickCursor2.hide()
-		$KickCursor.hide()
-		$WinCursor.emitting = false
+		place_cursor.hide()
+		kick_cursor2.hide()
+		kick_cursor.hide()
+		win_cursor.emitting = false
 
 func _update_kick_preview():
-	var moves = game_obj.get_kick_directions(tile_pos)
+	if !game_board._is_adjacent_to_ball(tile_pos):
+		return
+	var moves = game_board.get_kick_directions(tile_pos)
 	match moves:
-		null:
-			pass
 		[var a, var b]:
-			$KickCursor.position = cube_to_world(a, true)
-			$KickCursor2.position = cube_to_world(b, true)
-			$KickCursor.show()
-			$KickCursor2.show()
+			kick_cursor.position = axial_to_world(a, true)
+			kick_cursor2.position = axial_to_world(b, true)
+			kick_cursor.show()
+			kick_cursor2.show()
 		[var a]:
-			$KickCursor.position = cube_to_world(a, true)
-			$KickCursor.show()
+			kick_cursor.position = axial_to_world(a, true)
+			kick_cursor.show()
 		[]:
-			$WinCursor.position = cube_to_world(game_obj.ball_pos)
-			$WinCursor.emitting = true
+			win_cursor.position = axial_to_world(game_board.ball_pos, true)
+			win_cursor.emitting = true
 
 func _handle_kick_state(event, valid_moves):
 	if event is InputEventMouseMotion:
 		if prev_pos != tile_pos:
 			if tile_pos in valid_moves:
-				$KickCursor.position = cube_to_world(tile_pos, true)
-				$KickCursor.show()
+				kick_cursor.position = axial_to_world(tile_pos, true)
+				kick_cursor.show()
 			else:
-				$KickCursor.hide()
+				kick_cursor.hide()
 	elif (event is InputEventMouseButton and
 		event.is_released and
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		tile_pos in valid_moves):
-		game_obj.make_move(tile_pos)
-		$KickCursor.hide()
+		game_board.make_move(tile_pos)
+		kick_cursor.hide()
