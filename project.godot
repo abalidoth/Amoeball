@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Amoeball"
 run/main_scene="res://main_menu.tscn"
-config/features=PackedStringArray("4.2")
+config/features=PackedStringArray("4.3")
 config/icon="res://icon.png"
 
 [autoload]
@@ -34,7 +34,7 @@ project/assembly_name="Amoeball"
 
 [editor]
 
-movie_writer/movie_file="/home/gdking/godot/Amoeball/amoeball-2024-02-06.avi"
+movie_writer/movie_file="/home/gdking/godot/Amoeball/amoeball-2025-02-15.avi"
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 
