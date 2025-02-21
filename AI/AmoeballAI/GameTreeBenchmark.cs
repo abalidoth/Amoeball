@@ -1,6 +1,5 @@
-﻿using Godot;
+﻿
 using System.Diagnostics;
-using static AmoeballAI.AmoeballState;
 
 namespace AmoeballAI
 {

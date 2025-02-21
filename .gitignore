@@ -2,3 +2,10 @@
 .godot/
 *.avi
 /AI/.vs/AmoeballAI
+/AI/AmoeballAI/obj
+/AI/AmoeballAI/obj
+/AI/AmoeballAI/bin
+/AI/AmoeballAIConsole/obj
+/AI/GameTreeExplorer/bin
+/AI/AmoeballAI/obj
+/AI/AmoeballAIConsole/bin

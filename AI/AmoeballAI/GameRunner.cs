@@ -1,6 +1,4 @@
-﻿using static AmoeballAI.AmoeballState;
-
-namespace AmoeballAI
+﻿namespace AmoeballAI
 {
     public class GameRunner
     {
@@ -50,7 +48,7 @@ namespace AmoeballAI
             {
 
                 Turn++;
-                if (_verbose) Console.WriteLine("Running Turn {0}: {1} pieces on board", Turn, state.PieceCount());
+                // if (_verbose) Console.WriteLine("Running Turn {0}: {1} pieces on board", Turn, state.PieceCount());
 
                 // Green's turn
                 state = _greenPlayer.PlayTurn(state);

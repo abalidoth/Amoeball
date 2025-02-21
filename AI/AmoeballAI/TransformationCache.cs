@@ -1,5 +1,4 @@
-﻿using static AmoeballAI.AmoeballState;
-
+﻿
 namespace AmoeballAI
 {
     public readonly struct TransformationCache

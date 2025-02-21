@@ -10,5 +10,12 @@
     <PackageReference Include="GodotSharp" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="AmoeballAI.AmoeballState">
+      <Static>True</Static>
+    </Using>
+    <Using Include="Godot" />
+  </ItemGroup>
+
 
 </Project>

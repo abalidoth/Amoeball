@@ -1,11 +1,9 @@
-﻿using Godot;
-using static AmoeballAI.AmoeballState;
+﻿namespace AmoeballAI
 
-namespace AmoeballAI
 {
     public partial class OrderedGameTree
     {
-        private struct Node
+        protected struct Node
         {
             public TransformationCache StateCache;
             public int ParentIndex;
@@ -47,15 +45,15 @@ namespace AmoeballAI
             }
         }
 
-        private readonly int[] _hashTable;
-        private readonly Node[] _nodes;
-        private readonly int _capacity;
-        private int _count;
-        private const double LOAD_FACTOR_THRESHOLD = 0.7;
+        protected readonly int[] _hashTable;
+        protected readonly Node[] _nodes;
+        protected readonly int _capacity;
+        protected int _count;
+        protected const double LOAD_FACTOR_THRESHOLD = 0.7;
 
         // Store root moves in canonical form
-        private Move[] _rootMoves;
-        private int _rootMoveCount;
+        protected Move[] _rootMoves;
+        protected int _rootMoveCount;
 
         public OrderedGameTree(AmoeballState initialState, int initialCapacity = 1000000)
         {
@@ -101,15 +99,17 @@ namespace AmoeballAI
             return -1;
         }
 
-        public void Expand(int nodeIndex)
+        public virtual void Expand(int nodeIndex)
         {
             if (nodeIndex == -1 || _nodes[nodeIndex].IsExpanded)
             {
                 return;
             }
-
+            
             ref Node node = ref _nodes[nodeIndex];
             var state = node.StateCache.CanonicalForm;
+
+            
 
             foreach (var nextState in state.GetNextStates())
             {
@@ -151,7 +151,7 @@ namespace AmoeballAI
             _rootMoves[_rootMoveCount++] = move;
         }
 
-        private int InsertNode(AmoeballState state, int parentIndex, int depth)
+        protected virtual int InsertNode(AmoeballState state, int parentIndex, int depth)
         {
             if (_count >= _capacity * LOAD_FACTOR_THRESHOLD)
             {
@@ -292,7 +292,7 @@ namespace AmoeballAI
             }
         }
 
-        public void Prune(int nodeIndex)
+        public virtual Dictionary<int,int> Prune(int nodeIndex)
         {
             if (nodeIndex < 0 || nodeIndex >= _count)
             {
@@ -302,7 +302,7 @@ namespace AmoeballAI
             // Nothing to prune if we're keeping the whole tree
             if (nodeIndex == 0)
             {
-                return;
+                return new Dictionary<int, int>();
             }
 
             // Step 1: Find all descendants and record their parents
@@ -375,6 +375,8 @@ namespace AmoeballAI
 
             // Step 7: Validate connectivity
             ValidateTreeStructure();
+
+            return oldToNewIndex;
         }
 
         public void ValidateTreeStructure()

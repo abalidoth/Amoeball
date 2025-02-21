@@ -1,6 +1,4 @@
-﻿using static AmoeballAI.AmoeballState;
-
-namespace AmoeballAI
+﻿namespace AmoeballAI
 {
 
     public abstract class Player
