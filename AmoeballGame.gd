@@ -2,7 +2,7 @@ extends Node
 class_name AmoeballGame
 
 signal made_new_token(place: Vector2i, player: int)
-signal ball_moved(place: Vector2i)
+signal ball_moved(new_pos: Vector2i, old_pos: Vector2i)
 signal removed_token(place: Vector2i, player: int)
 signal new_turn(player: int, turn_num: int)
 signal made_move(new_state: int, player: int, game: Node)
@@ -21,7 +21,7 @@ enum {
 var current_player: int:
 	get: return int(_state.current_player) - 1
 var current_state: int:
-	get: return _convert_state_to_enum(_state.turn_step)
+	get: return _convert_state_to_enum(_state.turn_step, pending_placement != null)
 var ball_pos: Vector2i:
 	get: return _state.get_ball_position()
 var last_move: Vector2i
@@ -36,11 +36,11 @@ func _init():
 	_state.setup_initial_position()
 	last_move = Vector2i.ZERO
 
-func _convert_state_to_enum(step: int) -> int:
+func _convert_state_to_enum(step: int, kick:bool) -> int:
 	match step:
-		1: return STATE_PLACE_1
+		1: return STATE_KICK_1 if kick else STATE_PLACE_1
 		2: return STATE_REMOVE
-		3: return STATE_PLACE_2
+		3: return STATE_KICK_2 if kick else STATE_PLACE_2
 	return STATE_IDLE
 	
 func get_piece_pos(player: int) -> Array:
@@ -140,7 +140,8 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 	if not _state.is_legal_move(kick_move):
 		push_error("Illegal kick move attempted")
 		return
-		
+
+	var old_pos = _state.GetBallPosition()
 	_state.apply_move(kick_move)
 	ball_moved.emit(move)
 	last_move = pending_placement
