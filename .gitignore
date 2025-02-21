@@ -3,9 +3,8 @@
 *.avi
 /AI/.vs/AmoeballAI
 /AI/AmoeballAI/obj
-/AI/AmoeballAI/obj
-/AI/AmoeballAI/bin
+/AI/GameTreeExplorer/obj
 /AI/AmoeballAIConsole/obj
+/AI/AmoeballAI/bin
 /AI/GameTreeExplorer/bin
-/AI/AmoeballAI/obj
 /AI/AmoeballAIConsole/bin
