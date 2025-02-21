@@ -107,8 +107,9 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 			if not _state.is_legal_move(kick_move):
 				push_error("Illegal placement with kick move attempted")
 				return
+			ball_moved.emit(a, _state.get_ball_position())
 			_state.apply_move(kick_move)
-			ball_moved.emit(a)
+			
 			if is_second_placement:
 				turn_over()
 			else:
@@ -141,9 +142,8 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 		push_error("Illegal kick move attempted")
 		return
 
-	var old_pos = _state.GetBallPosition()
+	ball_moved.emit(move, _state.get_ball_position())
 	_state.apply_move(kick_move)
-	ball_moved.emit(move)
 	last_move = pending_placement
 	pending_placement = null
 	

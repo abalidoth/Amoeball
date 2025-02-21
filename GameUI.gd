@@ -71,7 +71,7 @@ func remove_token(pos: Vector2i, player: int):
 	var destroyed_node = get_node(token_name)
 	destroyed_node.animation = PLAYER_COLORS[player] + "_pop"
 
-func update_ball_pos(new_pos: Vector2i, old_pos: vector2i):
+func update_ball_pos(new_pos: Vector2i, old_pos: Vector2i):
 	var anim
 	var direction = old_pos - new_pos
 	
@@ -99,7 +99,7 @@ func show_win_screen(player: int):
 
 # Signal handlers for AmoeballGame
 func _on_amoeball_game_ball_moved(new_pos: Vector2i, old_pos: Vector2i):
-	update_ball_pos(new_pos: Vector2i, old_pos: Vector2i)
+	update_ball_pos(new_pos,old_pos)
 
 func _on_amoeball_game_made_new_token(place: Vector2i, player: int):
 	place_token(place, player)
