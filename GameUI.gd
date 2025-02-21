@@ -71,9 +71,8 @@ func remove_token(pos: Vector2i, player: int):
 	var destroyed_node = get_node(token_name)
 	destroyed_node.animation = PLAYER_COLORS[player] + "_pop"
 
-func update_ball_pos(new_pos: Vector2i):
+func update_ball_pos(new_pos: Vector2i, old_pos: vector2i):
 	var anim
-	var old_pos = game.GetBallPosition()  # Get the previous position from game state
 	var direction = old_pos - new_pos
 	
 	# Update visual position based on game state
@@ -99,8 +98,8 @@ func show_win_screen(player: int):
 		purple_wins_label.visible = true
 
 # Signal handlers for AmoeballGame
-func _on_amoeball_game_ball_moved(place: Vector2i):
-	update_ball_pos(place)
+func _on_amoeball_game_ball_moved(new_pos: Vector2i, old_pos: Vector2i):
+	update_ball_pos(new_pos: Vector2i, old_pos: Vector2i)
 
 func _on_amoeball_game_made_new_token(place: Vector2i, player: int):
 	place_token(place, player)
