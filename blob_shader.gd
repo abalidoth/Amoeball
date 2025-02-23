@@ -1,5 +1,6 @@
 
 extends ColorRect
+class_name BlobShader
 
 var current_move:Vector2
 var current_move_type:String

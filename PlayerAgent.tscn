@@ -42,8 +42,14 @@ gravity = Vector3(0, 98, 0)
 color_initial_ramp = SubResource("GradientTexture1D_ow6l5")
 alpha_curve = SubResource("CurveTexture_1181n")
 
-[node name="PlayerAgent" type="Node2D"]
+[node name="PlayerAgent" type="Node2D" node_paths=PackedStringArray("place_cursor", "remove_cursor", "kick_cursor", "kick_cursor2", "win_cursor", "instruction_label")]
 script = ExtResource("1")
+place_cursor = NodePath("PlaceCursor")
+remove_cursor = NodePath("RemoveCursor")
+kick_cursor = NodePath("KickCursor")
+kick_cursor2 = NodePath("KickCursor2")
+win_cursor = NodePath("WinCursor")
+instruction_label = NodePath("InstructionLabel")
 
 [node name="KickCursor" parent="." instance=ExtResource("2_1wyo2")]
 visible = false
@@ -85,7 +91,6 @@ trail_lifetime = 0.2
 
 [node name="PlaceIndicator1" parent="TurnIndicators" instance=ExtResource("5_qdm8j")]
 position = Vector2(31, 194)
-animation = &"green_idle"
 
 [node name="KickIndicator1" type="AnimatedSprite2D" parent="TurnIndicators"]
 position = Vector2(45, 204)
@@ -101,7 +106,6 @@ frame_progress = 1.0
 
 [node name="PlaceIndicator2" parent="TurnIndicators" instance=ExtResource("5_qdm8j")]
 position = Vector2(86, 194)
-animation = &"green_idle"
 
 [node name="KickIndicator2" type="AnimatedSprite2D" parent="TurnIndicators"]
 position = Vector2(100, 204)
