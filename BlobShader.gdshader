@@ -52,6 +52,7 @@ const vec4 shadow_color = vec4(0.0,0.0,0.0,0.5);
 void fragment() {
 	//vec2 pixel_uv = floor(UV*screen)/screen;
 	vec2 pixel_uv = UV;
+ 
 	// Called for every pixel the material is visible on.
 	COLOR = vec4(0.0,0.0,0.0,0.0);
 	float distance_count=0.0;
@@ -60,27 +61,23 @@ void fragment() {
 	distance_count+=noise_col;
 	
 	for(int i=0; i<num_green; i++){
-		vec2 sq_dist = pow(pixel_uv-green_slimes[i]-offset,vec2(2,2));
-		float this_dist = sqrt(sq_dist.x + sq_dist.y);
+		float this_dist = length(pixel_uv-green_slimes[i]-offset);
 		distance_count+=pow(this_dist,-blob_exponent);
 	}
 	
 	for(int i=0; i<num_purple; i++){
-		vec2 sq_dist = pow(pixel_uv-purple_slimes[i]-offset,vec2(2,2));
-		float this_dist = sqrt(sq_dist.x + sq_dist.y);
+		float this_dist = length(pixel_uv-purple_slimes[i]-offset);
 		distance_count-=pow(this_dist,-blob_exponent);
 	}
 	
 	float player_mult = float(current_player)*2.0 - 1.0;
 	
 	if(move_type==0){
-		vec2 sq_dist = pow(pixel_uv-move_position-offset,vec2(2,2));
-		float this_dist = sqrt(sq_dist.x + sq_dist.y);
+		float this_dist = length(pixel_uv-move_position-offset);
 		distance_count+=pow(this_dist,-blob_exponent)*player_mult*(1.0-progress);
 	}
 		if(move_type==1){
-		vec2 sq_dist = pow(pixel_uv-move_position-offset,vec2(2,2));
-		float this_dist = sqrt(sq_dist.x + sq_dist.y);
+		float this_dist = length(pixel_uv-move_position-offset);
 		distance_count-=pow(this_dist,-blob_exponent)*player_mult*(1.0-progress);
 	}
 	
@@ -131,7 +128,6 @@ void fragment() {
 			COLOR = spec_purple_color;
 		}
 	}
-	
 }
 
 //void light() {
