@@ -114,6 +114,9 @@ func _update_kick_preview():
 		return
 	var moves = game_board.get_kick_directions(tile_pos)
 	match moves:
+		[game_board.ball_pos]:
+			win_cursor.position = axial_to_world(game_board.ball_pos, true)
+			win_cursor.emitting = true
 		[var a, var b]:
 			kick_cursor.position = axial_to_world(a, true)
 			kick_cursor2.position = axial_to_world(b, true)
@@ -122,9 +125,6 @@ func _update_kick_preview():
 		[var a]:
 			kick_cursor.position = axial_to_world(a, true)
 			kick_cursor.show()
-		[]:
-			win_cursor.position = axial_to_world(game_board.ball_pos, true)
-			win_cursor.emitting = true
 
 func _handle_kick_state(event, valid_moves):
 	if event is InputEventMouseMotion:

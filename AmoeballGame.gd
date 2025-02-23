@@ -65,6 +65,9 @@ func get_moves() -> Array:
 		return stored_kick_directions
 	
 	var legal_moves = _state.get_legal_moves()
+	if _state.winner != AmoeballState.PieceType.EMPTY:
+		game_over.emit(1-current_player)
+		
 	var result = []
 	for move in legal_moves:
 		result.append(move.position)
@@ -101,6 +104,9 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 	last_move = move
 	
 	match stored_kick_directions:
+		[ball_pos]:
+			set_state(STATE_WIN)
+			game_over.emit(current_player)
 		[var a]:
 			# Single kick target - automatic
 			var kick_move = AmoeballState.Move.new(move, a)
