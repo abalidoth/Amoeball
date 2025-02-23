@@ -14,6 +14,7 @@ const ball_offset = Vector2(0, -4)
 @export var game_over_timer: Timer
 @export var green_wins_label: Node2D
 @export var purple_wins_label: Node2D
+@export var blob_shader: BlobShader
 
 var Token = preload("res://blob_token.tscn")
 var game_is_over = false
@@ -65,11 +66,14 @@ func place_token(pos: Vector2i, player: int) -> void:
 	new_token.flip_h = player
 	new_token.show()
 	new_token.play()
+	update_shader(pos, "place")
 
 func remove_token(pos: Vector2i, player: int):
 	var token_name = "token_%d_%d" % [pos.x, pos.y]
 	var destroyed_node = get_node(token_name)
 	destroyed_node.animation = PLAYER_COLORS[player] + "_pop"
+	update_shader(pos,"remove")
+	
 
 func update_ball_pos(new_pos: Vector2i, old_pos: Vector2i):
 	var anim
@@ -96,6 +100,32 @@ func show_win_screen(player: int):
 		green_wins_label.visible = true
 	else:
 		purple_wins_label.visible = true
+		
+
+func update_shader(move_pos:Vector2, move_type:String) -> void:
+	
+	var width : int = 1280
+	var height: int = 720
+	var uv_factor = Vector2(width,height)/3
+	var out=[[],[]]
+	var out_ball = axial_to_world(game.ball_pos)/uv_factor
+	var token_coords = [game.get_piece_pos(0), game.get_piece_pos(1)]
+	for player in range(2):
+		for i in range(61):
+			if i < len(token_coords[player]):
+				out[player].append(axial_to_world(token_coords[player][i])/uv_factor)
+			else:
+				out[player].append(Vector2(0.0,0.0))
+				
+	var out_move= axial_to_world(move_pos)/uv_factor
+	blob_shader.update_slimes(
+		out,
+		[len(token_coords[0]),len(token_coords[1])],
+		out_ball,
+		out_move,
+		move_type,
+		game.current_player
+	)
 
 # Signal handlers for AmoeballGame
 func _on_amoeball_game_ball_moved(new_pos: Vector2i, old_pos: Vector2i):

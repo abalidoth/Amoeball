@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://how_to_play.gd" id="2_a3hu7"]
 [ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_isp2i"]
 [ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://amoeball_button.tscn" id="2_l247g"]
-[ext_resource type="PackedScene" uid="uid://cb7hvn8h0s4q2" path="res://blob_token.tscn" id="3_rvx1k"]
+[ext_resource type="PackedScene" uid="uid://cbiyr00uk66gd" path="res://blob_token.tscn" id="3_rvx1k"]
 [ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="4_5d1tr"]
 [ext_resource type="Script" path="res://Page1.gd" id="4_cb8q8"]
 [ext_resource type="Script" path="res://Page2.gd" id="7_aywg6"]
@@ -13,7 +13,7 @@
 [ext_resource type="Script" path="res://Page4.gd" id="10_8m34a"]
 [ext_resource type="Script" path="res://Page5.gd" id="11_prsd7"]
 [ext_resource type="Script" path="res://Page6.gd" id="12_ekyhq"]
-[ext_resource type="Theme" path="res://main_menu_theme.tres" id="13_v4lif"]
+[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://main_menu_theme.tres" id="13_v4lif"]
 [ext_resource type="PackedScene" uid="uid://bgqir3v53t4mt" path="res://blob_shader.tscn" id="15_1fvww"]
 
 [sub_resource type="Theme" id="Theme_7okgq"]
