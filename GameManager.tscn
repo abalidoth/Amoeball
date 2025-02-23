@@ -1,5 +1,4 @@
 [gd_scene load_steps=8 format=3 uid="uid://1o6hivy8862p"]
-
 [ext_resource type="Script" path="res://GameUI.gd" id="1_5xws6"]
 [ext_resource type="Script" path="res://GameManager.gd" id="1_145do"]
 [ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_sr2ol"]
@@ -38,6 +37,16 @@ layer_0/tile_data = PackedInt32Array(65532, 4, 0, -65539, 65540, 0, -3, 131076, 
 
 [node name="Ball" parent="." instance=ExtResource("9_xq8lo")]
 position = Vector2(526, 289)
+
+[node name="BlobShader" parent="." instance=ExtResource("4_dpvf7")]
+
+[node name="testshader" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_khcqw")
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 427.0
+offset_bottom = 242.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(212, 121)
