@@ -37,6 +37,8 @@ func _init():
 	last_move = Vector2i.ZERO
 
 func _convert_state_to_enum(step: int, kick:bool) -> int:
+	if _state.winner != AmoeballState.PieceType.EMPTY:
+		return STATE_WIN
 	match step:
 		1: return STATE_KICK_1 if kick else STATE_PLACE_1
 		2: return STATE_REMOVE
@@ -54,6 +56,9 @@ func get_piece_pos(player: int) -> Array:
 			# Check if this is a valid board position and contains the player's piece
 			if HexGrid.is_valid_coordinate(pos) and _state.get_piece(pos) == piece_type:
 				positions.append(pos)
+	
+	if player == current_player and pending_placement != null:
+		positions.append(pending_placement)
 	
 	return positions
 
@@ -86,26 +91,26 @@ func _is_adjacent_to_ball(pos: Vector2i) -> bool:
 func hex_dist(coord_1: Vector2i, coord_2: Vector2i) -> int:
 	return HexGrid.get_distance(coord_1, coord_2)
 
-func set_state(new_state: int) -> void:
-	made_move.emit(new_state, current_player, self)
+func emit_move_signal() -> void:
+	made_move.emit(current_state, current_player, self)
 
 func turn_over() -> void:
 	current_player = 1 - current_player
 	current_turn += 1
-	set_state(STATE_PLACE_1)
+	emit_move_signal()
 	new_turn.emit(current_player, current_turn)
 
 func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
+	var player = current_player
 	if not _state.is_valid_placement(move):
 		push_error("Invalid placement position")
 		return
-	made_new_token.emit(move, current_player)
 	stored_kick_directions = get_kick_directions(move)
 	last_move = move
 	
 	match stored_kick_directions:
 		[ball_pos]:
-			set_state(STATE_WIN)
+			emit_move_signal()
 			game_over.emit(current_player)
 		[var a]:
 			# Single kick target - automatic
@@ -113,17 +118,18 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 			if not _state.is_legal_move(kick_move):
 				push_error("Illegal placement with kick move attempted")
 				return
-			ball_moved.emit(a, _state.get_ball_position())
+			var old_ball_pos = _state.get_ball_position()
 			_state.apply_move(kick_move)
+			ball_moved.emit(a, old_ball_pos)
 			
 			if is_second_placement:
 				turn_over()
 			else:
-				set_state(STATE_REMOVE)
+				emit_move_signal()
 		[var _a, var _b]:
 			# Multiple kick targets - store placement and wait for kick choice
 			pending_placement = move
-			set_state(STATE_KICK_2 if is_second_placement else STATE_KICK_1)
+			emit_move_signal()
 		[]:
 			# No Kick OR Ball surrounded - game over
 			var placement_move = AmoeballState.Move.new(move)
@@ -132,13 +138,14 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 				return
 			_state.apply_move(placement_move)
 			if _is_adjacent_to_ball(move):
-				set_state(STATE_WIN)
+				emit_move_signal()
 				game_over.emit(current_player)
 			else:
 				if is_second_placement:
 					turn_over()
 				else:
-					set_state(STATE_REMOVE)
+					emit_move_signal()
+	made_new_token.emit(move, player)
 
 func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 	var kick_move = AmoeballState.Move.new(pending_placement, move)
@@ -147,16 +154,18 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 	if not _state.is_legal_move(kick_move):
 		push_error("Illegal kick move attempted")
 		return
-
-	ball_moved.emit(move, _state.get_ball_position())
+	
+	var old_ball_pos = _state.get_ball_position()
 	_state.apply_move(kick_move)
+	ball_moved.emit(move, old_ball_pos)
+	
 	last_move = pending_placement
 	pending_placement = null
 	
 	if is_second_kick:
 		turn_over()
 	else:
-		set_state(STATE_REMOVE)
+		emit_move_signal()
 
 func make_move(move: Vector2i) -> void:
 	match current_state:
@@ -176,4 +185,4 @@ func make_move(move: Vector2i) -> void:
 			_state.apply_move(remove_move)
 			last_move = move
 			removed_token.emit(move, current_player)
-			set_state(STATE_PLACE_2)
+			emit_move_signal()
