@@ -118,13 +118,16 @@ func update_shader(move_pos:Vector2, move_type:String) -> void:
 				out[player].append(Vector2(0.0,0.0))
 				
 	var out_move= axial_to_world(move_pos)/uv_factor
+	var last_player_to_move = game.current_player
+	if game.current_state == AmoeballGame.STATE_PLACE_1:
+		last_player_to_move = 1-last_player_to_move
 	blob_shader.update_slimes(
 		out,
 		[len(token_coords[0]),len(token_coords[1])],
 		out_ball,
 		out_move,
 		move_type,
-		game.current_player
+		last_player_to_move
 	)
 
 # Signal handlers for AmoeballGame
