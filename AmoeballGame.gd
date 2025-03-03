@@ -95,9 +95,9 @@ func hex_dist(coord_1: Vector2i, coord_2: Vector2i) -> int:
 	return HexGrid.get_distance(coord_1, coord_2)
 
 func emit_move_signal() -> void:
-	if _state.winner != PieceType.EMPTY
+	if _state.winner != AmoeballState.PieceType.EMPTY:
 		game_over.emit(int(_state.winnerr) - 1)
-	else
+	else:
 		made_move.emit(current_state, current_player, self)
 	
 
