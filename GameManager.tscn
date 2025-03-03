@@ -1,19 +1,30 @@
-[gd_scene load_steps=10 format=3 uid="uid://1o6hivy8862p"]
+[gd_scene load_steps=9 format=3 uid="uid://1o6hivy8862p"]
 
+[ext_resource type="Script" path="res://GameUI.gd" id="1_5xws6"]
 [ext_resource type="Script" path="res://GameManager.gd" id="1_145do"]
 [ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_sr2ol"]
 [ext_resource type="PackedScene" uid="uid://bgqir3v53t4mt" path="res://blob_shader.tscn" id="4_dpvf7"]
-[ext_resource type="Shader" uid="uid://cd34bwinalrli" path="res://GameManager.tres" id="6_qqc4o"]
-[ext_resource type="PackedScene" path="res://ball_token.tscn" id="9_xq8lo"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="9_xq8lo"]
 [ext_resource type="PackedScene" uid="uid://df5ef6qdj4fev" path="res://amoeball_game.tscn" id="11_s088v"]
 [ext_resource type="Texture2D" uid="uid://cldq6xlynktw4" path="res://assets/game_over_green.png" id="12_6q4qm"]
 [ext_resource type="Texture2D" uid="uid://f50gr6tej7wb" path="res://assets/game_over_purple.png" id="13_oj5ei"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_khcqw"]
-shader = ExtResource("6_qqc4o")
+[node name="GameUI" type="Node2D" node_paths=PackedStringArray("board", "game_manager", "ball", "game", "win_screen_layer", "game_over_timer", "green_wins_label", "purple_wins_label", "blob_shader")]
+script = ExtResource("1_5xws6")
+board = NodePath("Board")
+game_manager = NodePath("GameManager")
+ball = NodePath("Ball")
+game = NodePath("AmoeballGame")
+win_screen_layer = NodePath("WinScreenLayer")
+game_over_timer = NodePath("GameOverTimer")
+green_wins_label = NodePath("WinScreenLayer/ColorRect/Control/GreenWins")
+purple_wins_label = NodePath("WinScreenLayer/ColorRect/Control/PurpleWins")
+blob_shader = NodePath("BlobShader")
 
-[node name="Game" type="Node2D"]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("game", "ui")]
 script = ExtResource("1_145do")
+game = NodePath("../AmoeballGame")
+ui = NodePath("..")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -29,16 +40,6 @@ layer_0/tile_data = PackedInt32Array(65532, 4, 0, -65539, 65540, 0, -3, 131076, 
 
 [node name="Ball" parent="." instance=ExtResource("9_xq8lo")]
 position = Vector2(526, 289)
-
-[node name="BlobShader" parent="." instance=ExtResource("4_dpvf7")]
-
-[node name="testshader" type="ColorRect" parent="."]
-visible = false
-material = SubResource("ShaderMaterial_khcqw")
-offset_left = 2.0
-offset_top = 1.0
-offset_right = 427.0
-offset_bottom = 242.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(212, 121)
@@ -84,6 +85,8 @@ texture = ExtResource("12_6q4qm")
 [node name="PurpleWins" type="Sprite2D" parent="WinScreenLayer/ColorRect/Control"]
 visible = false
 texture = ExtResource("13_oj5ei")
+
+[node name="BlobShader" parent="." instance=ExtResource("4_dpvf7")]
 
 [connection signal="ball_moved" from="AmoeballGame" to="." method="_on_amoeball_game_ball_moved"]
 [connection signal="game_over" from="AmoeballGame" to="." method="_on_amoeball_game_game_over"]

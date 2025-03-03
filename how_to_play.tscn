@@ -5,7 +5,7 @@
 [ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_isp2i"]
 [ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://amoeball_button.tscn" id="2_l247g"]
 [ext_resource type="PackedScene" uid="uid://cbiyr00uk66gd" path="res://blob_token.tscn" id="3_rvx1k"]
-[ext_resource type="PackedScene" path="res://ball_token.tscn" id="4_5d1tr"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://ball_token.tscn" id="4_5d1tr"]
 [ext_resource type="Script" path="res://Page1.gd" id="4_cb8q8"]
 [ext_resource type="Script" path="res://Page2.gd" id="7_aywg6"]
 [ext_resource type="SpriteFrames" uid="uid://cyldaey0y6oca" path="res://remove.tres" id="8_o82ug"]
@@ -13,7 +13,7 @@
 [ext_resource type="Script" path="res://Page4.gd" id="10_8m34a"]
 [ext_resource type="Script" path="res://Page5.gd" id="11_prsd7"]
 [ext_resource type="Script" path="res://Page6.gd" id="12_ekyhq"]
-[ext_resource type="Theme" path="res://main_menu_theme.tres" id="13_v4lif"]
+[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://main_menu_theme.tres" id="13_v4lif"]
 [ext_resource type="PackedScene" uid="uid://bgqir3v53t4mt" path="res://blob_shader.tscn" id="15_1fvww"]
 
 [sub_resource type="Theme" id="Theme_7okgq"]
@@ -165,7 +165,6 @@ flip_h = true
 
 [node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page1" instance=ExtResource("3_rvx1k")]
 position = Vector2(-38.3333, -8.33333)
-animation = &"green_idle"
 
 [node name="BallToken" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page1" instance=ExtResource("4_5d1tr")]
 position = Vector2(2.66666, 0.333333)
@@ -180,25 +179,20 @@ position = Vector2(-38.3333, -8.33333)
 
 [node name="Static1" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
 position = Vector2(-25, -20)
-animation = &"green_idle"
 
 [node name="Green2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
 position = Vector2(3.66666, 3.33333)
-animation = &"green_idle"
 real = false
 
 [node name="Static2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
 position = Vector2(-11.6667, 19)
-animation = &"green_idle"
 
 [node name="Green3" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
 visible = false
 position = Vector2(45.6667, -7.33333)
-animation = &"green_idle"
 
 [node name="Static3" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2" instance=ExtResource("3_rvx1k")]
 position = Vector2(30.3333, 4.33333)
-animation = &"green_idle"
 
 [node name="Remove" type="AnimatedSprite2D" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page2"]
 visible = false
@@ -215,7 +209,6 @@ position = Vector2(16.3333, 17.6667)
 
 [node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page3" instance=ExtResource("3_rvx1k")]
 position = Vector2(-11, 18.6667)
-animation = &"green_idle"
 
 [node name="BallToken" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page3" instance=ExtResource("4_5d1tr")]
 position = Vector2(2.6668, 1.33333)
@@ -230,7 +223,6 @@ position = Vector2(16.3333, 17.6667)
 
 [node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4" instance=ExtResource("3_rvx1k")]
 position = Vector2(-11, 18.6667)
-animation = &"green_idle"
 
 [node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page4" instance=ExtResource("3_rvx1k")]
 position = Vector2(-11.3333, -6)
@@ -249,7 +241,6 @@ position = Vector2(16.3333, 17.6667)
 
 [node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" instance=ExtResource("3_rvx1k")]
 position = Vector2(17.6667, -7)
-animation = &"green_idle"
 
 [node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page5" instance=ExtResource("3_rvx1k")]
 position = Vector2(-11.3333, -6)
@@ -272,11 +263,9 @@ position = Vector2(16.3333, 17.6667)
 
 [node name="GreenBlob2" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
 position = Vector2(17.6667, -7)
-animation = &"green_idle"
 
 [node name="GreenBlob3" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
 position = Vector2(-11.6667, 18)
-animation = &"green_idle"
 
 [node name="PurpleBlob" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6" instance=ExtResource("3_rvx1k")]
 position = Vector2(-11.3333, -6)
