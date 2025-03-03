@@ -70,13 +70,16 @@ func get_moves() -> Array:
 		return stored_kick_directions
 	
 	var legal_moves = _state.get_legal_moves()
-	if _state.winner != AmoeballState.PieceType.EMPTY:
-		game_over.emit(1-current_player)
 		
 	var result = []
 	for move in legal_moves:
 		result.append(move.position)
 	return result
+
+func is_legal_move(move: Vector2i) -> bool:
+	var legal_moves = get_moves()
+	return legal_moves.has(move)
+
 
 func get_kick_directions(place: Vector2i) -> Array:
 	if not _is_adjacent_to_ball(place):
@@ -92,7 +95,11 @@ func hex_dist(coord_1: Vector2i, coord_2: Vector2i) -> int:
 	return HexGrid.get_distance(coord_1, coord_2)
 
 func emit_move_signal() -> void:
-	made_move.emit(current_state, current_player, self)
+	if _state.winner != PieceType.EMPTY
+		game_over.emit(int(_state.winnerr) - 1)
+	else
+		made_move.emit(current_state, current_player, self)
+	
 
 func turn_over() -> void:
 	current_player = 1 - current_player
@@ -107,11 +114,9 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 		return
 	stored_kick_directions = get_kick_directions(move)
 	last_move = move
-	
 	match stored_kick_directions:
 		[ball_pos]:
-			emit_move_signal()
-			game_over.emit(current_player)
+			pass
 		[var a]:
 			# Single kick target - automatic
 			var kick_move = AmoeballState.Move.new(move, a)
@@ -121,15 +126,11 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 			var old_ball_pos = _state.get_ball_position()
 			_state.apply_move(kick_move)
 			ball_moved.emit(a, old_ball_pos)
-			
 			if is_second_placement:
 				turn_over()
-			else:
-				emit_move_signal()
 		[var _a, var _b]:
 			# Multiple kick targets - store placement and wait for kick choice
 			pending_placement = move
-			emit_move_signal()
 		[]:
 			# No Kick OR Ball surrounded - game over
 			var placement_move = AmoeballState.Move.new(move)
@@ -137,14 +138,8 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 				push_error("Illegal placement move attempted")
 				return
 			_state.apply_move(placement_move)
-			if _is_adjacent_to_ball(move):
-				emit_move_signal()
-				game_over.emit(current_player)
-			else:
-				if is_second_placement:
-					turn_over()
-				else:
-					emit_move_signal()
+			if is_second_placement:
+				turn_over()
 	made_new_token.emit(move, player)
 
 func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
@@ -164,8 +159,6 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 	
 	if is_second_kick:
 		turn_over()
-	else:
-		emit_move_signal()
 
 func make_move(move: Vector2i) -> void:
 	match current_state:
@@ -185,4 +178,5 @@ func make_move(move: Vector2i) -> void:
 			_state.apply_move(remove_move)
 			last_move = move
 			removed_token.emit(move, current_player)
-			emit_move_signal()
+	emit_move_signal()
+	
