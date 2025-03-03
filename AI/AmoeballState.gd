@@ -234,13 +234,9 @@ func is_legal_move(move: Move) -> bool:
 	if HexGrid.get_distance(move.position, _ball_position) == 1:
 		# Get valid kick targets
 		var kick_targets = get_kick_destination(move.position)
-		
-		# If there are no valid kicks but we're trying to kick
-		if kick_targets.size() == 1 and kick_targets[0] == _ball_position and move.has_kick():
-			return false
 			
 		# If we need to kick but aren't
-		if kick_targets.size() > 0 and kick_targets[0] != _ball_position and not move.has_kick():
+		if kick_targets.size() > 0 and not move.has_kick():
 			return false
 			
 		# If we're kicking to an invalid target
