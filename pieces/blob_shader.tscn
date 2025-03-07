@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://bgqir3v53t4mt"]
 
-[ext_resource type="Shader" path="res://BlobShader.gdshader" id="1_jg5ei"]
-[ext_resource type="Script" path="res://blob_shader.gd" id="2_4ggj6"]
+[ext_resource type="Shader" path="res://pieces/BlobShader.gdshader" id="1_jg5ei"]
+[ext_resource type="Script" path="res://pieces/blob_shader.gd" id="2_4ggj6"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_0r3p5"]
 

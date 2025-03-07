@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://4gg0i7eymyfj"]
 
-[ext_resource type="Script" path="res://ball_token.gd" id="2_j2rxr"]
-[ext_resource type="SpriteFrames" uid="uid://c8wtfxep0ctem" path="res://ball_token.tres" id="2_n8ax1"]
+[ext_resource type="Script" path="res://pieces/ball_token.gd" id="2_j2rxr"]
+[ext_resource type="SpriteFrames" uid="uid://c8wtfxep0ctem" path="res://pieces/ball_token.tres" id="2_n8ax1"]
 
 [sub_resource type="Animation" id="Animation_umqfd"]
 resource_name = "kick_east"

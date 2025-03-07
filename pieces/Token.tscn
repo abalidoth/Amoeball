@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dn1lejuj7jajq" path="res://assets/soccer-ball.png" id="1_w6b8r"]
 [ext_resource type="Texture2D" uid="uid://bmow00esiximd" path="res://assets/green-blob.png" id="2_1qscw"]
 [ext_resource type="Texture2D" uid="uid://bkyxutwkbfay3" path="res://assets/purple-blob.png" id="3_hrlx0"]
-[ext_resource type="Script" path="res://Token.gd" id="4"]
+[ext_resource type="Script" path="res://pieces/Token.gd" id="4"]
 
 [sub_resource type="SpriteFrames" id="1"]
 animations = [{

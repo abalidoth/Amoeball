@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Amoeball"
-run/main_scene="res://main_menu.tscn"
+run/main_scene="res://UI/main_menu.tscn"
 config/features=PackedStringArray("4.3")
 config/icon="res://icon.png"
 

@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://b0omstfucnsvi" path="res://assets/green_nucleus_dangle.png" id="1_c2hro"]
 [ext_resource type="Texture2D" uid="uid://0tv6oqnob7rt" path="res://assets/green_nucleus_drop.png" id="2_616er"]
-[ext_resource type="Script" path="res://blob_token.gd" id="3_1aaqm"]
+[ext_resource type="Script" path="res://pieces/blob_token.gd" id="3_1aaqm"]
 [ext_resource type="Texture2D" uid="uid://bmy3sa55txmf7" path="res://assets/green_nucleus_idle.png" id="3_pmp2c"]
 [ext_resource type="Texture2D" uid="uid://c5bk7o4jfdf3p" path="res://assets/green_nucleus_pop.png" id="4_yxj0y"]
 [ext_resource type="Texture2D" uid="uid://bku28shbpr166" path="res://assets/purple_nucleus_dangle.png" id="5_imoor"]

@@ -16,7 +16,7 @@ const ball_offset = Vector2(0, -4)
 @export var purple_wins_label: Node2D
 @export var blob_shader: BlobShader
 
-var Token = preload("res://blob_token.tscn")
+var Token = preload("res://pieces/blob_token.tscn")
 var game_is_over = false
 
 # Coordinate conversion methods
@@ -154,4 +154,4 @@ func _on_game_over_timer_timeout():
 
 func _input(event):
 	if game_is_over and event is InputEventMouseButton:
-		get_tree().change_scene_to_file("res://main_menu.tscn")
+		get_tree().change_scene_to_file("res://UI/main_menu.tscn")
