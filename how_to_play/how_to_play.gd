@@ -34,4 +34,4 @@ func page_turn():
 
 
 func _on_return_button_pressed():
-	get_tree().change_scene_to_file("res://main_menu.tscn")
+	get_tree().change_scene_to_file("res://UI/main_menu.tscn")
