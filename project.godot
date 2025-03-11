@@ -18,7 +18,7 @@ config/icon="res://icon.png"
 [autoload]
 
 PlayerManager="*res://player_manager.tscn"
-HexGrid="*res://HexGrid.tscn"
+HexGrid="*res://game_logic/HexGrid.tscn"
 
 [display]
 
