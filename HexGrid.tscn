@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dk5qo5qxgh2tn"]
-
-[ext_resource type="Script" path="res://AI/HexGrid.gd" id="1_ycvra"]
-
-[node name="HexGrid" type="Node"]
-script = ExtResource("1_ycvra")

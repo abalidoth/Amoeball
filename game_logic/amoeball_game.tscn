@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://df5ef6qdj4fev"]
+
+[ext_resource type="Script" uid="uid://h8bud0tljids" path="res://AmoeballGame.gd" id="1_mi220"]
+
+[node name="AmoeballGame" type="Node"]
+script = ExtResource("1_mi220")

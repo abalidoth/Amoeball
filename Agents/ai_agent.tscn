@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://c54b0efh64yl6"]
+
+[ext_resource type="Script" uid="uid://cexqo16qaehim" path="res://Agents/MonteCarloAgent.gd" id="1_up787"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://pieces/ball_token.tscn" id="2_yhglo"]
+
+[node name="AIAgent" type="Node2D"]
+script = ExtResource("1_up787")
+
+[node name="ThinkIndicator1" parent="." instance=ExtResource("2_yhglo")]
+position = Vector2(322, 188)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[node name="Timer2" type="Timer" parent="."]
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_timer_timeout"]
+[connection signal="timeout" from="Timer2" to="." method="_timer2_timeout"]
