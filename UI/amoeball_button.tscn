@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bel7a3qmm8mnf"]
 
-[ext_resource type="Script" path="res://AmoeballButton.gd" id="1_lplq1"]
+[ext_resource type="Script" uid="uid://difoj20fadwv4" path="res://AmoeballButton.gd" id="1_lplq1"]
 
 [node name="AmoeballButton" type="Button"]
 anchors_preset = 15

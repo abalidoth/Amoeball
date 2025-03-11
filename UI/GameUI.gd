@@ -19,6 +19,10 @@ const ball_offset = Vector2(0, -4)
 var Token = preload("res://pieces/blob_token.tscn")
 var game_is_over = false
 
+func _ready() -> void:
+	pass
+
+
 # Coordinate conversion methods
 func axial_to_tile(axial: Vector2i) -> Vector2i:
 	# Convert axial coordinates to tile coordinates

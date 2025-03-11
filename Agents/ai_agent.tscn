@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c54b0efh64yl6"]
 
-[ext_resource type="Script" path="res://Agents/MonteCarloAgent.gd" id="1_up787"]
+[ext_resource type="Script" uid="uid://cexqo16qaehim" path="res://Agents/MonteCarloAgent.gd" id="1_up787"]
 [ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://pieces/ball_token.tscn" id="2_yhglo"]
 
 [node name="AIAgent" type="Node2D"]

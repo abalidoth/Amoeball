@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://cqfdrt4d333rw"]
 
 [ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://UI/main_menu_theme.tres" id="1_l0j0k"]
-[ext_resource type="Script" path="res://UI/main_menu.gd" id="2_lwwuc"]
-[ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://amoeball_button.tscn" id="3_1cvgt"]
+[ext_resource type="Script" uid="uid://emsph0uv7avc" path="res://UI/main_menu.gd" id="2_lwwuc"]
+[ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://UI/amoeball_button.tscn" id="3_1cvgt"]
 [ext_resource type="SpriteFrames" uid="uid://ds3b0kqjdpw2" path="res://UI/main_menu_frames.tres" id="4_xtthi"]
 
 [sub_resource type="Gradient" id="Gradient_7niti"]

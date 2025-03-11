@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://4gg0i7eymyfj"]
 
-[ext_resource type="Script" path="res://pieces/ball_token.gd" id="2_j2rxr"]
+[ext_resource type="Script" uid="uid://2qnfvrclo6lb" path="res://pieces/ball_token.gd" id="2_j2rxr"]
 [ext_resource type="SpriteFrames" uid="uid://c8wtfxep0ctem" path="res://pieces/ball_token.tres" id="2_n8ax1"]
 
 [sub_resource type="Animation" id="Animation_umqfd"]
@@ -275,12 +275,12 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vtqr6"]
 _data = {
-"kick_east": SubResource("Animation_umqfd"),
-"kick_ne": SubResource("Animation_xh0it"),
-"kick_nw": SubResource("Animation_2pf75"),
-"kick_se": SubResource("Animation_6302g"),
-"kick_sw": SubResource("Animation_65lft"),
-"kick_west": SubResource("Animation_ds5np")
+&"kick_east": SubResource("Animation_umqfd"),
+&"kick_ne": SubResource("Animation_xh0it"),
+&"kick_nw": SubResource("Animation_2pf75"),
+&"kick_se": SubResource("Animation_6302g"),
+&"kick_sw": SubResource("Animation_65lft"),
+&"kick_west": SubResource("Animation_ds5np")
 }
 
 [node name="BallToken" type="Node2D"]

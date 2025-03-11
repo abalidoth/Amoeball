@@ -96,10 +96,15 @@ func hex_dist(coord_1: Vector2i, coord_2: Vector2i) -> int:
 
 func emit_move_signal() -> void:
 	if _state.winner != AmoeballState.PieceType.EMPTY:
-		game_over.emit(int(_state.winnerr) - 1)
+		game_over.emit(int(_state.winner) - 1)
 	else:
 		made_move.emit(current_state, current_player, self)
 	
+func kick_ball(kick_move: AmoeballState.Move) ->  void:
+	var old_ball_pos = _state.get_ball_position()
+	_state.apply_move(kick_move)
+	if (kick_move.kick_target != old_ball_pos):
+		ball_moved.emit(kick_move.kick_target, old_ball_pos)
 
 func turn_over() -> void:
 	current_player = 1 - current_player
@@ -115,28 +120,21 @@ func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 	stored_kick_directions = get_kick_directions(move)
 	last_move = move
 	match stored_kick_directions:
-		[ball_pos]:
-			pass
 		[var a]:
 			# Single kick target - automatic
 			var kick_move = AmoeballState.Move.new(move, a)
 			if not _state.is_legal_move(kick_move):
 				push_error("Illegal placement with kick move attempted")
 				return
-			var old_ball_pos = _state.get_ball_position()
-			_state.apply_move(kick_move)
-			ball_moved.emit(a, old_ball_pos)
+			kick_ball(kick_move)
 			if is_second_placement:
 				turn_over()
 		[var _a, var _b]:
 			# Multiple kick targets - store placement and wait for kick choice
 			pending_placement = move
 		[]:
-			# No Kick OR Ball surrounded - game over
+			# No Kick
 			var placement_move = AmoeballState.Move.new(move)
-			if not _state.is_legal_move(placement_move):
-				push_error("Illegal placement move attempted")
-				return
 			_state.apply_move(placement_move)
 			if is_second_placement:
 				turn_over()
@@ -150,9 +148,7 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 		push_error("Illegal kick move attempted")
 		return
 	
-	var old_ball_pos = _state.get_ball_position()
-	_state.apply_move(kick_move)
-	ball_moved.emit(move, old_ball_pos)
+	kick_ball(kick_move)
 	
 	last_move = pending_placement
 	pending_placement = null
