@@ -19,6 +19,7 @@ config/icon="res://icon.png"
 
 PlayerManager="*res://player_manager.tscn"
 HexGrid="*res://game_logic/HexGrid.tscn"
+MultiplayerConnector="*res://multiplayer_connector.tscn"
 
 [display]
 

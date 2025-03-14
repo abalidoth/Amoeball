@@ -37,6 +37,7 @@ func init(agent_name: String, player_id: int, game: AmoeballGame, ui: GameUI):
 	game_board = game
 	game_ui = ui
 	game.made_move.connect(_handle_game_state_change)
+	game.final_move.connect(_handle_game_state_change)
 	
 	_setup_common()
 	_setup_agent_specific()

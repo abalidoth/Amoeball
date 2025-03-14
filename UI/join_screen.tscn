@@ -1,0 +1,59 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbithw0e4yd6"]
+
+[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://UI/main_menu_theme.tres" id="1_86me4"]
+[ext_resource type="Script" uid="uid://dpd065id87quy" path="res://UI/join_screen.gd" id="1_c5v45"]
+[ext_resource type="FontFile" uid="uid://dmi84odllf8ul" path="res://assets/Kenney Pixel.ttf" id="3_jnpqy"]
+
+[node name="JoinScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_86me4")
+script = ExtResource("1_c5v45")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+offset_right = 1158.0
+offset_bottom = 647.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+text = "Join Game"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="RoomID" type="LineEdit" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_jnpqy")
+placeholder_text = "Enter room ID..."
+
+[node name="JoinButton" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Join"
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[connection signal="text_changed" from="CenterContainer/VBoxContainer/HBoxContainer/RoomID" to="." method="_on_room_id_text_changed"]
+[connection signal="text_submitted" from="CenterContainer/VBoxContainer/HBoxContainer/RoomID" to="." method="_on_room_id_text_submitted"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
