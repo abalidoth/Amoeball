@@ -159,6 +159,9 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 	if is_second_kick:
 		turn_over()
 
+func _on_declared_move(player:int, move_type:String, move_tile:Vector2i) -> void:
+	make_move(move_tile)
+
 func make_move(move: Vector2i) -> void:
 	match current_state:
 		STATE_PLACE_1:

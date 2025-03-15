@@ -19,7 +19,7 @@ var game_board: AmoeballGame = null
 var game_ui: GameUI = null
 
 # Common signals
-signal make_move(player, move_type, move_cell)
+signal declare_move(player:int, move_type:String, move_cell:Vector2i)
 signal check_cursors(player, move_type, move_cell)
 
 # Common constants
@@ -64,3 +64,6 @@ func _setup_common():
 		$TurnIndicators/PlaceIndicator2.animation = "purple_idle"
 		$TurnIndicators/PlaceIndicator1.flip_h = true
 		$TurnIndicators/PlaceIndicator2.flip_h = true
+		
+func _on_other_player_declare(player:int, move_type:String, move_cell:Vector2i):
+	pass
