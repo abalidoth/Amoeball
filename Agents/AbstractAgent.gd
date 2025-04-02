@@ -19,7 +19,7 @@ var game_board: AmoeballGame = null
 var game_ui: GameUI = null
 
 # Common signals
-signal make_move(player, move_type, move_cell)
+signal declare_move(player:int, move_type:String, move_cell:Vector2i)
 signal check_cursors(player, move_type, move_cell)
 
 # Common constants
@@ -37,6 +37,7 @@ func init(agent_name: String, player_id: int, game: AmoeballGame, ui: GameUI):
 	game_board = game
 	game_ui = ui
 	game.made_move.connect(_handle_game_state_change)
+	game.final_move.connect(_handle_game_state_change)
 	
 	_setup_common()
 	_setup_agent_specific()
@@ -63,3 +64,6 @@ func _setup_common():
 		$TurnIndicators/PlaceIndicator2.animation = "purple_idle"
 		$TurnIndicators/PlaceIndicator1.flip_h = true
 		$TurnIndicators/PlaceIndicator2.flip_h = true
+		
+func _on_other_player_declare(player:int, move_type:String, move_cell:Vector2i):
+	pass

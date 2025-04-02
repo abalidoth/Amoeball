@@ -10,7 +10,7 @@ const ball_offset = Vector2(0, -4)
 @export var game_manager: GameManager
 @export var ball: BallToken
 @export var game: AmoeballGame
-@export var win_screen_layer: CanvasLayer
+@export var win_screen_layer: Node2D
 @export var game_over_timer: Timer
 @export var green_wins_label: Node2D
 @export var purple_wins_label: Node2D
@@ -158,4 +158,14 @@ func _on_game_over_timer_timeout():
 
 func _input(event):
 	if game_is_over and event is InputEventMouseButton:
+		#get_tree().change_scene_to_file("res://UI/main_menu.tscn")
+		pass
+
+
+func _on_replay_button_pressed() -> void:
+	if game_is_over:
+		get_tree().change_scene_to_file("res://GameManager.tscn")
+
+func _on_main_menu_button_pressed() -> void:
+	if game_is_over:
 		get_tree().change_scene_to_file("res://UI/main_menu.tscn")

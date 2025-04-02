@@ -6,6 +6,7 @@ signal ball_moved(new_pos: Vector2i, old_pos: Vector2i)
 signal removed_token(place: Vector2i, player: int)
 signal new_turn(player: int, turn_num: int)
 signal made_move(new_state: int, player: int, game: Node)
+signal final_move(new_state: int, player: int, game: Node)
 signal game_over(player: int)
 
 enum {
@@ -25,6 +26,7 @@ var current_state: int:
 var ball_pos: Vector2i:
 	get: return _state.get_ball_position()
 var last_move: Vector2i
+var last_player: int
 var current_turn: int = 0
 
 var _state: AmoeballState
@@ -97,6 +99,7 @@ func hex_dist(coord_1: Vector2i, coord_2: Vector2i) -> int:
 func emit_move_signal() -> void:
 	if _state.winner != AmoeballState.PieceType.EMPTY:
 		game_over.emit(int(_state.winner) - 1)
+		final_move.emit(current_state, current_player, self)
 	else:
 		made_move.emit(current_state, current_player, self)
 	
@@ -156,6 +159,9 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 	if is_second_kick:
 		turn_over()
 
+func _on_declared_move(player:int, move_type:String, move_tile:Vector2i) -> void:
+	make_move(move_tile)
+
 func make_move(move: Vector2i) -> void:
 	match current_state:
 		STATE_PLACE_1:
@@ -174,5 +180,6 @@ func make_move(move: Vector2i) -> void:
 			_state.apply_move(remove_move)
 			last_move = move
 			removed_token.emit(move, current_player)
+	print("emitting move signal")
 	emit_move_signal()
 	

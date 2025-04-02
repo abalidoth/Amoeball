@@ -1,0 +1,64 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0jhtd3e6v21n"]
+
+[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://UI/main_menu_theme.tres" id="1_gy24b"]
+[ext_resource type="Script" uid="uid://djrecq2rnye4u" path="res://UI/host_screen.gd" id="1_wd5sp"]
+[ext_resource type="FontFile" uid="uid://dmi84odllf8ul" path="res://assets/Kenney Pixel.ttf" id="3_xsxqu"]
+
+[node name="HostScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_gy24b")
+script = ExtResource("1_wd5sp")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+offset_right = 1158.0
+offset_bottom = 647.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+text = "Hosting New Game"
+
+[node name="CreateButton" type="Button" parent="CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Create Room"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ServerID" type="LineEdit" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_xsxqu")
+placeholder_text = "Room ID will appear here..."
+editable = false
+virtual_keyboard_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="CopyButton" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Copy"
+
+[node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CreateButton" to="." method="_on_create_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/CopyButton" to="." method="_on_copy_button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_back_button_pressed"]
