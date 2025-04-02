@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://pieces/ball_token.tscn" id="4_5d1tr"]
 [ext_resource type="Script" uid="uid://c27kksj1h3qwu" path="res://how_to_play/Page1.gd" id="4_cb8q8"]
 [ext_resource type="Script" uid="uid://c5lg88mv618hj" path="res://how_to_play/Page2.gd" id="7_aywg6"]
-[ext_resource type="SpriteFrames" uid="uid://cyldaey0y6oca" path="res://remove.tres" id="8_o82ug"]
+[ext_resource type="SpriteFrames" uid="uid://cyldaey0y6oca" path="res://pieces/remove.tres" id="8_o82ug"]
 [ext_resource type="Script" uid="uid://47neb5uh4xd5" path="res://how_to_play/Page3.gd" id="9_eapdo"]
 [ext_resource type="Script" uid="uid://dwhr475s2tk8y" path="res://how_to_play/Page4.gd" id="10_8m34a"]
 [ext_resource type="Script" uid="uid://bbpp0f30q0quc" path="res://how_to_play/Page5.gd" id="11_prsd7"]
@@ -287,13 +287,13 @@ position = Vector2(2.6668, 0.333333)
 position = Vector2(1.66666, 0)
 emitting = false
 amount = 64
-process_material = SubResource("ParticleProcessMaterial_khthf")
 lifetime = 0.5
 one_shot = true
 explosiveness = 0.5
 randomness = 0.49
 trail_enabled = true
 trail_lifetime = 0.2
+process_material = SubResource("ParticleProcessMaterial_khthf")
 
 [node name="Label" type="Label" parent="HBoxContainer/RightPane/ExampleMargin/ExampleCenter/Page6"]
 visible = false
