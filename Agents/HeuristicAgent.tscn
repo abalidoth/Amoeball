@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://by6tgjlyj45yf"]
+
+[ext_resource type="Script" uid="uid://58yfvbmk5bpy" path="res://Agents/HeuristicAgent.gd" id="1_6eaff"]
+[ext_resource type="PackedScene" uid="uid://cbiyr00uk66gd" path="res://pieces/blob_token.tscn" id="2_srjlk"]
+[ext_resource type="SpriteFrames" uid="uid://c8wtfxep0ctem" path="res://pieces/ball_token.tres" id="3_g50u5"]
+[ext_resource type="SpriteFrames" uid="uid://cyldaey0y6oca" path="res://pieces/remove.tres" id="4_yxgi2"]
+
+[node name="HeuristicAgent" type="Node2D"]
+script = ExtResource("1_6eaff")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
+[node name="TurnIndicators" type="Node2D" parent="."]
+
+[node name="PlaceIndicator1" parent="TurnIndicators" instance=ExtResource("2_srjlk")]
+position = Vector2(31, 194)
+
+[node name="KickIndicator1" type="AnimatedSprite2D" parent="TurnIndicators"]
+position = Vector2(45, 204)
+sprite_frames = ExtResource("3_g50u5")
+animation = &"stationary"
+
+[node name="RemoveIndicator" type="AnimatedSprite2D" parent="TurnIndicators"]
+modulate = Color(1, 1, 1, 0.72549)
+position = Vector2(59, 192)
+sprite_frames = ExtResource("4_yxgi2")
+frame = 5
+frame_progress = 1.0
+
+[node name="PlaceIndicator2" parent="TurnIndicators" instance=ExtResource("2_srjlk")]
+position = Vector2(86, 194)
+
+[node name="KickIndicator2" type="AnimatedSprite2D" parent="TurnIndicators"]
+position = Vector2(100, 204)
+sprite_frames = ExtResource("3_g50u5")
+animation = &"stationary"
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

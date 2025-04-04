@@ -180,6 +180,11 @@ func make_move(move: Vector2i) -> void:
 			_state.apply_move(remove_move)
 			last_move = move
 			removed_token.emit(move, current_player)
-	print("emitting move signal")
 	emit_move_signal()
-	
+
+func clone() -> AmoeballGame:
+	var out :AmoeballGame = self.duplicate(14)
+	out._state = self._state.clone()
+	out.stored_kick_directions = stored_kick_directions
+	out.pending_placement = pending_placement
+	return out
