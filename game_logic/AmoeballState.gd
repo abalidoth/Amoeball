@@ -251,6 +251,10 @@ func is_legal_move(move: Move) -> bool:
 
 func evaluate_heuristic() -> float:
 	var out:float = 0.
+	if winner == PieceType.GREEN_AMOEBA:
+		return INF
+	elif winner == PieceType.PURPLE_AMOEBA:
+		return -INF
 	for i in range(len(_board)):
 		var tile = HexGrid.get_coordinate(i)
 		var piece = _board[i]
