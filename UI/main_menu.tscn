@@ -131,5 +131,6 @@ text = "Credits"
 [connection signal="pressed" from="VBoxContainer/Control/HowToPlay" to="." method="_on_how_to_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Control/VsLocal" to="." method="_on_vs_local_pressed"]
 [connection signal="pressed" from="VBoxContainer/Control/VsAI" to="." method="_on_vs_ai_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/HBoxContainer/EasyAIButton" to="." method="_on_easy_ai_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Control/HBoxContainer2/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Control/HBoxContainer2/JoinButton" to="." method="_on_join_button_pressed"]
