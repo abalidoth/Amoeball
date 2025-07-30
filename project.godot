@@ -11,13 +11,15 @@ config_version=5
 [application]
 
 config/name="Amoeball"
-run/main_scene="res://main_menu.tscn"
-config/features=PackedStringArray("4.3")
+run/main_scene="res://UI/main_menu.tscn"
+config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
 
 [autoload]
 
 PlayerManager="*res://player_manager.tscn"
+HexGrid="*res://game_logic/HexGrid.tscn"
+MultiplayerConnector="*res://multiplayer_connector.tscn"
 
 [display]
 

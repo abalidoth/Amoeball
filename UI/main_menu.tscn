@@ -1,0 +1,136 @@
+[gd_scene load_steps=8 format=3 uid="uid://cqfdrt4d333rw"]
+
+[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://UI/main_menu_theme.tres" id="1_l0j0k"]
+[ext_resource type="Script" uid="uid://emsph0uv7avc" path="res://UI/main_menu.gd" id="2_lwwuc"]
+[ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://UI/amoeball_button.tscn" id="3_1cvgt"]
+[ext_resource type="SpriteFrames" uid="uid://ds3b0kqjdpw2" path="res://UI/main_menu_frames.tres" id="4_xtthi"]
+
+[sub_resource type="Gradient" id="Gradient_7niti"]
+offsets = PackedFloat32Array(0, 0.553746, 1)
+colors = PackedColorArray(0.06215, 0.11, 0.0605, 1, 0.0330348, 0.0898836, 0.0558463, 1, 0.1085, 0.07, 0.14, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4hiql"]
+noise_type = 2
+frequency = 0.0224
+fractal_lacunarity = 3.0
+cellular_distance_function = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_igxb7"]
+width = 1000
+height = 1000
+invert = true
+seamless = true
+color_ramp = SubResource("Gradient_7niti")
+noise = SubResource("FastNoiseLite_4hiql")
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_l0j0k")
+script = ExtResource("2_lwwuc")
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = -9.0
+offset_right = 8.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("NoiseTexture2D_igxb7")
+expand_mode = 2
+stretch_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="spritecont" type="MarginContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(96, 240)
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/spritecont"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Title" type="AnimatedSprite2D" parent="VBoxContainer/spritecont/CenterContainer"]
+unique_name_in_owner = true
+scale = Vector2(8.125, 8.125)
+sprite_frames = ExtResource("4_xtthi")
+frame_progress = 0.694571
+
+[node name="Control" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HowToPlay" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "How to Play"
+
+[node name="VsLocal" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Vs. Local"
+
+[node name="VsAI" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+size_flags_horizontal = 4
+disabled = true
+text = "Vs. AI"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Control"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="EasyAIButton" parent="VBoxContainer/Control/HBoxContainer" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+text = "Easy"
+
+[node name="HardAIButton" parent="VBoxContainer/Control/HBoxContainer" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+disabled = true
+text = "Hard"
+
+[node name="VsRemote" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+size_flags_horizontal = 4
+disabled = true
+text = "Vs. Remote"
+enabled = false
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/Control"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="HostButton" parent="VBoxContainer/Control/HBoxContainer2" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+text = "Host"
+
+[node name="JoinButton" parent="VBoxContainer/Control/HBoxContainer2" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+text = "Join"
+
+[node name="Credits" parent="VBoxContainer/Control" instance=ExtResource("3_1cvgt")]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Credits"
+
+[connection signal="pressed" from="VBoxContainer/Control/HowToPlay" to="." method="_on_how_to_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/VsLocal" to="." method="_on_vs_local_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/VsAI" to="." method="_on_vs_ai_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/HBoxContainer/EasyAIButton" to="." method="_on_easy_ai_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/HBoxContainer2/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/HBoxContainer2/JoinButton" to="." method="_on_join_button_pressed"]

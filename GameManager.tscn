@@ -1,19 +1,32 @@
-[gd_scene load_steps=10 format=3 uid="uid://1o6hivy8862p"]
+[gd_scene load_steps=11 format=3 uid="uid://1o6hivy8862p"]
 
-[ext_resource type="Script" path="res://GameManager.gd" id="1_145do"]
-[ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://new_tile_set.tres" id="2_sr2ol"]
-[ext_resource type="PackedScene" uid="uid://bgqir3v53t4mt" path="res://blob_shader.tscn" id="4_dpvf7"]
-[ext_resource type="Shader" uid="uid://cd34bwinalrli" path="res://GameManager.tres" id="6_qqc4o"]
-[ext_resource type="PackedScene" path="res://ball_token.tscn" id="9_xq8lo"]
-[ext_resource type="PackedScene" uid="uid://df5ef6qdj4fev" path="res://amoeball_game.tscn" id="11_s088v"]
+[ext_resource type="Script" uid="uid://drngnygbl5fn7" path="res://UI/GameUI.gd" id="1_5xws6"]
+[ext_resource type="Script" uid="uid://cn3elgm420xk3" path="res://GameManager.gd" id="1_145do"]
+[ext_resource type="TileSet" uid="uid://dskmyvdux4x8r" path="res://pieces/new_tile_set.tres" id="2_sr2ol"]
+[ext_resource type="PackedScene" uid="uid://bgqir3v53t4mt" path="res://pieces/blob_shader.tscn" id="4_dpvf7"]
+[ext_resource type="Theme" uid="uid://gm2pdlqwlsb1" path="res://UI/main_menu_theme.tres" id="7_0q1rh"]
+[ext_resource type="PackedScene" uid="uid://bel7a3qmm8mnf" path="res://UI/amoeball_button.tscn" id="8_5me18"]
+[ext_resource type="PackedScene" uid="uid://4gg0i7eymyfj" path="res://pieces/ball_token.tscn" id="9_xq8lo"]
+[ext_resource type="PackedScene" uid="uid://df5ef6qdj4fev" path="res://game_logic/amoeball_game.tscn" id="11_s088v"]
 [ext_resource type="Texture2D" uid="uid://cldq6xlynktw4" path="res://assets/game_over_green.png" id="12_6q4qm"]
 [ext_resource type="Texture2D" uid="uid://f50gr6tej7wb" path="res://assets/game_over_purple.png" id="13_oj5ei"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_khcqw"]
-shader = ExtResource("6_qqc4o")
+[node name="GameUI" type="Node2D" node_paths=PackedStringArray("board", "game_manager", "ball", "game", "win_screen_layer", "game_over_timer", "green_wins_label", "purple_wins_label", "blob_shader")]
+script = ExtResource("1_5xws6")
+board = NodePath("Board")
+game_manager = NodePath("GameManager")
+ball = NodePath("Ball")
+game = NodePath("AmoeballGame")
+win_screen_layer = NodePath("WinScreenLayer")
+game_over_timer = NodePath("GameOverTimer")
+green_wins_label = NodePath("WinScreenLayer/ColorRect/Control/VBoxContainer/GreenWins")
+purple_wins_label = NodePath("WinScreenLayer/ColorRect/Control/VBoxContainer2/PurpleWins")
+blob_shader = NodePath("BlobShader")
 
-[node name="Game" type="Node2D"]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("game", "ui")]
 script = ExtResource("1_145do")
+game = NodePath("../AmoeballGame")
+ui = NodePath("..")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
@@ -30,16 +43,6 @@ layer_0/tile_data = PackedInt32Array(65532, 4, 0, -65539, 65540, 0, -3, 131076, 
 [node name="Ball" parent="." instance=ExtResource("9_xq8lo")]
 position = Vector2(526, 289)
 
-[node name="BlobShader" parent="." instance=ExtResource("4_dpvf7")]
-
-[node name="testshader" type="ColorRect" parent="."]
-visible = false
-material = SubResource("ShaderMaterial_khcqw")
-offset_left = 2.0
-offset_top = 1.0
-offset_right = 427.0
-offset_bottom = 242.0
-
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(212, 121)
 zoom = Vector2(3, 3)
@@ -53,15 +56,16 @@ unique_name_in_owner = true
 [node name="GameOverTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="WinScreenLayer" type="CanvasLayer" parent="."]
+[node name="BlobShader" parent="." instance=ExtResource("4_dpvf7")]
+
+[node name="WinScreenLayer" type="Node2D" parent="."]
 visible = false
-scale = Vector2(3, 3)
-transform = Transform2D(3, 0, 0, 3, 0, 0)
 
 [node name="ColorRect" type="ColorRect" parent="WinScreenLayer"]
 self_modulate = Color(0, 0, 0, 0.611765)
-offset_right = 430.0
-offset_bottom = 240.0
+offset_left = -2.0
+offset_right = 426.0
+offset_bottom = 241.0
 
 [node name="Control" type="Control" parent="WinScreenLayer/ColorRect"]
 layout_mode = 1
@@ -77,12 +81,48 @@ offset_bottom = 34.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GreenWins" type="Sprite2D" parent="WinScreenLayer/ColorRect/Control"]
+[node name="VBoxContainer3" type="VBoxContainer" parent="WinScreenLayer/ColorRect/Control"]
+layout_mode = 0
+offset_left = -135.0
+offset_top = 48.5
+offset_right = 164.0
+offset_bottom = 152.5
+theme = ExtResource("7_0q1rh")
+
+[node name="ReplayButton" parent="WinScreenLayer/ColorRect/Control/VBoxContainer3" instance=ExtResource("8_5me18")]
+texture_filter = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+text = "Replay"
+
+[node name="MainMenuButton" parent="WinScreenLayer/ColorRect/Control/VBoxContainer3" instance=ExtResource("8_5me18")]
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+text = "Main Menu"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WinScreenLayer/ColorRect/Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GreenWins" type="Sprite2D" parent="WinScreenLayer/ColorRect/Control/VBoxContainer"]
 visible = false
+position = Vector2(5.33333, -10.1667)
 texture = ExtResource("12_6q4qm")
 
-[node name="PurpleWins" type="Sprite2D" parent="WinScreenLayer/ColorRect/Control"]
+[node name="HBoxContainer" type="HBoxContainer" parent="WinScreenLayer/ColorRect/Control/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="WinScreenLayer/ColorRect/Control"]
+layout_mode = 0
+offset_left = -53.0
+offset_top = 41.5
+offset_right = -13.0
+offset_bottom = 81.5
+
+[node name="PurpleWins" type="Sprite2D" parent="WinScreenLayer/ColorRect/Control/VBoxContainer2"]
 visible = false
+position = Vector2(5, -10.5)
 texture = ExtResource("13_oj5ei")
 
 [connection signal="ball_moved" from="AmoeballGame" to="." method="_on_amoeball_game_ball_moved"]
@@ -91,3 +131,5 @@ texture = ExtResource("13_oj5ei")
 [connection signal="new_turn" from="AmoeballGame" to="." method="_on_amoeball_game_new_turn"]
 [connection signal="removed_token" from="AmoeballGame" to="." method="_on_amoeball_game_removed_token"]
 [connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
+[connection signal="pressed" from="WinScreenLayer/ColorRect/Control/VBoxContainer3/ReplayButton" to="." method="_on_replay_button_pressed"]
+[connection signal="pressed" from="WinScreenLayer/ColorRect/Control/VBoxContainer3/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
