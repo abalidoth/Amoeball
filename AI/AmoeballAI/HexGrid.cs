@@ -1,6 +1,3 @@
-using Godot;
-
-
 namespace AmoeballAI
 {
     public class HexGrid

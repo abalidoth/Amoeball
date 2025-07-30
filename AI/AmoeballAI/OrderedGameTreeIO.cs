@@ -1,7 +1,4 @@
-﻿using System.IO;
-using static AmoeballAI.AmoeballState;
-
-namespace AmoeballAI
+﻿namespace AmoeballAI
 {
 
     public partial class OrderedGameTree

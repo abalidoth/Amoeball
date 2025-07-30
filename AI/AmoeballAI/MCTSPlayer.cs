@@ -54,7 +54,7 @@ namespace AmoeballAI
             try
             {
                 // Try running MCTS with normal depth
-                AmoeballMCTS.RunSimulations(
+                MCTS.RunSimulations(
                     _gameTree,
                     int.MaxValue,
                     _maxDepth,
@@ -69,7 +69,7 @@ namespace AmoeballAI
                 }
 
                 // If hash table is full, continue with MaxDepth=0 to prevent further expansion
-                AmoeballMCTS.RunSimulations(
+                MCTS.RunSimulations(
                     _gameTree,
                     int.MaxValue,
                     0,

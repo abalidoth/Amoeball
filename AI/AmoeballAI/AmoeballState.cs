@@ -1,6 +1,3 @@
-using Godot;
-using System;
-
 namespace AmoeballAI
 {
     public partial class AmoeballState

@@ -1,6 +1,4 @@
 ﻿
-using static AmoeballAI.AmoeballState;
-
 namespace AmoeballAI
 {
     

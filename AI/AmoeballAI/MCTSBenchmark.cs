@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using static AmoeballAI.AmoeballState;
 
 namespace AmoeballAI
 {
@@ -32,12 +31,12 @@ namespace AmoeballAI
                 {
                     var sw = Stopwatch.StartNew();
                     var tree = new OrderedGameTree(state);
-                    AmoeballMCTS.RunSimulations(tree, simCount);
-                    var bestMove = AmoeballMCTS.GetBestMove(tree, state);
+                    MCTS.RunSimulations(tree, simCount);
+                    var bestMove = MCTS.GetBestMove(tree, state);
                     sw.Stop();
 
                     // Get statistics for the chosen move
-                    var stats = AmoeballMCTS.GetMoveStatistics(tree, state)
+                    var stats = MCTS.GetMoveStatistics(tree, state)
                         .First(s => MovesAreEquivalent(s.move, bestMove));
 
                     moves.Add(bestMove);

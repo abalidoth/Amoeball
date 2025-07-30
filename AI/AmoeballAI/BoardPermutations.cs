@@ -1,7 +1,4 @@
-using Godot;
-using static AmoeballAI.AmoeballState;
-
-namespace AmoeballAI
+﻿namespace AmoeballAI
 {
 
 	public class BoardPermutations
