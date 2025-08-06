@@ -1,6 +1,4 @@
-﻿using static AmoeballAI.AmoeballState;
-
-namespace AmoeballAI
+﻿namespace AmoeballAI
 {
     /// <summary>
     /// Enhanced Monte Carlo Tree Search that works with HeuristicGameTree
@@ -9,17 +7,17 @@ namespace AmoeballAI
     {
         // Configuration parameters
         private readonly float _heuristicWeight = 10.0f;
-        private readonly float _playoutHeuristicProbability = 0.8f;
-        private readonly float _expansionHeuristicProbability = 0.5f;
+        private readonly float _initialPlayoutHeuristicUsage = 0.8f;
+        private readonly float _simulationHeuristicUsage = 0.5f;
 
         public HeuristicMCTS(
             float heuristicWeight = 10.0f,
-            float playoutHeuristicProbability = 0.8f,
-            float expansionHeuristicProbability = 0.5f)
+            float initialPlayoutHeuristicUsage = 0.8f,
+            float simulationHeuristicUsage = 0.5f)
         {
             _heuristicWeight = heuristicWeight;
-            _playoutHeuristicProbability = playoutHeuristicProbability;
-            _expansionHeuristicProbability = expansionHeuristicProbability;
+            _initialPlayoutHeuristicUsage = initialPlayoutHeuristicUsage;
+            _simulationHeuristicUsage = simulationHeuristicUsage;
         }
 
         /// <summary>
@@ -113,7 +111,7 @@ namespace AmoeballAI
             }
 
             // Use heuristic with probability, otherwise random
-            if (_random.NextDouble() < _playoutHeuristicProbability)
+            if (_random.NextDouble() < _initialPlayoutHeuristicUsage)
             {
                 // Use tree's heuristic values
                 return childIndices.MaxBy(index => heuristicTree.GetHeuristicValue(index));
@@ -143,7 +141,7 @@ namespace AmoeballAI
                 if (nextStates.Count == 0) break;
 
                 // Use heuristic with probability
-                if (_random.NextDouble() < _expansionHeuristicProbability)
+                if (_random.NextDouble() < _simulationHeuristicUsage)
                 {
                     // Evaluate next states with the same heuristic function
                     var currentPlayer = state.CurrentPlayer;
