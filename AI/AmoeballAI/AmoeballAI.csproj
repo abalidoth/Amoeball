@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="HeuristicMCTSPlayer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="HeuristicMCTSPlayer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="GodotSharp" Version="4.3.0" />
   </ItemGroup>
 

@@ -7,7 +7,7 @@ namespace AmoeballAI
     {
         private readonly Random _random = new Random();
 
-        protected override AmoeballState SelectSingleMove(AmoeballState currentState)
+        public override AmoeballState SelectSingleMove(AmoeballState currentState)
         {
             var possibleStates = currentState.GetNextStates().ToList();
 

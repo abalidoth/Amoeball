@@ -11,7 +11,7 @@ namespace AmoeballAI
             _random = seed.HasValue ? new Random(seed.Value) : new Random();
         }
 
-        protected override AmoeballState SelectSingleMove(AmoeballState currentState)
+        public override AmoeballState SelectSingleMove(AmoeballState currentState)
         {
             
             var nextStates = currentState.GetNextStates().ToList();

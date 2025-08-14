@@ -20,7 +20,7 @@ namespace AmoeballAI
             _verbose = verbose;
         }
 
-        protected override void ProcessTurn(AmoeballState currentState)
+        public override void ProcessTurn(AmoeballState currentState)
         {
             // Initialize or update game tree
             if (_gameTree == null)
@@ -87,7 +87,7 @@ namespace AmoeballAI
 
         }
 
-        protected override AmoeballState SelectSingleMove(AmoeballState currentState)
+        public override AmoeballState SelectSingleMove(AmoeballState currentState)
         {
             return _gameTree!.PopState();
         }

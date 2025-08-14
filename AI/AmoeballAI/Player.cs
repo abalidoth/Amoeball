@@ -58,8 +58,8 @@
             OnGameComplete();
         }
 
-        protected virtual void ProcessTurn(AmoeballState currentState){ }
+        public virtual void ProcessTurn(AmoeballState currentState){ }
         protected virtual void OnGameComplete() { }
-        protected abstract AmoeballState SelectSingleMove(AmoeballState currentState);
+        public abstract AmoeballState SelectSingleMove(AmoeballState currentState);
     }
 }

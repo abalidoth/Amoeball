@@ -17,11 +17,11 @@ public class Program
 
         while (!cts.IsCancellationRequested)
         {
-            AmoeballMCTS.RunSimulations(tree, 1000, 9, cts.Token);
+            MCTS.RunSimulations(tree, 1000, 9, cts.Token);
             totalSimulations += 1000;
             Console.WriteLine("Simulations Completed: {0}", totalSimulations);
             Console.WriteLine("Elapsed Time: {0} minutes", stopwatch.Elapsed.TotalMinutes);
-            Console.WriteLine("Current Best Move: {0}", AmoeballMCTS.GetBestMove(tree, initialState).Position);
+            Console.WriteLine("Current Best Move: {0}", MCTS.GetBestMove(tree, initialState).Position);
             Console.WriteLine();
         }
 
