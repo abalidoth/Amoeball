@@ -112,7 +112,6 @@ func kick_ball(kick_move: AmoeballState.Move) ->  void:
 func turn_over() -> void:
 	current_player = 1 - current_player
 	current_turn += 1
-	emit_move_signal()
 	new_turn.emit(current_player, current_turn)
 
 func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
@@ -159,10 +158,8 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 	if is_second_kick:
 		turn_over()
 
-func _on_declared_move(player:int, move_type:String, move_tile:Vector2i) -> void:
-	make_move(move_tile)
-
 func make_move(move: Vector2i) -> void:
+	last_player = current_player
 	match current_state:
 		STATE_PLACE_1:
 			_handle_placement(move, false)
@@ -181,10 +178,3 @@ func make_move(move: Vector2i) -> void:
 			last_move = move
 			removed_token.emit(move, current_player)
 	emit_move_signal()
-
-func clone() -> AmoeballGame:
-	var out :AmoeballGame = self.duplicate(14)
-	out._state = self._state.clone()
-	out.stored_kick_directions = stored_kick_directions
-	out.pending_placement = pending_placement
-	return out

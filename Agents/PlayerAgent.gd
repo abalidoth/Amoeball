@@ -1,11 +1,8 @@
 extends AbstractAgent
 class_name PlayerAgent
 
-
 var tile_pos: Vector2i
 var prev_pos: Vector2i = Vector2i(0, 0)
-
-const INDICATOR_DARK = "#777777cc"
 
 @export var place_cursor: AnimatedSprite2D
 @export var remove_cursor: AnimatedSprite2D
@@ -14,7 +11,8 @@ const INDICATOR_DARK = "#777777cc"
 @export var win_cursor: GPUParticles2D
 @export var instruction_label: Label
 
-func _setup_agent_specific():
+func _setup():
+	super()
 	place_cursor.animation = PLAYER_TOKEN_ANIMS[player] + "_dangle"
 	place_cursor.flip_h = player
 	place_cursor.play()
@@ -22,31 +20,9 @@ func _setup_agent_specific():
 	_handle_game_state_change(GameState.STATE_PLACE_1, 0, null)
 
 func _handle_game_state_change(new_state, new_player, game):
-	set_nodes_dark()
-	var light
-	if new_player == player:
-		match new_state:
-			GameState.STATE_WIN:
-				return
-			GameState.STATE_PLACE_1:
-				light = $TurnIndicators/PlaceIndicator1
-			GameState.STATE_PLACE_2:
-				light = $TurnIndicators/PlaceIndicator2
-			GameState.STATE_KICK_1:
-				light = $TurnIndicators/KickIndicator1
-			GameState.STATE_KICK_2:
-				light = $TurnIndicators/KickIndicator2
-			GameState.STATE_REMOVE:
-				light = $TurnIndicators/RemoveIndicator
-		light.modulate = "#ffffff"
-		light.frame = 0
-		light.play()
+	super(new_state, new_player, game)
 
-func set_nodes_dark():
-	for node in $TurnIndicators.get_children():
-		node.modulate = INDICATOR_DARK
-		node.stop()
-	$TurnIndicators/RemoveIndicator.frame = 5
+
 
 func _input(event):
 	if game_board.current_player != player:
@@ -80,9 +56,7 @@ func _handle_remove_state(event, valid_moves):
 		event.pressed and
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		tile_pos in valid_moves):
-		declare_move.emit(player, "remove", tile_pos)
-		#below is the old way of doing it
-		#game_board.make_move(tile_pos)
+		game_board.make_move(tile_pos)
 		remove_cursor.hide()
 
 func _handle_place_state(event, valid_moves):
@@ -93,8 +67,7 @@ func _handle_place_state(event, valid_moves):
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		event.pressed and
 		tile_pos in valid_moves):
-		#game_board.make_move(tile_pos)
-		declare_move.emit(player, "place", tile_pos)
+		game_board.make_move(tile_pos)
 		place_cursor.hide()
 		kick_cursor2.hide()
 		kick_cursor.hide()
@@ -141,5 +114,5 @@ func _handle_kick_state(event, valid_moves):
 		event.is_released and
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		tile_pos in valid_moves):
-		declare_move.emit(player, "kick", tile_pos)
+		game_board.make_move(tile_pos)
 		kick_cursor.hide()
