@@ -63,9 +63,6 @@ func move_sequence_to_coord_sequence(move_sequence: Array) -> Array:
 		if move.has_kick():
 			out.append(move.kick_target)
 	return out
-	
-func _setup_agent_specific():
-	pass
 
 
 func _on_timer_timeout():

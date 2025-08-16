@@ -6,7 +6,8 @@ func _handle_game_state_change(new_state: int, new_player: int, game: AmoeballGa
 	if (game.last_player != player):
 		$/root/MultiplayerConnector.send_move(var_to_str(game.last_move))
 		
-func _setup_agent_specific():
+func _setup():
+	super()
 	$/root/MultiplayerConnector.heard_move.connect(_on_heard_move)
 	$/root/MultiplayerConnector.client_has_left.connect(_on_client_left)
 	
