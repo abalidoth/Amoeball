@@ -54,9 +54,15 @@ func _handle_game_state_change(new_state, new_player, game):
 			if evaluation > max_state:
 				max_state = evaluation
 				max_moves = move_string
-		moves_to_make = max_moves
+		moves_to_make = move_sequence_to_coord_sequence(max_moves)
 				
-				
+func move_sequence_to_coord_sequence(move_sequence: Array) -> Array: 
+	var out = []
+	for move:AmoeballState.Move in move_sequence:
+		out.append(move.position)
+		if move.has_kick():
+			out.append(move.kick_target)
+	return out
 	
 func _setup_agent_specific():
 	pass
