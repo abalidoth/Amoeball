@@ -5,7 +5,7 @@ var move_set: Array
 
 var moves_to_make: Array
 
-func make_move_set(in_state):
+func make_move_set(in_state: AmoeballState):
 	var state :AmoeballState = in_state.clone()
 	var out = []
 	var moves_to_eval = [[[],state]]
@@ -13,13 +13,13 @@ func make_move_set(in_state):
 		var move_state = moves_to_eval.pop_back()
 		var move_set = move_state[0]
 		var new_state = move_state[1]
-		var moves = new_state.get_moves()
-		if new_state.current_player != player or not moves:
+		var moves = new_state.get_legal_moves()
+		if (int(new_state.current_player) - 1) != player or not moves:
 			out.append(move_set)
 		else:
 			for move in moves:
 				var newer_state = new_state.clone()
-				newer_state.make_move(move)
+				newer_state.apply_move(move)
 				moves_to_eval.append([move_set+[move], newer_state])
 	return out
 	
@@ -40,23 +40,29 @@ func evaluate_game_state(state: AmoeballState) -> float:
 			out -= 1.0/dist
 	return out
 
-func _handle_game_state_change(new_state, new_player, game):
+func _handle_game_state_change(new_state, new_player, game: AmoeballGame):
 	if new_state == GameState.STATE_PLACE_1 and new_player == player:
 		var max_state = -INF
-		var max_moves
-		var moves = make_move_set(new_state)
+		var max_moves: Array
+		var moves = make_move_set(game._state)
 		var player_mult = -1 if player else 1
 		for move_string in moves:
-			var test_state = new_state.clone()
+			var test_state = game._state.clone()
 			for move in move_string:
-				test_state.make_move(move)
-			var evaluation = evaluate_game_state(new_state) * player_mult
+				test_state.apply_move(move)
+			var evaluation = evaluate_game_state(test_state) * player_mult
 			if evaluation > max_state:
 				max_state = evaluation
 				max_moves = move_string
-		moves_to_make = max_moves
+		moves_to_make = move_sequence_to_coord_sequence(max_moves)
 				
-				
+func move_sequence_to_coord_sequence(move_sequence: Array) -> Array: 
+	var out = []
+	for move:AmoeballState.Move in move_sequence:
+		out.append(move.position)
+		if move.has_kick():
+			out.append(move.kick_target)
+	return out
 	
 func _setup_agent_specific():
 	pass
