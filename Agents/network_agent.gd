@@ -2,12 +2,10 @@ extends AbstractAgent
 
 class_name NetworkAgent
 
-func _handle_game_state_change(new_state, new_player, game):
-	pass
-	
-func _on_other_player_declare(player:int, move_type:String, move_cell:Vector2i):
-	$/root/MultiplayerConnector.send_move(var_to_str(move_cell))
-	
+func _handle_game_state_change(new_state: int, new_player: int, game: AmoeballGame):
+	if (game.last_player != player):
+		$/root/MultiplayerConnector.send_move(var_to_str(game.last_move))
+		
 func _setup_agent_specific():
 	$/root/MultiplayerConnector.heard_move.connect(_on_heard_move)
 	$/root/MultiplayerConnector.client_has_left.connect(_on_client_left)

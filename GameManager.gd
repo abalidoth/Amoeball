@@ -23,12 +23,6 @@ func setup_game():
 	ui.move_child(agent1, 4)
 	ui.move_child(agent2, 4)
 	
-	#connect declare move signals
-	agent1.declare_move.connect(game._on_declared_move)
-	agent2.declare_move.connect(game._on_declared_move)
-	
-	agent1.declare_move.connect(agent2._on_other_player_declare)
-	agent2.declare_move.connect(agent1._on_other_player_declare)
 	# Place initial tokens and ball based on game state
 	for player in [0, 1]:
 		for token in ui.game.get_piece_pos(player):

@@ -80,9 +80,7 @@ func _handle_remove_state(event, valid_moves):
 		event.pressed and
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		tile_pos in valid_moves):
-		declare_move.emit(player, "remove", tile_pos)
-		#below is the old way of doing it
-		#game_board.make_move(tile_pos)
+		game_board.make_move(tile_pos)
 		remove_cursor.hide()
 
 func _handle_place_state(event, valid_moves):
@@ -93,8 +91,7 @@ func _handle_place_state(event, valid_moves):
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		event.pressed and
 		tile_pos in valid_moves):
-		#game_board.make_move(tile_pos)
-		declare_move.emit(player, "place", tile_pos)
+		game_board.make_move(tile_pos)
 		place_cursor.hide()
 		kick_cursor2.hide()
 		kick_cursor.hide()
@@ -141,5 +138,5 @@ func _handle_kick_state(event, valid_moves):
 		event.is_released and
 		event.button_index == MOUSE_BUTTON_LEFT and 
 		tile_pos in valid_moves):
-		declare_move.emit(player, "kick", tile_pos)
+		game_board.make_move(tile_pos)
 		kick_cursor.hide()

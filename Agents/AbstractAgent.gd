@@ -19,7 +19,6 @@ var game_board: AmoeballGame = null
 var game_ui: GameUI = null
 
 # Common signals
-signal declare_move(player:int, move_type:String, move_cell:Vector2i)
 signal check_cursors(player, move_type, move_cell)
 
 # Common constants
