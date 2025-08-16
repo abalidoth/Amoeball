@@ -159,6 +159,7 @@ func _handle_kick(move: Vector2i, is_second_kick: bool) -> void:
 		turn_over()
 
 func make_move(move: Vector2i) -> void:
+	last_player = current_player
 	match current_state:
 		STATE_PLACE_1:
 			_handle_placement(move, false)
