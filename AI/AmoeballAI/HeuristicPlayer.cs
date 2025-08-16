@@ -32,7 +32,7 @@ namespace AmoeballAI
             Verbose = verbose;
         }
 
-        protected override AmoeballState SelectSingleMove(AmoeballState currentState)
+        public override AmoeballState SelectSingleMove(AmoeballState currentState)
         {
             var possibleMoves = currentState.GetNextStates().ToList();
 
