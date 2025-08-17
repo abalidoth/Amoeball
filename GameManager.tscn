@@ -125,6 +125,14 @@ visible = false
 position = Vector2(5, -10.5)
 texture = ExtResource("13_oj5ei")
 
+[node name="BackButton" parent="." instance=ExtResource("8_5me18")]
+offset_top = 1.0
+offset_right = 51.0
+offset_bottom = 23.0
+theme = ExtResource("7_0q1rh")
+theme_override_font_sizes/font_size = 10
+text = "Back"
+
 [connection signal="ball_moved" from="AmoeballGame" to="." method="_on_amoeball_game_ball_moved"]
 [connection signal="game_over" from="AmoeballGame" to="." method="_on_amoeball_game_game_over"]
 [connection signal="made_new_token" from="AmoeballGame" to="." method="_on_amoeball_game_made_new_token"]
@@ -133,3 +141,4 @@ texture = ExtResource("13_oj5ei")
 [connection signal="timeout" from="GameOverTimer" to="." method="_on_game_over_timer_timeout"]
 [connection signal="pressed" from="WinScreenLayer/ColorRect/Control/VBoxContainer3/ReplayButton" to="." method="_on_replay_button_pressed"]
 [connection signal="pressed" from="WinScreenLayer/ColorRect/Control/VBoxContainer3/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
