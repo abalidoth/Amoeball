@@ -7,11 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="HeuristicMCTSPlayer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="HeuristicMCTSPlayer.cs" />
+    <None Remove="AmoeballMCTS.cs.uid" />
+    <None Remove="AmoeballState.cs.uid" />
+    <None Remove="BoardPermutations.cs.uid" />
+    <None Remove="GameRunner.cs.uid" />
+    <None Remove="GameTreeBenchmark.cs.uid" />
+    <None Remove="HeuristicGameTree.cs.uid" />
+    <None Remove="HeuristicMCTS.cs.uid" />
+    <None Remove="HeuristicPlayer.cs.uid" />
+    <None Remove="HexGrid.cs.uid" />
+    <None Remove="MCTS.cs.uid" />
+    <None Remove="MCTSBenchmark.cs.uid" />
+    <None Remove="MCTSPlayer.cs.uid" />
+    <None Remove="OnePlyPlayer.cs.uid" />
+    <None Remove="OrderedGameTree.cs.uid" />
+    <None Remove="OrderedGameTreeIO.cs.uid" />
+    <None Remove="Player.cs.uid" />
+    <None Remove="RandomPlayer.cs.uid" />
+    <None Remove="SerializedState.cs.uid" />
+    <None Remove="TransformationCache.cs.uid" />
   </ItemGroup>
 
   <ItemGroup>

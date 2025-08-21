@@ -1,0 +1,21 @@
+<Project Sdk="Godot.NET.Sdk/4.4.1">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="AI\AmoeballAIConsole\**" />
+    <Compile Remove="AI\AmoeballAI\**" />
+    <Compile Remove="AI\GameTreeExplorer\**" />
+    <EmbeddedResource Remove="AI\AmoeballAIConsole\**" />
+    <EmbeddedResource Remove="AI\AmoeballAI\**" />
+    <EmbeddedResource Remove="AI\GameTreeExplorer\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="AI\HeuristicMCTSPlayerProvider.cs" />
+    <Compile Remove="AI\PlayerProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="AI\AmoeballAI\AmoeballAI.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amoeball", "Amoeball.csproj", "{062B3ACE-E540-4F87-B01D-AB5A34433FF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmoeballAI", "AI\AmoeballAI\AmoeballAI.csproj", "{B8A9FE79-A8A4-65FC-82AD-C4A0C8C07D9C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{062B3ACE-E540-4F87-B01D-AB5A34433FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{062B3ACE-E540-4F87-B01D-AB5A34433FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{062B3ACE-E540-4F87-B01D-AB5A34433FF0}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{062B3ACE-E540-4F87-B01D-AB5A34433FF0}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{062B3ACE-E540-4F87-B01D-AB5A34433FF0}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{062B3ACE-E540-4F87-B01D-AB5A34433FF0}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{B8A9FE79-A8A4-65FC-82AD-C4A0C8C07D9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8A9FE79-A8A4-65FC-82AD-C4A0C8C07D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8A9FE79-A8A4-65FC-82AD-C4A0C8C07D9C}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
+		{B8A9FE79-A8A4-65FC-82AD-C4A0C8C07D9C}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
+		{B8A9FE79-A8A4-65FC-82AD-C4A0C8C07D9C}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{B8A9FE79-A8A4-65FC-82AD-C4A0C8C07D9C}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {78C3A0AD-BF51-40FC-B9C5-9D2A36DFD448}
+	EndGlobalSection
+EndGlobal

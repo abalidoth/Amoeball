@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c332hglyh2iyw"]
+
+[ext_resource type="Script" uid="uid://1jho6bfgvi52" path="res://Agents/CSharpAgent.gd" id="1_4bx7o"]
+[ext_resource type="Script" uid="uid://clvryioilb0de" path="res://AI/PlayerProviders/HeuristicMCTSPlayerProvider.cs" id="2_u77r2"]
+
+[node name="HeuristicMctsAgent" type="Node2D"]
+script = ExtResource("1_4bx7o")
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("2_u77r2")
