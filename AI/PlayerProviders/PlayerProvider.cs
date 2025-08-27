@@ -63,27 +63,45 @@ namespace AmoeballAIIntegration
 		/// Select a single move using the internal state
 		/// Updates the internal state and returns move information
 		/// </summary>
-		/// <returns>The move that was made</returns>
-		public AmoeballState.Move SelectSingleMove()
+		/// <returns>The move that was made</returns>		
+public Godot.Collections.Dictionary SelectSingleMove()
+{
+if (playerInstance == null)
+	{
+		GD.PrintErr("PlayerProvider: No player instance available");
+		return new Godot.Collections.Dictionary
 		{
-			if (playerInstance == null)
-			{
-				GD.PrintErr("PlayerProvider: No player instance available");
-				return new AmoeballState.Move();
-			}
-			
-			if (currentState == null)
-			{
-				GD.PrintErr("PlayerProvider: ProcessTurn must be called before SelectSingleMove");
-				return new AmoeballState.Move();
-			}
-			
-			// Get the next state after making a move
-			currentState = playerInstance.SelectSingleMove(currentState);
-			
-			// Return the move that was made
-			return currentState.LastMove;
-		}
+			["Position"] = Vector2I.Zero
+		};
+	}
+	
+	if (currentState == null)
+	{
+		GD.PrintErr("PlayerProvider: ProcessTurn must be called before SelectSingleMove");
+		return new Godot.Collections.Dictionary
+		{
+			["Position"] = Vector2I.Zero
+		};
+	}
+	
+	// Get the next state after making a move
+	currentState = playerInstance.SelectSingleMove(currentState);
+	
+	// Return the move as a dictionary that GDScript can understand
+	var move = currentState.LastMove;
+	var result = new Godot.Collections.Dictionary
+	{
+		["Position"] = move.Position
+	};
+	
+	// Only add KickTarget if it has a value
+	if (move.KickTarget.HasValue)
+	{
+		result["KickTarget"] = move.KickTarget.Value;
+	}
+	
+	return result;
+}
 
 		/// <summary>
 		/// Clear the internal state

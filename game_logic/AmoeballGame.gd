@@ -117,7 +117,7 @@ func turn_over() -> void:
 func _handle_placement(move: Vector2i, is_second_placement: bool) -> void:
 	var player = current_player
 	if not _state.is_valid_placement(move):
-		push_error("Invalid placement position")
+		push_error("Invalid placement position:", move)
 		return
 	stored_kick_directions = get_kick_directions(move)
 	last_move = move

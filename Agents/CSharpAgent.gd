@@ -62,15 +62,15 @@ func _generate_turn_moves(game):
 	
 	# Get all three moves for this turn
 	for i in range(3):
-		# Get next move using internal state
-		var move = player_provider.SelectSingleMove()
+		# Get next move using internal state (returns Dictionary)
+		var move_dict = player_provider.SelectSingleMove()
 		
 		# Add the main move position
-		pending_moves.append(move.Position)
+		pending_moves.append(move_dict["Position"])
 		
 		# If this is a placement move (steps 1 or 3) and has a kick
-		if (i == 0 or i == 2) and move.KickTarget != null:
-			pending_moves.append(move.KickTarget)
+		if (i == 0 or i == 2) and move_dict.has("KickTarget"):
+			pending_moves.append(move_dict["KickTarget"])
 	
 	if pending_moves.is_empty():
 		push_error("CsharpAgent: No moves generated for turn!")
