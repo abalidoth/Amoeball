@@ -248,6 +248,39 @@ func is_legal_move(move: Move) -> bool:
 			return false
 	
 	return true
+	
+func serialize() -> PackedByteArray:
+# Calculate required size
+	var board_bytes = (_board.size() + 3) / 4  # Ceiling division
+	var data = PackedByteArray()
+	data.resize(1 + board_bytes)
+	
+	# Pack current player (2 bits) and turn step (2 bits) into first byte
+	data[0] = (int(current_player) & 0x3)
+	data[0] |= ((turn_step & 0x3) << 2)
+	
+	# Pack board array - each cell uses 2 bits
+	var byte_index = 1
+	var bit_position = 0
+	var current_byte = 0
+	
+	for i in range(_board.size()):
+		# Pack 2 bits for the current cell
+		current_byte |= ((_board[i] & 0x3) << bit_position)
+		bit_position += 2
+		
+		# When we've packed 4 cells (8 bits), write the byte
+		if bit_position == 8:
+			data[byte_index] = current_byte
+			byte_index += 1
+			current_byte = 0
+			bit_position = 0
+	
+	# Write final byte if we have any bits pending
+	if bit_position > 0 and byte_index < data.size():
+		data[byte_index] = current_byte
+
+	return data
 
 func evaluate_heuristic() -> float:
 	var out:float = 0.

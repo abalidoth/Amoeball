@@ -1,10 +1,39 @@
-[gd_scene load_steps=3 format=3 uid="uid://c332hglyh2iyw"]
+[gd_scene load_steps=6 format=3 uid="uid://c332hglyh2iyw"]
 
 [ext_resource type="Script" uid="uid://1jho6bfgvi52" path="res://Agents/CSharpAgent.gd" id="1_4bx7o"]
 [ext_resource type="Script" uid="uid://clvryioilb0de" path="res://AI/PlayerProviders/HeuristicMCTSPlayerProvider.cs" id="2_u77r2"]
+[ext_resource type="PackedScene" uid="uid://cbiyr00uk66gd" path="res://pieces/blob_token.tscn" id="3_h18nc"]
+[ext_resource type="SpriteFrames" uid="uid://c8wtfxep0ctem" path="res://pieces/ball_token.tres" id="4_p56g5"]
+[ext_resource type="SpriteFrames" uid="uid://cyldaey0y6oca" path="res://pieces/remove.tres" id="5_x0uam"]
 
-[node name="HeuristicMctsAgent" type="Node2D"]
+[node name="HeuristicMctsAgent" type="Node2D" node_paths=PackedStringArray("player_provider")]
 script = ExtResource("1_4bx7o")
+player_provider = NodePath("PlayerProvider")
 
-[node name="Node" type="Node" parent="."]
+[node name="PlayerProvider" type="Node" parent="."]
 script = ExtResource("2_u77r2")
+
+[node name="TurnIndicators" type="Node2D" parent="."]
+
+[node name="PlaceIndicator1" parent="TurnIndicators" instance=ExtResource("3_h18nc")]
+position = Vector2(31, 194)
+
+[node name="KickIndicator1" type="AnimatedSprite2D" parent="TurnIndicators"]
+position = Vector2(45, 204)
+sprite_frames = ExtResource("4_p56g5")
+animation = &"stationary"
+
+[node name="RemoveIndicator" type="AnimatedSprite2D" parent="TurnIndicators"]
+modulate = Color(1, 1, 1, 0.72549)
+position = Vector2(59, 192)
+sprite_frames = ExtResource("5_x0uam")
+frame = 5
+frame_progress = 1.0
+
+[node name="PlaceIndicator2" parent="TurnIndicators" instance=ExtResource("3_h18nc")]
+position = Vector2(86, 194)
+
+[node name="KickIndicator2" type="AnimatedSprite2D" parent="TurnIndicators"]
+position = Vector2(100, 204)
+sprite_frames = ExtResource("4_p56g5")
+animation = &"stationary"

@@ -53,20 +53,17 @@ func _generate_turn_moves(game):
 	# Clear any existing moves
 	pending_moves.clear()
 	
-	# Convert GDScript state to C# state via serialization
-	var gdscript_state = game._state
-	var serialized = gdscript_state.serialize()
-	var csharp_state = AmoeballAI.AmoeballState.new()
-	csharp_state.Deserialize(serialized)
+	# Get serialized state from GDScript
+	var serialized = game._state.serialize()
 	
 	# Process the turn (this may run MCTS simulations, etc.)
-	player_provider.process_turn(csharp_state)
+	# This also sets the internal state in the provider
+	player_provider.ProcessTurn(serialized)
 	
 	# Get all three moves for this turn
-	var current_state = csharp_state
 	for i in range(3):
-		var next_state = player_provider.select_single_move(current_state)
-		var move = next_state.LastMove
+		# Get next move using internal state
+		var move = player_provider.SelectSingleMove()
 		
 		# Add the main move position
 		pending_moves.append(move.Position)
@@ -74,8 +71,6 @@ func _generate_turn_moves(game):
 		# If this is a placement move (steps 1 or 3) and has a kick
 		if (i == 0 or i == 2) and move.KickTarget != null:
 			pending_moves.append(move.KickTarget)
-		
-		current_state = next_state
 	
 	if pending_moves.is_empty():
 		push_error("CsharpAgent: No moves generated for turn!")

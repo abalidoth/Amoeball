@@ -35,3 +35,8 @@ func _on_easy_ai_button_pressed():
 	PlayerManager.left_player = "res://Agents/PlayerAgent.tscn"
 	PlayerManager.right_player = "res://Agents/HeuristicAgent.tscn"
 	get_tree().change_scene_to_file("res://GameManager.tscn")
+	
+func _on_hard_ai_button_pressed():
+	PlayerManager.left_player = "res://Agents/PlayerAgent.tscn"
+	PlayerManager.right_player = "res://Agents/HeuristicMCTSAgent.tscn"
+	get_tree().change_scene_to_file("res://GameManager.tscn")
