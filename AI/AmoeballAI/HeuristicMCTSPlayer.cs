@@ -45,88 +45,103 @@
 			SimulationHeuristicUsage = simulationHeuristicUsage;
 		}
 
-		public override void ProcessTurn(AmoeballState currentState)
+		public override async Task ProcessTurn(AmoeballState currentState)
 		{
-			// Initialize or update game tree
-			if (_gameTree == null)
+			await Task.Run(() =>
 			{
-				_gameTree = new HeuristicGameTree(currentState, Heuristic);
-			}
-			else
-			{
-				// Try to find current state in existing tree
-				int stateIndex = _gameTree.FindStateIndex(currentState);
-				if (stateIndex == -1)
+				// Initialize or update game tree
+				if (_gameTree == null)
 				{
-					// State not found, create new tree
 					_gameTree = new HeuristicGameTree(currentState, Heuristic);
 				}
 				else
 				{
-					// Prune tree to current state
-					_gameTree.Prune(stateIndex);
-
-					// Re-initialize heuristic if it was changed
-					if (_gameTree.HeuristicFunction != Heuristic)
+					// Try to find current state in existing tree
+					int stateIndex = _gameTree.FindStateIndex(currentState);
+					if (stateIndex == -1)
 					{
-						_gameTree.InitializeHeuristic(Heuristic);
+						// State not found, create new tree
+						_gameTree = new HeuristicGameTree(currentState, Heuristic);
+					}
+					else
+					{
+						// Prune tree to current state
+						_gameTree.Prune(stateIndex);
+
+						// Re-initialize heuristic if it was changed
+						if (_gameTree.HeuristicFunction != Heuristic)
+						{
+							_gameTree.InitializeHeuristic(Heuristic);
+						}
 					}
 				}
-			}
 
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter(_turnLength);
+				var cancellationTokenSource = new CancellationTokenSource();
+				cancellationTokenSource.CancelAfter(_turnLength);
 
-			var initialSimCount = _gameTree.GetVisits(0);
-			var initialNodeCount = _gameTree.GetNodeCount();
+				var initialSimCount = _gameTree.GetVisits(0);
+				var initialNodeCount = _gameTree.GetNodeCount();
 
-			try
-			{
-				// Run MCTS with heuristic guidance
-				HeuristicMCTS.RunSimulations(
-					_gameTree,
-					int.MaxValue,
-					HeuristicWeight,
-					InitialPlayoutHeuristicUsage,
-					SimulationHeuristicUsage,
-					_maxDepth,
-					cancellationTokenSource.Token
-				);
-			}
-			catch (InvalidOperationException ex) when (ex.Message.Contains("Hash table load factor exceeded"))
-			{
-				if (_verbose)
+				try
 				{
-					Console.WriteLine("Hash table full, continuing with MaxDepth=0");
+					// Run MCTS with heuristic guidance
+					HeuristicMCTS.RunSimulations(
+						_gameTree,
+						int.MaxValue,
+						HeuristicWeight,
+						InitialPlayoutHeuristicUsage,
+						SimulationHeuristicUsage,
+						_maxDepth,
+						cancellationTokenSource.Token
+					);
+				}
+				catch (InvalidOperationException ex) when (ex.Message.Contains("Hash table load factor exceeded"))
+				{
+					if (_verbose)
+					{
+						Console.WriteLine("Hash table full, continuing with MaxDepth=0");
+					}
+
+					// If hash table is full, continue with MaxDepth=0 to prevent further expansion
+					HeuristicMCTS.RunSimulations(
+						_gameTree,
+						int.MaxValue,
+						HeuristicWeight,
+						InitialPlayoutHeuristicUsage,
+						SimulationHeuristicUsage,
+						0,
+						cancellationTokenSource.Token
+					);
 				}
 
-				// If hash table is full, continue with MaxDepth=0 to prevent further expansion
-				HeuristicMCTS.RunSimulations(
-					_gameTree,
-					int.MaxValue,
-					HeuristicWeight,
-					InitialPlayoutHeuristicUsage,
-					SimulationHeuristicUsage,
-					0,
-					cancellationTokenSource.Token
-				);
-			}
+				if (_verbose)
+				{
+					var finalSimCount = _gameTree.GetVisits(0);
+					var finalNodeCount = _gameTree.GetNodeCount();
+					var rootHeuristicValue = _gameTree.GetHeuristicValue(0);
 
-			if (_verbose)
-			{
-				var finalSimCount = _gameTree.GetVisits(0);
-				var finalNodeCount = _gameTree.GetNodeCount();
-				var rootHeuristicValue = _gameTree.GetHeuristicValue(0);
-
-				Console.WriteLine($"{Color} MCTS completed {finalSimCount - initialSimCount} simulations " +
-								$"(tree size: {finalNodeCount} nodes, +{finalNodeCount - initialNodeCount} this turn)");
-				Console.WriteLine($"  Root heuristic value: {rootHeuristicValue:F3}");
+					Console.WriteLine($"{Color} MCTS completed {finalSimCount - initialSimCount} simulations " +
+									$"(tree size: {finalNodeCount} nodes, +{finalNodeCount - initialNodeCount} this turn)");
+					Console.WriteLine($"  Root heuristic value: {rootHeuristicValue:F3}");
+				}
 			}
+			);
 		}
 
 		public override AmoeballState SelectSingleMove(AmoeballState currentState)
 		{
-			return _gameTree!.PopState();
+            if (_gameTree == null) throw new Exception("GameTree uninitialized");
+            var bestMove = MCTS.GetBestMove(_gameTree, currentState);
+            var newState = currentState.Clone();
+            newState.ApplyMove(bestMove);
+
+            // Prune tree so the new state becomes the root
+            int nodeIndex = _gameTree.FindStateIndex(newState);
+			if (nodeIndex != -1)
+			{
+				_gameTree.Prune(nodeIndex);
+			}
+			return newState;
 		}
 
 		protected override void OnGameComplete()

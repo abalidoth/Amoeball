@@ -39,7 +39,6 @@ func _handle_game_state_change(new_state, new_player, game):
 		GameState.STATE_PLACE_1:
 			# Beginning of turn - generate all moves for this turn
 			_generate_turn_moves(game)
-			_play_next_pending_move()
 			
 		GameState.STATE_KICK_1, GameState.STATE_REMOVE, GameState.STATE_PLACE_2, GameState.STATE_KICK_2:
 			# Just play the next buffered move
@@ -58,8 +57,10 @@ func _generate_turn_moves(game):
 	
 	# Process the turn (this may run MCTS simulations, etc.)
 	# This also sets the internal state in the provider
+	player_provider.ProcessTurnCompleted.connect(_on_process_turn_completed, CONNECT_ONE_SHOT)
 	player_provider.ProcessTurn(serialized)
 	
+func _on_process_turn_completed():
 	# Get all three moves for this turn
 	for i in range(3):
 		# Get next move using internal state (returns Dictionary)
@@ -74,6 +75,7 @@ func _generate_turn_moves(game):
 	
 	if pending_moves.is_empty():
 		push_error("CsharpAgent: No moves generated for turn!")
+	_play_next_pending_move()
 
 func _play_next_pending_move():
 	if pending_moves.is_empty():

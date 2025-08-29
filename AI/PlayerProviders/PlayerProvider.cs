@@ -1,5 +1,6 @@
 using Godot;
 using AmoeballAI;
+using System.Threading.Tasks;
 
 namespace AmoeballAIIntegration
 {
@@ -38,25 +39,48 @@ namespace AmoeballAIIntegration
 		/// </summary>
 		protected abstract void InitializePlayer();
 
+		[Signal]
+		public delegate void ProcessTurnCompletedEventHandler();
+
+		private bool _isProcessing = false;
+
+		// Synchronous method that starts async processing
+		public void ProcessTurn(byte[] serializedState)
+		{
+			if (_isProcessing) return;
+
+			_isProcessing = true;
+			_ = ProcessTurnAsync(serializedState);
+		}
+
+
 		/// <summary>
 		/// Process turn with a GDScript AmoeballState (passed as serialized bytes)
 		/// This initializes the internal state for this turn
 		/// </summary>
 		/// <param name="serializedState">Byte array from GDScript AmoeballState.serialize()</param>
-		public void ProcessTurn(byte[] serializedState)
+		public async Task ProcessTurnAsync(byte[] serializedState)
 		{
-			if (playerInstance == null)
+			try
 			{
-				GD.PrintErr("PlayerProvider: No player instance available");
-				return;
+				if (playerInstance == null)
+				{
+					GD.PrintErr("PlayerProvider: No player instance available");
+					return;
+				}
+
+				// Convert GDScript state to C# state and store it
+				currentState = new AmoeballState();
+				currentState.Deserialize(serializedState);
+
+				// Process the turn (runs MCTS simulations, etc.)
+				await playerInstance.ProcessTurn(currentState);
 			}
-			
-			// Convert GDScript state to C# state and store it
-			currentState = new AmoeballState();
-			currentState.Deserialize(serializedState);
-			
-			// Process the turn (runs MCTS simulations, etc.)
-			playerInstance.ProcessTurn(currentState);
+			finally
+			{
+				_isProcessing = false;
+				EmitSignal(SignalName.ProcessTurnCompleted);
+			}
 		}
 
 		/// <summary>
@@ -64,7 +88,7 @@ namespace AmoeballAIIntegration
 		/// Updates the internal state and returns move information
 		/// </summary>
 		/// <returns>The move that was made</returns>		
-public Godot.Collections.Dictionary SelectSingleMove()
+		public Godot.Collections.Dictionary SelectSingleMove()
 {
 if (playerInstance == null)
 	{

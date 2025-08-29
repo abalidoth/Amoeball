@@ -12,6 +12,8 @@ player_provider = NodePath("PlayerProvider")
 
 [node name="PlayerProvider" type="Node" parent="."]
 script = ExtResource("2_u77r2")
+TurnLengthSeconds = 1.0
+Verbose = true
 
 [node name="TurnIndicators" type="Node2D" parent="."]
 

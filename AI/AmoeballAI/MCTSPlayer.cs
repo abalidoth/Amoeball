@@ -20,76 +20,91 @@ namespace AmoeballAI
             _verbose = verbose;
         }
 
-        public override void ProcessTurn(AmoeballState currentState)
+        public override async Task ProcessTurn(AmoeballState currentState)
         {
-            // Initialize or update game tree
-            if (_gameTree == null)
+            await Task.Run(
+            () =>
             {
-                _gameTree = new OrderedGameTree(currentState);
-            }
-            else
-            {
-                // Try to find current state in existing tree
-                int stateIndex = _gameTree.FindStateIndex(currentState);
-                if (stateIndex == -1)
+                // Initialize or update game tree
+                if (_gameTree == null)
                 {
-                    // State not found, create new tree
                     _gameTree = new OrderedGameTree(currentState);
                 }
                 else
                 {
-                    // Prune tree to current state
-                    _gameTree.Prune(stateIndex);
+                    // Try to find current state in existing tree
+                    int stateIndex = _gameTree.FindStateIndex(currentState);
+                    if (stateIndex == -1)
+                    {
+                        // State not found, create new tree
+                        _gameTree = new OrderedGameTree(currentState);
+                    }
+                    else
+                    {
+                        // Prune tree to current state
+                        _gameTree.Prune(stateIndex);
+                    }
                 }
-            }
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            cancellationTokenSource.CancelAfter(_turnLength);
+                var cancellationTokenSource = new CancellationTokenSource();
+                cancellationTokenSource.CancelAfter(_turnLength);
 
-            var initialSimCount = _gameTree.GetVisits(0);
-            var initialNodeCount = _gameTree.GetNodeCount();
+                var initialSimCount = _gameTree.GetVisits(0);
+                var initialNodeCount = _gameTree.GetNodeCount();
 
-            
 
-            try
-            {
-                // Try running MCTS with normal depth
-                MCTS.RunSimulations(
-                    _gameTree,
-                    int.MaxValue,
-                    _maxDepth,
-                    cancellationTokenSource.Token
-                );
-            }
-            catch (InvalidOperationException ex) when (ex.Message.Contains("Hash table load factor exceeded"))
-            {
+
+                try
+                {
+                    // Try running MCTS with normal depth
+                    MCTS.RunSimulations(
+                        _gameTree,
+                        int.MaxValue,
+                        _maxDepth,
+                        cancellationTokenSource.Token
+                    );
+                }
+                catch (InvalidOperationException ex) when (ex.Message.Contains("Hash table load factor exceeded"))
+                {
+                    if (_verbose)
+                    {
+                        Console.WriteLine("Hash table full, continuing with MaxDepth=0");
+                    }
+
+                    // If hash table is full, continue with MaxDepth=0 to prevent further expansion
+                    MCTS.RunSimulations(
+                        _gameTree,
+                        int.MaxValue,
+                        0,
+                        cancellationTokenSource.Token
+                    );
+                }
+
                 if (_verbose)
                 {
-                    Console.WriteLine("Hash table full, continuing with MaxDepth=0");
+                    var finalSimCount = _gameTree.GetVisits(0);
+                    var finalNodeCount = _gameTree.GetNodeCount();
+                    Console.WriteLine($"{Color} MCTS completed {finalSimCount - initialSimCount} simulations " +
+                                    $"(tree size: {finalNodeCount} nodes, +{finalNodeCount - initialNodeCount} this turn)");
                 }
-
-                // If hash table is full, continue with MaxDepth=0 to prevent further expansion
-                MCTS.RunSimulations(
-                    _gameTree,
-                    int.MaxValue,
-                    0,
-                    cancellationTokenSource.Token
-                );
-            }
-
-            if (_verbose)
-            {
-                var finalSimCount = _gameTree.GetVisits(0);
-                var finalNodeCount = _gameTree.GetNodeCount();
-                Console.WriteLine($"{Color} MCTS completed {finalSimCount - initialSimCount} simulations " +
-                                $"(tree size: {finalNodeCount} nodes, +{finalNodeCount - initialNodeCount} this turn)");
-            }
+            });
 
         }
 
         public override AmoeballState SelectSingleMove(AmoeballState currentState)
         {
-            return _gameTree!.PopState();
+            if (_gameTree == null) throw new Exception("GameTree uninitialized");
+            var bestMove = MCTS.GetBestMove(_gameTree, currentState);
+            var newState = currentState.Clone();
+            newState.ApplyMove(bestMove);
+
+            // Prune tree so the new state becomes the root
+            int nodeIndex = _gameTree.FindStateIndex(newState);
+            if (nodeIndex != -1)
+            {
+                _gameTree.Prune(nodeIndex);
+            }
+            return newState;
         }
 
         protected override void OnGameComplete()

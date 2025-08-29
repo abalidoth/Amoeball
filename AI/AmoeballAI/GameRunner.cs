@@ -13,7 +13,7 @@
             _verbose = verbose;
         }
 
-        public void RunGames(int numberOfGames)
+        public async Task RunGames(int numberOfGames)
         {
             for (int i = 0; i < numberOfGames; i++)
             {
@@ -22,7 +22,7 @@
                     Console.WriteLine($"\nStarting Game {i + 1}");
                 }
 
-                var winner = PlaySingleGame();
+                var winner = await PlaySingleGame();
 
                 if (_verbose)
                 {
@@ -37,7 +37,7 @@
             }
         }
 
-        private PieceType PlaySingleGame()
+        private async Task<PieceType> PlaySingleGame()
         {
             var state = new AmoeballState();
             state.SetupInitialPosition();
@@ -51,7 +51,7 @@
                 // if (_verbose) Console.WriteLine("Running Turn {0}: {1} pieces on board", Turn, state.PieceCount());
 
                 // Green's turn
-                state = _greenPlayer.PlayTurn(state);
+                state = await _greenPlayer.PlayTurn(state);
                 if (_greenPlayer.GameOver)
                 {
                     if (state.Winner == PieceType.GreenAmoeba)
@@ -67,7 +67,7 @@
 
 
                 // Purple's turn
-                state = _purplePlayer.PlayTurn(state);
+                state = await _purplePlayer.PlayTurn(state);
                 if (_purplePlayer.GameOver)
                 {
                     if (state.Winner == PieceType.PurpleAmoeba)

@@ -12,7 +12,7 @@
         public PieceType Color => _playerColor;
         public float WinRate => _gamesPlayed > 0 ? (float)_gamesWon / _gamesPlayed : 0f;
 
-        public AmoeballState PlayTurn(AmoeballState currentState)
+        public async Task<AmoeballState> PlayTurn(AmoeballState currentState)
         {
             if (_playerColor == PieceType.Empty)
             {
@@ -27,7 +27,7 @@
             
 
             var resultState = currentState.Clone();
-            ProcessTurn(resultState);
+            await ProcessTurn(resultState);
 
 
             for (int step = 0; step < 3 && resultState.Winner == PieceType.Empty; step++)
@@ -58,7 +58,7 @@
             OnGameComplete();
         }
 
-        public virtual void ProcessTurn(AmoeballState currentState){ }
+        public virtual async Task ProcessTurn(AmoeballState currentState){ }
         protected virtual void OnGameComplete() { }
         public abstract AmoeballState SelectSingleMove(AmoeballState currentState);
     }
